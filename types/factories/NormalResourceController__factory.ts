@@ -15,6 +15,19 @@ const _abi = [
     inputs: [
       {
         indexed: false,
+        internalType: "address",
+        name: "dstChainPayment",
+        type: "address",
+      },
+    ],
+    name: "DstChainPaymentUpdated",
+    type: "event",
+  },
+  {
+    anonymous: false,
+    inputs: [
+      {
+        indexed: false,
         internalType: "bytes32",
         name: "account",
         type: "bytes32",
@@ -107,6 +120,19 @@ const _abi = [
     type: "function",
   },
   {
+    inputs: [],
+    name: "dstChainPayment",
+    outputs: [
+      {
+        internalType: "address",
+        name: "",
+        type: "address",
+      },
+    ],
+    stateMutability: "view",
+    type: "function",
+  },
+  {
     inputs: [
       {
         internalType: "bytes32",
@@ -120,7 +146,13 @@ const _abi = [
       },
     ],
     name: "expand",
-    outputs: [],
+    outputs: [
+      {
+        internalType: "uint256",
+        name: "",
+        type: "uint256",
+      },
+    ],
     stateMutability: "nonpayable",
     type: "function",
   },
@@ -206,6 +238,19 @@ const _abi = [
       },
     ],
     stateMutability: "view",
+    type: "function",
+  },
+  {
+    inputs: [
+      {
+        internalType: "address",
+        name: "_dstChainPayment",
+        type: "address",
+      },
+    ],
+    name: "setDstChainPayment",
+    outputs: [],
+    stateMutability: "nonpayable",
     type: "function",
   },
   {

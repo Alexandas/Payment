@@ -2,8 +2,8 @@
 /* tslint:disable */
 /* eslint-disable */
 
-import { Signer, utils, Contract, ContractFactory, Overrides } from "ethers";
-import { Provider, TransactionRequest } from "@ethersproject/providers";
+import { Contract, Signer, utils } from "ethers";
+import { Provider } from "@ethersproject/providers";
 import type { Billing, BillingInterface } from "../Billing";
 
 const _abi = [
@@ -13,11 +13,35 @@ const _abi = [
       {
         indexed: false,
         internalType: "address",
-        name: "operator",
+        name: "provider",
         type: "address",
       },
+      {
+        indexed: false,
+        internalType: "uint64",
+        name: "nonce",
+        type: "uint64",
+      },
+      {
+        indexed: false,
+        internalType: "bytes32",
+        name: "account",
+        type: "bytes32",
+      },
+      {
+        indexed: false,
+        internalType: "bytes",
+        name: "bill",
+        type: "bytes",
+      },
+      {
+        indexed: false,
+        internalType: "uint256",
+        name: "amount",
+        type: "uint256",
+      },
     ],
-    name: "AddOperator",
+    name: "Billing",
     type: "event",
   },
   {
@@ -45,11 +69,50 @@ const _abi = [
       {
         indexed: false,
         internalType: "address",
-        name: "operator",
+        name: "account",
         type: "address",
       },
     ],
-    name: "RemoveOperator",
+    name: "Paused",
+    type: "event",
+  },
+  {
+    anonymous: false,
+    inputs: [
+      {
+        indexed: false,
+        internalType: "address",
+        name: "account",
+        type: "address",
+      },
+    ],
+    name: "PauserAdded",
+    type: "event",
+  },
+  {
+    anonymous: false,
+    inputs: [
+      {
+        indexed: false,
+        internalType: "address",
+        name: "account",
+        type: "address",
+      },
+    ],
+    name: "PauserRemoved",
+    type: "event",
+  },
+  {
+    anonymous: false,
+    inputs: [
+      {
+        indexed: false,
+        internalType: "contract IProviders",
+        name: "providers",
+        type: "address",
+      },
+    ],
+    name: "ProvidersUpdated",
     type: "event",
   },
   {
@@ -70,80 +133,72 @@ const _abi = [
     inputs: [
       {
         indexed: false,
-        internalType: "bytes32",
-        name: "account",
-        type: "bytes32",
-      },
-      {
-        indexed: false,
-        internalType: "uint256",
-        name: "amount",
-        type: "uint256",
+        internalType: "contract IERC20Upgradeable",
+        name: "token",
+        type: "address",
       },
     ],
-    name: "SpendARStorage",
+    name: "TokenUpdated",
     type: "event",
+  },
+  {
+    anonymous: false,
+    inputs: [
+      {
+        indexed: false,
+        internalType: "address",
+        name: "account",
+        type: "address",
+      },
+    ],
+    name: "Unpaused",
+    type: "event",
+  },
+  {
+    inputs: [],
+    name: "adaptor",
+    outputs: [
+      {
+        internalType: "contract IResourceAdaptor",
+        name: "",
+        type: "address",
+      },
+    ],
+    stateMutability: "view",
+    type: "function",
   },
   {
     inputs: [
       {
         internalType: "address",
-        name: "operator",
+        name: "account",
         type: "address",
       },
     ],
-    name: "addOperator",
+    name: "addPauser",
     outputs: [],
     stateMutability: "nonpayable",
     type: "function",
   },
   {
-    inputs: [],
-    name: "arStorageController",
-    outputs: [
+    inputs: [
       {
-        internalType: "contract INormalResourceController",
-        name: "",
+        internalType: "address",
+        name: "provider",
         type: "address",
       },
-    ],
-    stateMutability: "view",
-    type: "function",
-  },
-  {
-    inputs: [],
-    name: "bandwidthController",
-    outputs: [
       {
-        internalType: "contract INormalResourceController",
-        name: "",
-        type: "address",
+        internalType: "bytes32",
+        name: "account",
+        type: "bytes32",
       },
     ],
-    stateMutability: "view",
-    type: "function",
-  },
-  {
-    inputs: [],
-    name: "buildingTimeController",
+    name: "balanceOf",
     outputs: [
       {
-        internalType: "contract INormalResourceController",
+        internalType: "uint256",
         name: "",
-        type: "address",
-      },
-    ],
-    stateMutability: "view",
-    type: "function",
-  },
-  {
-    inputs: [],
-    name: "ipfsStorageController",
-    outputs: [
-      {
-        internalType: "contract IIPFSStorageController",
-        name: "",
-        type: "address",
+        type: "uint256",
       },
     ],
     stateMutability: "view",
@@ -152,31 +207,156 @@ const _abi = [
   {
     inputs: [
       {
-        internalType: "address",
-        name: "operator",
-        type: "address",
+        internalType: "bytes",
+        name: "message",
+        type: "bytes",
       },
     ],
-    name: "isOperator",
+    name: "decodeBill",
     outputs: [
       {
-        internalType: "bool",
+        components: [
+          {
+            internalType: "uint256",
+            name: "totalValue",
+            type: "uint256",
+          },
+          {
+            components: [
+              {
+                internalType: "uint256",
+                name: "indexBlock",
+                type: "uint256",
+              },
+              {
+                components: [
+                  {
+                    internalType: "enum ResourceData.ResourceType",
+                    name: "resourceType",
+                    type: "uint8",
+                  },
+                  {
+                    internalType: "uint256",
+                    name: "amount",
+                    type: "uint256",
+                  },
+                ],
+                internalType: "struct IBilling.BillEntry[]",
+                name: "entries",
+                type: "tuple[]",
+              },
+            ],
+            internalType: "struct IBilling.BillPayload[]",
+            name: "payloads",
+            type: "tuple[]",
+          },
+        ],
+        internalType: "struct IBilling.Bill",
         name: "",
-        type: "bool",
+        type: "tuple",
       },
     ],
-    stateMutability: "view",
+    stateMutability: "pure",
+    type: "function",
+  },
+  {
+    inputs: [
+      {
+        components: [
+          {
+            internalType: "uint256",
+            name: "totalValue",
+            type: "uint256",
+          },
+          {
+            components: [
+              {
+                internalType: "uint256",
+                name: "indexBlock",
+                type: "uint256",
+              },
+              {
+                components: [
+                  {
+                    internalType: "enum ResourceData.ResourceType",
+                    name: "resourceType",
+                    type: "uint8",
+                  },
+                  {
+                    internalType: "uint256",
+                    name: "amount",
+                    type: "uint256",
+                  },
+                ],
+                internalType: "struct IBilling.BillEntry[]",
+                name: "entries",
+                type: "tuple[]",
+              },
+            ],
+            internalType: "struct IBilling.BillPayload[]",
+            name: "payloads",
+            type: "tuple[]",
+          },
+        ],
+        internalType: "struct IBilling.Bill",
+        name: "bills",
+        type: "tuple",
+      },
+    ],
+    name: "encodeBill",
+    outputs: [
+      {
+        internalType: "bytes",
+        name: "",
+        type: "bytes",
+      },
+    ],
+    stateMutability: "pure",
     type: "function",
   },
   {
     inputs: [
       {
         internalType: "address",
+        name: "provider",
+        type: "address",
+      },
+      {
+        internalType: "uint64",
+        name: "nonce",
+        type: "uint64",
+      },
+      {
+        internalType: "bytes32",
+        name: "account",
+        type: "bytes32",
+      },
+      {
+        internalType: "bytes",
+        name: "bill",
+        type: "bytes",
+      },
+    ],
+    name: "hashBill",
+    outputs: [
+      {
+        internalType: "bytes32",
         name: "",
+        type: "bytes32",
+      },
+    ],
+    stateMutability: "pure",
+    type: "function",
+  },
+  {
+    inputs: [
+      {
+        internalType: "address",
+        name: "account",
         type: "address",
       },
     ],
-    name: "operators",
+    name: "isPauser",
     outputs: [
       {
         internalType: "bool",
@@ -201,14 +381,66 @@ const _abi = [
     type: "function",
   },
   {
+    inputs: [],
+    name: "pause",
+    outputs: [],
+    stateMutability: "nonpayable",
+    type: "function",
+  },
+  {
+    inputs: [],
+    name: "paused",
+    outputs: [
+      {
+        internalType: "bool",
+        name: "",
+        type: "bool",
+      },
+    ],
+    stateMutability: "view",
+    type: "function",
+  },
+  {
     inputs: [
       {
         internalType: "address",
-        name: "operator",
+        name: "",
         type: "address",
       },
     ],
-    name: "removeOperator",
+    name: "pausers",
+    outputs: [
+      {
+        internalType: "bool",
+        name: "",
+        type: "bool",
+      },
+    ],
+    stateMutability: "view",
+    type: "function",
+  },
+  {
+    inputs: [],
+    name: "providers",
+    outputs: [
+      {
+        internalType: "contract IProviders",
+        name: "",
+        type: "address",
+      },
+    ],
+    stateMutability: "view",
+    type: "function",
+  },
+  {
+    inputs: [
+      {
+        internalType: "address",
+        name: "account",
+        type: "address",
+      },
+    ],
+    name: "removePauser",
     outputs: [],
     stateMutability: "nonpayable",
     type: "function",
@@ -221,16 +453,23 @@ const _abi = [
     type: "function",
   },
   {
-    inputs: [
-      {
-        internalType: "uint256",
-        name: "amount",
-        type: "uint256",
-      },
-    ],
-    name: "spend",
+    inputs: [],
+    name: "renouncePauser",
     outputs: [],
     stateMutability: "nonpayable",
+    type: "function",
+  },
+  {
+    inputs: [],
+    name: "token",
+    outputs: [
+      {
+        internalType: "contract IERC20Upgradeable",
+        name: "",
+        type: "address",
+      },
+    ],
+    stateMutability: "view",
     type: "function",
   },
   {
@@ -246,39 +485,16 @@ const _abi = [
     stateMutability: "nonpayable",
     type: "function",
   },
+  {
+    inputs: [],
+    name: "unpause",
+    outputs: [],
+    stateMutability: "nonpayable",
+    type: "function",
+  },
 ];
 
-const _bytecode =
-  "0x608060405234801561001057600080fd5b50610618806100206000396000f3fe608060405234801561001057600080fd5b50600436106100b45760003560e01c80638da5cb5b116100715780638da5cb5b146101785780639870d7fe14610189578063ac8a584a1461019c578063b05f87a8146101af578063f2fde38b146101c2578063f8f071fa146101d557600080fd5b806313e7c9d8146100b957806315e07769146100f15780631dbf3bc71461011c57806329dbfc75146101315780636d70f7ae14610144578063715018a614610170575b600080fd5b6100dc6100c7366004610564565b60656020526000908152604090205460ff1681565b60405190151581526020015b60405180910390f35b606654610104906001600160a01b031681565b6040516001600160a01b0390911681526020016100e8565b61012f61012a366004610594565b6101e8565b005b606854610104906001600160a01b031681565b6100dc610152366004610564565b6001600160a01b031660009081526065602052604090205460ff1690565b61012f610259565b6033546001600160a01b0316610104565b61012f610197366004610564565b61028f565b61012f6101aa366004610564565b6102c2565b606954610104906001600160a01b031681565b61012f6101d0366004610564565b6102f5565b606754610104906001600160a01b031681565b3360009081526065602052604090205460ff166102565760405162461bcd60e51b815260206004820152602160248201527f4f70657261746f72733a2063616c6c6572206973206e6f74206f70657261746f6044820152603960f91b60648201526084015b60405180910390fd5b50565b6033546001600160a01b031633146102835760405162461bcd60e51b815260040161024d906105ad565b61028d6000610389565b565b6033546001600160a01b031633146102b95760405162461bcd60e51b815260040161024d906105ad565b610256816103db565b6033546001600160a01b031633146102ec5760405162461bcd60e51b815260040161024d906105ad565b610256816104ab565b6033546001600160a01b0316331461031f5760405162461bcd60e51b815260040161024d906105ad565b6001600160a01b0381166103845760405162461bcd60e51b815260206004820152602660248201527f4f776e61626c653a206e6577206f776e657220697320746865207a65726f206160448201526564647265737360d01b606482015260840161024d565b610256815b603380546001600160a01b038381166001600160a01b0319831681179093556040519116919082907f8be0079c531659141344cd1fd0a4f28419497f9722a3daafe3b4186f6b6457e090600090a35050565b6001600160a01b03811660009081526065602052604090205460ff16156104505760405162461bcd60e51b8152602060048201526024808201527f4f70657261746f72733a206f70657261746f7220697320616c726561647920616044820152631919195960e21b606482015260840161024d565b6001600160a01b038116600081815260656020908152604091829020805460ff1916600117905590519182527f4c141abccf173677929dea054f218ed87362117834a8869ec9f68d8bdaaea1dc91015b60405180910390a150565b6001600160a01b03811660009081526065602052604090205460ff166105135760405162461bcd60e51b815260206004820152601b60248201527f4f70657261746f72733a20696e76616c6964206f70657261746f720000000000604482015260640161024d565b6001600160a01b038116600081815260656020908152604091829020805460ff1916905590519182527f6b4be2dd49eba45ba43390fbe7da13e2b965d255db41d6a0fcf6d2e15ac1fccb91016104a0565b60006020828403121561057657600080fd5b81356001600160a01b038116811461058d57600080fd5b9392505050565b6000602082840312156105a657600080fd5b5035919050565b6020808252818101527f4f776e61626c653a2063616c6c6572206973206e6f7420746865206f776e657260408201526060019056fea2646970667358221220858d021331cb319465e17260ac0c3f158b1e824c2126bdd5c0c885df18daa43264736f6c63430008090033";
-
-export class Billing__factory extends ContractFactory {
-  constructor(
-    ...args: [signer: Signer] | ConstructorParameters<typeof ContractFactory>
-  ) {
-    if (args.length === 1) {
-      super(_abi, _bytecode, args[0]);
-    } else {
-      super(...args);
-    }
-  }
-
-  deploy(
-    overrides?: Overrides & { from?: string | Promise<string> }
-  ): Promise<Billing> {
-    return super.deploy(overrides || {}) as Promise<Billing>;
-  }
-  getDeployTransaction(
-    overrides?: Overrides & { from?: string | Promise<string> }
-  ): TransactionRequest {
-    return super.getDeployTransaction(overrides || {});
-  }
-  attach(address: string): Billing {
-    return super.attach(address) as Billing;
-  }
-  connect(signer: Signer): Billing__factory {
-    return super.connect(signer) as Billing__factory;
-  }
-  static readonly bytecode = _bytecode;
+export class Billing__factory {
   static readonly abi = _abi;
   static createInterface(): BillingInterface {
     return new utils.Interface(_abi) as BillingInterface;

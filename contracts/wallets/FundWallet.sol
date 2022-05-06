@@ -2,25 +2,43 @@
 
 pragma solidity >=0.8.0;
 
-import '@openzeppelin/contracts-upgradeable/interfaces/IERC20Upgradeable.sol';
-import '@openzeppelin/contracts-upgradeable/token/ERC20/utils/SafeERC20Upgradeable.sol';
 import '@openzeppelin/contracts-upgradeable/security/ReentrancyGuardUpgradeable.sol';
 import '@openzeppelin/contracts-upgradeable/utils/math/SafeMathUpgradeable.sol';
+import '@openzeppelin/contracts-upgradeable/token/ERC20/utils/SafeERC20Upgradeable.sol';
 
 import './Billing.sol';
 import '../interfaces/IFundWallet.sol';
+import '../access/OwnerWithdrawable.sol';
 
-contract FundWallet is IFundWallet, Billing, ReentrancyGuardUpgradeable {
+contract FundWallet is IFundWallet, Billing, OwnerWithdrawable, ReentrancyGuardUpgradeable {
 	using SafeMathUpgradeable for uint256;
 	using SafeERC20Upgradeable for IERC20Upgradeable;
 
-	IERC20Upgradeable public override token;
+	mapping(address => mapping(bytes32 => Wallet)) internal wallets;
 
-	mapping(uint256 => bool) public nonces;
+	mapping(address => mapping(uint64 => bool)) internal nonces;
 
-	mapping(bytes32 => Wallet) internal wallets;
+	modifier onlyWalletOwner(address provider, bytes32 account) {
+		require(wallets[provider][account].owner == msg.sender, 'FundWallet: caller is not wallet owner');
+		_;
+	}
 
-	constructor() initializer {}
+	modifier nonNonce(address provider, uint64 nonce) {
+		require(!nonces[provider][nonce], 'FundWallet: invalid nonce');
+		_;
+	}
+
+	constructor(
+		address owner,
+		address pauser,
+		IProviders _providers,
+		IERC20Upgradeable _token
+	) initializer {
+		_transferOwnership(owner);
+		__Init_Pauser(pauser);
+		__Init_Providers(_providers);
+		__Init_Token(_token);
+	}
 
 	function initialize(
 		address owner,
@@ -38,20 +56,24 @@ contract FundWallet is IFundWallet, Billing, ReentrancyGuardUpgradeable {
 		_setToken(_token);
 	}
 
+	function setToken(IERC20Upgradeable _token) external onlyOwner {
+		_setToken(_token);
+	}
+
 	function charge(
 		address provider,
-		uint256 nonce,
+		uint64 nonce,
 		address owner,
 		bytes32 account,
 		uint256 amount,
 		bytes memory signature
-	) external override whenNotPaused nonReentrant {
+	) external override nonNonce(provider, nonce) whenNotPaused nonReentrant {
 		bytes32 hash = keccak256(abi.encodePacked(provider, nonce, owner, account, amount));
-		require(providers.isValidSignature(provider, hash, signature), 'ChargeWallet: invalid signature');
-		if (wallets[account].owner == address(0)) {
-			wallets[account].owner = owner;
+		require(providers.isValidSignature(provider, hash, signature), 'FundWallet: invalid signature');
+		if (wallets[provider][account].owner == address(0)) {
+			wallets[provider][account].owner = owner;
 		}
-		wallets[account].amount = wallets[account].amount.add(amount);
+		wallets[provider][account].amount = wallets[provider][account].amount.add(amount);
 		token.safeTransferFrom(msg.sender, address(this), amount);
 
 		emit Charge(provider, nonce, owner, account, amount);
@@ -59,73 +81,46 @@ contract FundWallet is IFundWallet, Billing, ReentrancyGuardUpgradeable {
 
 	function spend(
 		address provider,
-		uint256 nonce,
+		uint64 nonce,
 		bytes32 account,
-		address to,
 		bytes memory bill,
 		bytes memory signature
-	) external override {
-		require(providers.isProvider(msg.sender), 'FundWallet: caller is not a provider');
-		bytes32 hash = keccak256(abi.encodePacked(provider, nonce, account, to, bill));
+	) external override nonNonce(provider, nonce) whenNotPaused nonReentrant returns (uint256 fee) {
+		fee = _spend(provider, nonce, account, bill, signature);
+		wallets[provider][account].amount = wallets[provider][account].amount.sub(fee);
 
-		require(wallets[account].amount > 0, 'FundWallet: insufficient balance');
-		if (wallets[account].amount > fee) {
-			wallets[account].amount = wallets[account].amount.sub(fee);
-		} else {
-			wallets[account].amount = 0;
-		}
-
-		emit Spend(account, wallets[account].amount > fee ? fee : wallets[account].amount);
+		emit Spend(provider, nonce, account, fee, wallets[provider][account].amount);
 	}
 
 	function withdraw(
 		address provider,
-		uint256 nonce,
+		uint64 nonce,
 		bytes32 account,
 		address to,
 		bytes memory bill,
 		bytes memory signature
-	) external override nonNonce(nonce) onlyWalletOwner(account) whenNotPaused nonReentrant returns (uint256 amount) {
-		bytes32 hash = keccak256(abi.encodePacked(provider, nonce, account, to, bill));
-		require(providers.isValidSignature(provider, hash, signature), 'FundWallet: invalid signature');
-		uint256 balance = balanceOf(account);
-		uint256 value = _validateBill(bill);
-		if (balance > value) {
-			amount = balance.sub(value);
-			wallets[account].amount = amount;
-			token.safeTransfer(to, amount);
-		} else {
-			wallets[account].amount = 0;
-		}
+	) external override nonNonce(provider, nonce) onlyWalletOwner(provider, account) whenNotPaused nonReentrant returns (uint256 amount) {
+		uint256 fee = _spend(provider, nonce, account, bill, signature);
+		amount = wallets[provider][account].amount.sub(fee);
+		token.safeTransfer(to, amount);
+		wallets[provider][account].amount = 0;
 
 		emit Withdrawn(provider, nonce, account, to, amount);
 	}
 
-	function transferWalletOwner(bytes32 account, address newOwner) external override whenNotPaused onlyWalletOwner(account) {
-		wallets[account].owner = newOwner;
-		emit WalletOwnerTransferred(account, newOwner);
+	function transferWalletOwner(address provider, bytes32 account, address newOwner, bytes memory signature) external override whenNotPaused onlyWalletOwner(provider, account) {
+		bytes32 hash = keccak256(abi.encodePacked(provider, newOwner, account));
+		require(providers.isValidSignature(provider, hash, signature), 'FundWallet: invalid signature');
+		wallets[provider][account].owner = newOwner;
+		emit WalletOwnerTransferred(provider, account, newOwner);
 	}
 
-	function ownerOf(bytes32 account) public view override returns (address) {
-		return wallets[account].owner;
+	function ownerOf(address provider, bytes32 account) public view override returns (address) {
+		return wallets[provider][account].owner;
 	}
 
-	function balanceOf(bytes32 account) public view override returns (uint256) {
-		return wallets[account].amount;
+	function balanceOf(address provider, bytes32 account) public view override returns (uint256) {
+		return wallets[provider][account].amount;
 	}
 
-	function _setToken(IERC20Upgradeable _token) internal {
-		token = _token;
-		emit TokenUpdated(_token);
-	}
-
-	modifier nonNonce(uint256 nonce) {
-		require(nonces[nonce], 'FundWallet: nonce too low');
-		_;
-	}
-
-	modifier onlyWalletOwner(bytes32 account) {
-		require(wallets[account].owner == msg.sender, 'FundWallet: caller is not binding account');
-		_;
-	}
 }

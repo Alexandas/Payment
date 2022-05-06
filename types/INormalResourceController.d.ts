@@ -198,7 +198,7 @@ export class INormalResourceController extends BaseContract {
       account: BytesLike,
       value: BigNumberish,
       overrides?: CallOverrides
-    ): Promise<void>;
+    ): Promise<BigNumber>;
 
     getAmountOf(
       value: BigNumberish,

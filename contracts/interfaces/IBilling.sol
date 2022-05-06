@@ -2,6 +2,7 @@
 
 pragma solidity >=0.8.0;
 
+import '@openzeppelin/contracts-upgradeable/interfaces/IERC20Upgradeable.sol';
 import '../libraries/ResourceData.sol';
 import '../resources/interfaces/IResourceAdaptor.sol';
 import './IProvidersWrapper.sol';
@@ -22,7 +23,14 @@ interface IBilling is IProvidersWrapper {
 		BillPayload[] payloads;
 	}
 
+	event TokenUpdated(IERC20Upgradeable token);
+
 	event ResourceAdaptorUpdated(IResourceAdaptor adaptor);
 
+	event Billing(address provider, uint64 nonce, bytes32 account, bytes bill, uint256 amount);
+
+	function token() external view returns (IERC20Upgradeable);
+
 	function adaptor() external view returns (IResourceAdaptor);
+
 }

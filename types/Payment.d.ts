@@ -22,52 +22,42 @@ import type { TypedEventFilter, TypedEvent, TypedListener } from "./common";
 
 interface PaymentInterface extends ethers.utils.Interface {
   functions: {
+    "Init_Payment(address,address,address,address)": FunctionFragment;
     "addPauser(address)": FunctionFragment;
-    "addToken(address)": FunctionFragment;
-    "decodeMessage(bytes)": FunctionFragment;
-    "destination()": FunctionFragment;
-    "encodeMessage(bytes32,tuple[])": FunctionFragment;
-    "getValueOf(tuple[])": FunctionFragment;
+    "encodeMessage(address,uint64,bytes32,tuple[])": FunctionFragment;
     "isPauser(address)": FunctionFragment;
     "messageSender()": FunctionFragment;
     "owner()": FunctionFragment;
     "pause()": FunctionFragment;
     "paused()": FunctionFragment;
     "pausers(address)": FunctionFragment;
-    "pay(bytes32,address,uint64,uint32,tuple[])": FunctionFragment;
+    "pay(address,uint64,bytes32,uint32,tuple[])": FunctionFragment;
     "removePauser(address)": FunctionFragment;
-    "removeToken(address)": FunctionFragment;
     "renounceOwnership()": FunctionFragment;
     "renouncePauser()": FunctionFragment;
-    "setDestination(address)": FunctionFragment;
     "setMessageSender(address)": FunctionFragment;
-    "tokenExists(address)": FunctionFragment;
+    "setToken(address)": FunctionFragment;
+    "token()": FunctionFragment;
+    "totalValue(tuple[])": FunctionFragment;
     "transferOwnership(address)": FunctionFragment;
     "unpause()": FunctionFragment;
     "withdraw(address,address,uint256)": FunctionFragment;
     "withdrawNative(address,uint256)": FunctionFragment;
   };
 
+  encodeFunctionData(
+    functionFragment: "Init_Payment",
+    values: [string, string, string, string]
+  ): string;
   encodeFunctionData(functionFragment: "addPauser", values: [string]): string;
-  encodeFunctionData(functionFragment: "addToken", values: [string]): string;
-  encodeFunctionData(
-    functionFragment: "decodeMessage",
-    values: [BytesLike]
-  ): string;
-  encodeFunctionData(
-    functionFragment: "destination",
-    values?: undefined
-  ): string;
   encodeFunctionData(
     functionFragment: "encodeMessage",
     values: [
+      string,
+      BigNumberish,
       BytesLike,
       { resourceType: BigNumberish; values: BigNumberish[] }[]
     ]
-  ): string;
-  encodeFunctionData(
-    functionFragment: "getValueOf",
-    values: [{ resourceType: BigNumberish; values: BigNumberish[] }[]]
   ): string;
   encodeFunctionData(functionFragment: "isPauser", values: [string]): string;
   encodeFunctionData(
@@ -81,9 +71,9 @@ interface PaymentInterface extends ethers.utils.Interface {
   encodeFunctionData(
     functionFragment: "pay",
     values: [
-      BytesLike,
       string,
       BigNumberish,
+      BytesLike,
       BigNumberish,
       { resourceType: BigNumberish; values: BigNumberish[] }[]
     ]
@@ -92,7 +82,6 @@ interface PaymentInterface extends ethers.utils.Interface {
     functionFragment: "removePauser",
     values: [string]
   ): string;
-  encodeFunctionData(functionFragment: "removeToken", values: [string]): string;
   encodeFunctionData(
     functionFragment: "renounceOwnership",
     values?: undefined
@@ -102,14 +91,15 @@ interface PaymentInterface extends ethers.utils.Interface {
     values?: undefined
   ): string;
   encodeFunctionData(
-    functionFragment: "setDestination",
-    values: [string]
-  ): string;
-  encodeFunctionData(
     functionFragment: "setMessageSender",
     values: [string]
   ): string;
-  encodeFunctionData(functionFragment: "tokenExists", values: [string]): string;
+  encodeFunctionData(functionFragment: "setToken", values: [string]): string;
+  encodeFunctionData(functionFragment: "token", values?: undefined): string;
+  encodeFunctionData(
+    functionFragment: "totalValue",
+    values: [{ resourceType: BigNumberish; values: BigNumberish[] }[]]
+  ): string;
   encodeFunctionData(
     functionFragment: "transferOwnership",
     values: [string]
@@ -124,21 +114,15 @@ interface PaymentInterface extends ethers.utils.Interface {
     values: [string, BigNumberish]
   ): string;
 
+  decodeFunctionResult(
+    functionFragment: "Init_Payment",
+    data: BytesLike
+  ): Result;
   decodeFunctionResult(functionFragment: "addPauser", data: BytesLike): Result;
-  decodeFunctionResult(functionFragment: "addToken", data: BytesLike): Result;
-  decodeFunctionResult(
-    functionFragment: "decodeMessage",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(
-    functionFragment: "destination",
-    data: BytesLike
-  ): Result;
   decodeFunctionResult(
     functionFragment: "encodeMessage",
     data: BytesLike
   ): Result;
-  decodeFunctionResult(functionFragment: "getValueOf", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "isPauser", data: BytesLike): Result;
   decodeFunctionResult(
     functionFragment: "messageSender",
@@ -154,10 +138,6 @@ interface PaymentInterface extends ethers.utils.Interface {
     data: BytesLike
   ): Result;
   decodeFunctionResult(
-    functionFragment: "removeToken",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(
     functionFragment: "renounceOwnership",
     data: BytesLike
   ): Result;
@@ -166,17 +146,12 @@ interface PaymentInterface extends ethers.utils.Interface {
     data: BytesLike
   ): Result;
   decodeFunctionResult(
-    functionFragment: "setDestination",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(
     functionFragment: "setMessageSender",
     data: BytesLike
   ): Result;
-  decodeFunctionResult(
-    functionFragment: "tokenExists",
-    data: BytesLike
-  ): Result;
+  decodeFunctionResult(functionFragment: "setToken", data: BytesLike): Result;
+  decodeFunctionResult(functionFragment: "token", data: BytesLike): Result;
+  decodeFunctionResult(functionFragment: "totalValue", data: BytesLike): Result;
   decodeFunctionResult(
     functionFragment: "transferOwnership",
     data: BytesLike
@@ -189,31 +164,29 @@ interface PaymentInterface extends ethers.utils.Interface {
   ): Result;
 
   events: {
-    "AddToken(address)": EventFragment;
     "MessageSenderUpdated(address)": EventFragment;
     "NativeWithdrawal(address,uint256)": EventFragment;
     "OwnershipTransferred(address,address)": EventFragment;
+    "Paid(address,uint64,bytes32,uint32,tuple[])": EventFragment;
     "Paused(address)": EventFragment;
     "PauserAdded(address)": EventFragment;
     "PauserRemoved(address)": EventFragment;
-    "RemoveToken(address)": EventFragment;
+    "TokenUpdated(address)": EventFragment;
     "Unpaused(address)": EventFragment;
     "Withdrawal(address,address,uint256)": EventFragment;
   };
 
-  getEvent(nameOrSignatureOrTopic: "AddToken"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "MessageSenderUpdated"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "NativeWithdrawal"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "OwnershipTransferred"): EventFragment;
+  getEvent(nameOrSignatureOrTopic: "Paid"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "Paused"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "PauserAdded"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "PauserRemoved"): EventFragment;
-  getEvent(nameOrSignatureOrTopic: "RemoveToken"): EventFragment;
+  getEvent(nameOrSignatureOrTopic: "TokenUpdated"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "Unpaused"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "Withdrawal"): EventFragment;
 }
-
-export type AddTokenEvent = TypedEvent<[string] & { token: string }>;
 
 export type MessageSenderUpdatedEvent = TypedEvent<
   [string] & { messageSender: string }
@@ -227,13 +200,32 @@ export type OwnershipTransferredEvent = TypedEvent<
   [string, string] & { previousOwner: string; newOwner: string }
 >;
 
+export type PaidEvent = TypedEvent<
+  [
+    string,
+    BigNumber,
+    string,
+    number,
+    ([number, BigNumber[]] & { resourceType: number; values: BigNumber[] })[]
+  ] & {
+    provider: string;
+    nonce: BigNumber;
+    account: string;
+    maxSlippage: number;
+    payloads: ([number, BigNumber[]] & {
+      resourceType: number;
+      values: BigNumber[];
+    })[];
+  }
+>;
+
 export type PausedEvent = TypedEvent<[string] & { account: string }>;
 
 export type PauserAddedEvent = TypedEvent<[string] & { account: string }>;
 
 export type PauserRemovedEvent = TypedEvent<[string] & { account: string }>;
 
-export type RemoveTokenEvent = TypedEvent<[string] & { token: string }>;
+export type TokenUpdatedEvent = TypedEvent<[string] & { token: string }>;
 
 export type UnpausedEvent = TypedEvent<[string] & { account: string }>;
 
@@ -285,49 +277,26 @@ export class Payment extends BaseContract {
   interface: PaymentInterface;
 
   functions: {
+    Init_Payment(
+      owner: string,
+      pauser: string,
+      _messageSender: string,
+      token: string,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<ContractTransaction>;
+
     addPauser(
       account: string,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<ContractTransaction>;
 
-    addToken(
-      token: string,
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<ContractTransaction>;
-
-    decodeMessage(
-      message: BytesLike,
-      overrides?: CallOverrides
-    ): Promise<
-      [
-        string,
-        string,
-        ([number, BigNumber[]] & {
-          resourceType: number;
-          values: BigNumber[];
-        })[]
-      ] & {
-        destination: string;
-        account: string;
-        payloads: ([number, BigNumber[]] & {
-          resourceType: number;
-          values: BigNumber[];
-        })[];
-      }
-    >;
-
-    destination(overrides?: CallOverrides): Promise<[string]>;
-
     encodeMessage(
+      provider: string,
+      nonce: BigNumberish,
       account: BytesLike,
       payloads: { resourceType: BigNumberish; values: BigNumberish[] }[],
       overrides?: CallOverrides
     ): Promise<[string]>;
-
-    getValueOf(
-      payloads: { resourceType: BigNumberish; values: BigNumberish[] }[],
-      overrides?: CallOverrides
-    ): Promise<[BigNumber] & { value: BigNumber }>;
 
     isPauser(account: string, overrides?: CallOverrides): Promise<[boolean]>;
 
@@ -344,9 +313,9 @@ export class Payment extends BaseContract {
     pausers(arg0: string, overrides?: CallOverrides): Promise<[boolean]>;
 
     pay(
-      account: BytesLike,
-      token: string,
+      provider: string,
       nonce: BigNumberish,
+      account: BytesLike,
       maxSlippage: BigNumberish,
       payloads: { resourceType: BigNumberish; values: BigNumberish[] }[],
       overrides?: PayableOverrides & { from?: string | Promise<string> }
@@ -354,11 +323,6 @@ export class Payment extends BaseContract {
 
     removePauser(
       account: string,
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<ContractTransaction>;
-
-    removeToken(
-      token: string,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<ContractTransaction>;
 
@@ -370,17 +334,22 @@ export class Payment extends BaseContract {
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<ContractTransaction>;
 
-    setDestination(
-      _destination: string,
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<ContractTransaction>;
-
     setMessageSender(
       _messageSender: string,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<ContractTransaction>;
 
-    tokenExists(token: string, overrides?: CallOverrides): Promise<[boolean]>;
+    setToken(
+      _token: string,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<ContractTransaction>;
+
+    token(overrides?: CallOverrides): Promise<[string]>;
+
+    totalValue(
+      payloads: { resourceType: BigNumberish; values: BigNumberish[] }[],
+      overrides?: CallOverrides
+    ): Promise<[BigNumber] & { value: BigNumber }>;
 
     transferOwnership(
       newOwner: string,
@@ -405,46 +374,26 @@ export class Payment extends BaseContract {
     ): Promise<ContractTransaction>;
   };
 
+  Init_Payment(
+    owner: string,
+    pauser: string,
+    _messageSender: string,
+    token: string,
+    overrides?: Overrides & { from?: string | Promise<string> }
+  ): Promise<ContractTransaction>;
+
   addPauser(
     account: string,
     overrides?: Overrides & { from?: string | Promise<string> }
   ): Promise<ContractTransaction>;
 
-  addToken(
-    token: string,
-    overrides?: Overrides & { from?: string | Promise<string> }
-  ): Promise<ContractTransaction>;
-
-  decodeMessage(
-    message: BytesLike,
-    overrides?: CallOverrides
-  ): Promise<
-    [
-      string,
-      string,
-      ([number, BigNumber[]] & { resourceType: number; values: BigNumber[] })[]
-    ] & {
-      destination: string;
-      account: string;
-      payloads: ([number, BigNumber[]] & {
-        resourceType: number;
-        values: BigNumber[];
-      })[];
-    }
-  >;
-
-  destination(overrides?: CallOverrides): Promise<string>;
-
   encodeMessage(
+    provider: string,
+    nonce: BigNumberish,
     account: BytesLike,
     payloads: { resourceType: BigNumberish; values: BigNumberish[] }[],
     overrides?: CallOverrides
   ): Promise<string>;
-
-  getValueOf(
-    payloads: { resourceType: BigNumberish; values: BigNumberish[] }[],
-    overrides?: CallOverrides
-  ): Promise<BigNumber>;
 
   isPauser(account: string, overrides?: CallOverrides): Promise<boolean>;
 
@@ -461,9 +410,9 @@ export class Payment extends BaseContract {
   pausers(arg0: string, overrides?: CallOverrides): Promise<boolean>;
 
   pay(
-    account: BytesLike,
-    token: string,
+    provider: string,
     nonce: BigNumberish,
+    account: BytesLike,
     maxSlippage: BigNumberish,
     payloads: { resourceType: BigNumberish; values: BigNumberish[] }[],
     overrides?: PayableOverrides & { from?: string | Promise<string> }
@@ -471,11 +420,6 @@ export class Payment extends BaseContract {
 
   removePauser(
     account: string,
-    overrides?: Overrides & { from?: string | Promise<string> }
-  ): Promise<ContractTransaction>;
-
-  removeToken(
-    token: string,
     overrides?: Overrides & { from?: string | Promise<string> }
   ): Promise<ContractTransaction>;
 
@@ -487,17 +431,22 @@ export class Payment extends BaseContract {
     overrides?: Overrides & { from?: string | Promise<string> }
   ): Promise<ContractTransaction>;
 
-  setDestination(
-    _destination: string,
-    overrides?: Overrides & { from?: string | Promise<string> }
-  ): Promise<ContractTransaction>;
-
   setMessageSender(
     _messageSender: string,
     overrides?: Overrides & { from?: string | Promise<string> }
   ): Promise<ContractTransaction>;
 
-  tokenExists(token: string, overrides?: CallOverrides): Promise<boolean>;
+  setToken(
+    _token: string,
+    overrides?: Overrides & { from?: string | Promise<string> }
+  ): Promise<ContractTransaction>;
+
+  token(overrides?: CallOverrides): Promise<string>;
+
+  totalValue(
+    payloads: { resourceType: BigNumberish; values: BigNumberish[] }[],
+    overrides?: CallOverrides
+  ): Promise<BigNumber>;
 
   transferOwnership(
     newOwner: string,
@@ -522,43 +471,23 @@ export class Payment extends BaseContract {
   ): Promise<ContractTransaction>;
 
   callStatic: {
+    Init_Payment(
+      owner: string,
+      pauser: string,
+      _messageSender: string,
+      token: string,
+      overrides?: CallOverrides
+    ): Promise<void>;
+
     addPauser(account: string, overrides?: CallOverrides): Promise<void>;
 
-    addToken(token: string, overrides?: CallOverrides): Promise<void>;
-
-    decodeMessage(
-      message: BytesLike,
-      overrides?: CallOverrides
-    ): Promise<
-      [
-        string,
-        string,
-        ([number, BigNumber[]] & {
-          resourceType: number;
-          values: BigNumber[];
-        })[]
-      ] & {
-        destination: string;
-        account: string;
-        payloads: ([number, BigNumber[]] & {
-          resourceType: number;
-          values: BigNumber[];
-        })[];
-      }
-    >;
-
-    destination(overrides?: CallOverrides): Promise<string>;
-
     encodeMessage(
+      provider: string,
+      nonce: BigNumberish,
       account: BytesLike,
       payloads: { resourceType: BigNumberish; values: BigNumberish[] }[],
       overrides?: CallOverrides
     ): Promise<string>;
-
-    getValueOf(
-      payloads: { resourceType: BigNumberish; values: BigNumberish[] }[],
-      overrides?: CallOverrides
-    ): Promise<BigNumber>;
 
     isPauser(account: string, overrides?: CallOverrides): Promise<boolean>;
 
@@ -573,9 +502,9 @@ export class Payment extends BaseContract {
     pausers(arg0: string, overrides?: CallOverrides): Promise<boolean>;
 
     pay(
-      account: BytesLike,
-      token: string,
+      provider: string,
       nonce: BigNumberish,
+      account: BytesLike,
       maxSlippage: BigNumberish,
       payloads: { resourceType: BigNumberish; values: BigNumberish[] }[],
       overrides?: CallOverrides
@@ -583,23 +512,23 @@ export class Payment extends BaseContract {
 
     removePauser(account: string, overrides?: CallOverrides): Promise<void>;
 
-    removeToken(token: string, overrides?: CallOverrides): Promise<void>;
-
     renounceOwnership(overrides?: CallOverrides): Promise<void>;
 
     renouncePauser(overrides?: CallOverrides): Promise<void>;
-
-    setDestination(
-      _destination: string,
-      overrides?: CallOverrides
-    ): Promise<void>;
 
     setMessageSender(
       _messageSender: string,
       overrides?: CallOverrides
     ): Promise<void>;
 
-    tokenExists(token: string, overrides?: CallOverrides): Promise<boolean>;
+    setToken(_token: string, overrides?: CallOverrides): Promise<void>;
+
+    token(overrides?: CallOverrides): Promise<string>;
+
+    totalValue(
+      payloads: { resourceType: BigNumberish; values: BigNumberish[] }[],
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
 
     transferOwnership(
       newOwner: string,
@@ -623,12 +552,6 @@ export class Payment extends BaseContract {
   };
 
   filters: {
-    "AddToken(address)"(
-      token?: null
-    ): TypedEventFilter<[string], { token: string }>;
-
-    AddToken(token?: null): TypedEventFilter<[string], { token: string }>;
-
     "MessageSenderUpdated(address)"(
       messageSender?: null
     ): TypedEventFilter<[string], { messageSender: string }>;
@@ -663,6 +586,64 @@ export class Payment extends BaseContract {
       { previousOwner: string; newOwner: string }
     >;
 
+    "Paid(address,uint64,bytes32,uint32,tuple[])"(
+      provider?: null,
+      nonce?: null,
+      account?: null,
+      maxSlippage?: null,
+      payloads?: null
+    ): TypedEventFilter<
+      [
+        string,
+        BigNumber,
+        string,
+        number,
+        ([number, BigNumber[]] & {
+          resourceType: number;
+          values: BigNumber[];
+        })[]
+      ],
+      {
+        provider: string;
+        nonce: BigNumber;
+        account: string;
+        maxSlippage: number;
+        payloads: ([number, BigNumber[]] & {
+          resourceType: number;
+          values: BigNumber[];
+        })[];
+      }
+    >;
+
+    Paid(
+      provider?: null,
+      nonce?: null,
+      account?: null,
+      maxSlippage?: null,
+      payloads?: null
+    ): TypedEventFilter<
+      [
+        string,
+        BigNumber,
+        string,
+        number,
+        ([number, BigNumber[]] & {
+          resourceType: number;
+          values: BigNumber[];
+        })[]
+      ],
+      {
+        provider: string;
+        nonce: BigNumber;
+        account: string;
+        maxSlippage: number;
+        payloads: ([number, BigNumber[]] & {
+          resourceType: number;
+          values: BigNumber[];
+        })[];
+      }
+    >;
+
     "Paused(address)"(
       account?: null
     ): TypedEventFilter<[string], { account: string }>;
@@ -685,11 +666,11 @@ export class Payment extends BaseContract {
       account?: null
     ): TypedEventFilter<[string], { account: string }>;
 
-    "RemoveToken(address)"(
+    "TokenUpdated(address)"(
       token?: null
     ): TypedEventFilter<[string], { token: string }>;
 
-    RemoveToken(token?: null): TypedEventFilter<[string], { token: string }>;
+    TokenUpdated(token?: null): TypedEventFilter<[string], { token: string }>;
 
     "Unpaused(address)"(
       account?: null
@@ -717,30 +698,23 @@ export class Payment extends BaseContract {
   };
 
   estimateGas: {
+    Init_Payment(
+      owner: string,
+      pauser: string,
+      _messageSender: string,
+      token: string,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<BigNumber>;
+
     addPauser(
       account: string,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<BigNumber>;
 
-    addToken(
-      token: string,
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<BigNumber>;
-
-    decodeMessage(
-      message: BytesLike,
-      overrides?: CallOverrides
-    ): Promise<BigNumber>;
-
-    destination(overrides?: CallOverrides): Promise<BigNumber>;
-
     encodeMessage(
+      provider: string,
+      nonce: BigNumberish,
       account: BytesLike,
-      payloads: { resourceType: BigNumberish; values: BigNumberish[] }[],
-      overrides?: CallOverrides
-    ): Promise<BigNumber>;
-
-    getValueOf(
       payloads: { resourceType: BigNumberish; values: BigNumberish[] }[],
       overrides?: CallOverrides
     ): Promise<BigNumber>;
@@ -760,9 +734,9 @@ export class Payment extends BaseContract {
     pausers(arg0: string, overrides?: CallOverrides): Promise<BigNumber>;
 
     pay(
-      account: BytesLike,
-      token: string,
+      provider: string,
       nonce: BigNumberish,
+      account: BytesLike,
       maxSlippage: BigNumberish,
       payloads: { resourceType: BigNumberish; values: BigNumberish[] }[],
       overrides?: PayableOverrides & { from?: string | Promise<string> }
@@ -770,11 +744,6 @@ export class Payment extends BaseContract {
 
     removePauser(
       account: string,
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<BigNumber>;
-
-    removeToken(
-      token: string,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<BigNumber>;
 
@@ -786,17 +755,22 @@ export class Payment extends BaseContract {
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<BigNumber>;
 
-    setDestination(
-      _destination: string,
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<BigNumber>;
-
     setMessageSender(
       _messageSender: string,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<BigNumber>;
 
-    tokenExists(token: string, overrides?: CallOverrides): Promise<BigNumber>;
+    setToken(
+      _token: string,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<BigNumber>;
+
+    token(overrides?: CallOverrides): Promise<BigNumber>;
+
+    totalValue(
+      payloads: { resourceType: BigNumberish; values: BigNumberish[] }[],
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
 
     transferOwnership(
       newOwner: string,
@@ -822,30 +796,23 @@ export class Payment extends BaseContract {
   };
 
   populateTransaction: {
+    Init_Payment(
+      owner: string,
+      pauser: string,
+      _messageSender: string,
+      token: string,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<PopulatedTransaction>;
+
     addPauser(
       account: string,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<PopulatedTransaction>;
 
-    addToken(
-      token: string,
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<PopulatedTransaction>;
-
-    decodeMessage(
-      message: BytesLike,
-      overrides?: CallOverrides
-    ): Promise<PopulatedTransaction>;
-
-    destination(overrides?: CallOverrides): Promise<PopulatedTransaction>;
-
     encodeMessage(
+      provider: string,
+      nonce: BigNumberish,
       account: BytesLike,
-      payloads: { resourceType: BigNumberish; values: BigNumberish[] }[],
-      overrides?: CallOverrides
-    ): Promise<PopulatedTransaction>;
-
-    getValueOf(
       payloads: { resourceType: BigNumberish; values: BigNumberish[] }[],
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
@@ -871,9 +838,9 @@ export class Payment extends BaseContract {
     ): Promise<PopulatedTransaction>;
 
     pay(
-      account: BytesLike,
-      token: string,
+      provider: string,
       nonce: BigNumberish,
+      account: BytesLike,
       maxSlippage: BigNumberish,
       payloads: { resourceType: BigNumberish; values: BigNumberish[] }[],
       overrides?: PayableOverrides & { from?: string | Promise<string> }
@@ -881,11 +848,6 @@ export class Payment extends BaseContract {
 
     removePauser(
       account: string,
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<PopulatedTransaction>;
-
-    removeToken(
-      token: string,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<PopulatedTransaction>;
 
@@ -897,18 +859,20 @@ export class Payment extends BaseContract {
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<PopulatedTransaction>;
 
-    setDestination(
-      _destination: string,
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<PopulatedTransaction>;
-
     setMessageSender(
       _messageSender: string,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<PopulatedTransaction>;
 
-    tokenExists(
-      token: string,
+    setToken(
+      _token: string,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<PopulatedTransaction>;
+
+    token(overrides?: CallOverrides): Promise<PopulatedTransaction>;
+
+    totalValue(
+      payloads: { resourceType: BigNumberish; values: BigNumberish[] }[],
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 

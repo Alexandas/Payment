@@ -21,121 +21,162 @@ import type { TypedEventFilter, TypedEvent, TypedListener } from "./common";
 
 interface BillingInterface extends ethers.utils.Interface {
   functions: {
-    "addOperator(address)": FunctionFragment;
-    "arStorageController()": FunctionFragment;
-    "bandwidthController()": FunctionFragment;
-    "buildingTimeController()": FunctionFragment;
-    "ipfsStorageController()": FunctionFragment;
-    "isOperator(address)": FunctionFragment;
-    "operators(address)": FunctionFragment;
+    "adaptor()": FunctionFragment;
+    "addPauser(address)": FunctionFragment;
+    "balanceOf(address,bytes32)": FunctionFragment;
+    "decodeBill(bytes)": FunctionFragment;
+    "encodeBill((uint256,tuple[]))": FunctionFragment;
+    "hashBill(address,uint64,bytes32,bytes)": FunctionFragment;
+    "isPauser(address)": FunctionFragment;
     "owner()": FunctionFragment;
-    "removeOperator(address)": FunctionFragment;
+    "pause()": FunctionFragment;
+    "paused()": FunctionFragment;
+    "pausers(address)": FunctionFragment;
+    "providers()": FunctionFragment;
+    "removePauser(address)": FunctionFragment;
     "renounceOwnership()": FunctionFragment;
-    "spend(uint256)": FunctionFragment;
+    "renouncePauser()": FunctionFragment;
+    "token()": FunctionFragment;
     "transferOwnership(address)": FunctionFragment;
+    "unpause()": FunctionFragment;
   };
 
-  encodeFunctionData(functionFragment: "addOperator", values: [string]): string;
+  encodeFunctionData(functionFragment: "adaptor", values?: undefined): string;
+  encodeFunctionData(functionFragment: "addPauser", values: [string]): string;
   encodeFunctionData(
-    functionFragment: "arStorageController",
-    values?: undefined
+    functionFragment: "balanceOf",
+    values: [string, BytesLike]
   ): string;
   encodeFunctionData(
-    functionFragment: "bandwidthController",
-    values?: undefined
+    functionFragment: "decodeBill",
+    values: [BytesLike]
   ): string;
   encodeFunctionData(
-    functionFragment: "buildingTimeController",
-    values?: undefined
+    functionFragment: "encodeBill",
+    values: [
+      {
+        totalValue: BigNumberish;
+        payloads: {
+          indexBlock: BigNumberish;
+          entries: { resourceType: BigNumberish; amount: BigNumberish }[];
+        }[];
+      }
+    ]
   ): string;
   encodeFunctionData(
-    functionFragment: "ipfsStorageController",
-    values?: undefined
+    functionFragment: "hashBill",
+    values: [string, BigNumberish, BytesLike, BytesLike]
   ): string;
-  encodeFunctionData(functionFragment: "isOperator", values: [string]): string;
-  encodeFunctionData(functionFragment: "operators", values: [string]): string;
+  encodeFunctionData(functionFragment: "isPauser", values: [string]): string;
   encodeFunctionData(functionFragment: "owner", values?: undefined): string;
+  encodeFunctionData(functionFragment: "pause", values?: undefined): string;
+  encodeFunctionData(functionFragment: "paused", values?: undefined): string;
+  encodeFunctionData(functionFragment: "pausers", values: [string]): string;
+  encodeFunctionData(functionFragment: "providers", values?: undefined): string;
   encodeFunctionData(
-    functionFragment: "removeOperator",
+    functionFragment: "removePauser",
     values: [string]
   ): string;
   encodeFunctionData(
     functionFragment: "renounceOwnership",
     values?: undefined
   ): string;
-  encodeFunctionData(functionFragment: "spend", values: [BigNumberish]): string;
+  encodeFunctionData(
+    functionFragment: "renouncePauser",
+    values?: undefined
+  ): string;
+  encodeFunctionData(functionFragment: "token", values?: undefined): string;
   encodeFunctionData(
     functionFragment: "transferOwnership",
     values: [string]
   ): string;
+  encodeFunctionData(functionFragment: "unpause", values?: undefined): string;
 
-  decodeFunctionResult(
-    functionFragment: "addOperator",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(
-    functionFragment: "arStorageController",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(
-    functionFragment: "bandwidthController",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(
-    functionFragment: "buildingTimeController",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(
-    functionFragment: "ipfsStorageController",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(functionFragment: "isOperator", data: BytesLike): Result;
-  decodeFunctionResult(functionFragment: "operators", data: BytesLike): Result;
+  decodeFunctionResult(functionFragment: "adaptor", data: BytesLike): Result;
+  decodeFunctionResult(functionFragment: "addPauser", data: BytesLike): Result;
+  decodeFunctionResult(functionFragment: "balanceOf", data: BytesLike): Result;
+  decodeFunctionResult(functionFragment: "decodeBill", data: BytesLike): Result;
+  decodeFunctionResult(functionFragment: "encodeBill", data: BytesLike): Result;
+  decodeFunctionResult(functionFragment: "hashBill", data: BytesLike): Result;
+  decodeFunctionResult(functionFragment: "isPauser", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "owner", data: BytesLike): Result;
+  decodeFunctionResult(functionFragment: "pause", data: BytesLike): Result;
+  decodeFunctionResult(functionFragment: "paused", data: BytesLike): Result;
+  decodeFunctionResult(functionFragment: "pausers", data: BytesLike): Result;
+  decodeFunctionResult(functionFragment: "providers", data: BytesLike): Result;
   decodeFunctionResult(
-    functionFragment: "removeOperator",
+    functionFragment: "removePauser",
     data: BytesLike
   ): Result;
   decodeFunctionResult(
     functionFragment: "renounceOwnership",
     data: BytesLike
   ): Result;
-  decodeFunctionResult(functionFragment: "spend", data: BytesLike): Result;
+  decodeFunctionResult(
+    functionFragment: "renouncePauser",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(functionFragment: "token", data: BytesLike): Result;
   decodeFunctionResult(
     functionFragment: "transferOwnership",
     data: BytesLike
   ): Result;
+  decodeFunctionResult(functionFragment: "unpause", data: BytesLike): Result;
 
   events: {
-    "AddOperator(address)": EventFragment;
+    "Billing(address,uint64,bytes32,bytes,uint256)": EventFragment;
     "OwnershipTransferred(address,address)": EventFragment;
-    "RemoveOperator(address)": EventFragment;
+    "Paused(address)": EventFragment;
+    "PauserAdded(address)": EventFragment;
+    "PauserRemoved(address)": EventFragment;
+    "ProvidersUpdated(address)": EventFragment;
     "ResourceAdaptorUpdated(address)": EventFragment;
-    "SpendARStorage(bytes32,uint256)": EventFragment;
+    "TokenUpdated(address)": EventFragment;
+    "Unpaused(address)": EventFragment;
   };
 
-  getEvent(nameOrSignatureOrTopic: "AddOperator"): EventFragment;
+  getEvent(nameOrSignatureOrTopic: "Billing"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "OwnershipTransferred"): EventFragment;
-  getEvent(nameOrSignatureOrTopic: "RemoveOperator"): EventFragment;
+  getEvent(nameOrSignatureOrTopic: "Paused"): EventFragment;
+  getEvent(nameOrSignatureOrTopic: "PauserAdded"): EventFragment;
+  getEvent(nameOrSignatureOrTopic: "PauserRemoved"): EventFragment;
+  getEvent(nameOrSignatureOrTopic: "ProvidersUpdated"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "ResourceAdaptorUpdated"): EventFragment;
-  getEvent(nameOrSignatureOrTopic: "SpendARStorage"): EventFragment;
+  getEvent(nameOrSignatureOrTopic: "TokenUpdated"): EventFragment;
+  getEvent(nameOrSignatureOrTopic: "Unpaused"): EventFragment;
 }
 
-export type AddOperatorEvent = TypedEvent<[string] & { operator: string }>;
+export type BillingEvent = TypedEvent<
+  [string, BigNumber, string, string, BigNumber] & {
+    provider: string;
+    nonce: BigNumber;
+    account: string;
+    bill: string;
+    amount: BigNumber;
+  }
+>;
 
 export type OwnershipTransferredEvent = TypedEvent<
   [string, string] & { previousOwner: string; newOwner: string }
 >;
 
-export type RemoveOperatorEvent = TypedEvent<[string] & { operator: string }>;
+export type PausedEvent = TypedEvent<[string] & { account: string }>;
+
+export type PauserAddedEvent = TypedEvent<[string] & { account: string }>;
+
+export type PauserRemovedEvent = TypedEvent<[string] & { account: string }>;
+
+export type ProvidersUpdatedEvent = TypedEvent<
+  [string] & { providers: string }
+>;
 
 export type ResourceAdaptorUpdatedEvent = TypedEvent<
   [string] & { adaptor: string }
 >;
 
-export type SpendARStorageEvent = TypedEvent<
-  [string, BigNumber] & { account: string; amount: BigNumber }
->;
+export type TokenUpdatedEvent = TypedEvent<[string] & { token: string }>;
+
+export type UnpausedEvent = TypedEvent<[string] & { account: string }>;
 
 export class Billing extends BaseContract {
   connect(signerOrProvider: Signer | Provider | string): this;
@@ -181,27 +222,93 @@ export class Billing extends BaseContract {
   interface: BillingInterface;
 
   functions: {
-    addOperator(
-      operator: string,
+    adaptor(overrides?: CallOverrides): Promise<[string]>;
+
+    addPauser(
+      account: string,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<ContractTransaction>;
 
-    arStorageController(overrides?: CallOverrides): Promise<[string]>;
+    balanceOf(
+      provider: string,
+      account: BytesLike,
+      overrides?: CallOverrides
+    ): Promise<[BigNumber]>;
 
-    bandwidthController(overrides?: CallOverrides): Promise<[string]>;
+    decodeBill(
+      message: BytesLike,
+      overrides?: CallOverrides
+    ): Promise<
+      [
+        [
+          BigNumber,
+          ([
+            BigNumber,
+            ([number, BigNumber] & {
+              resourceType: number;
+              amount: BigNumber;
+            })[]
+          ] & {
+            indexBlock: BigNumber;
+            entries: ([number, BigNumber] & {
+              resourceType: number;
+              amount: BigNumber;
+            })[];
+          })[]
+        ] & {
+          totalValue: BigNumber;
+          payloads: ([
+            BigNumber,
+            ([number, BigNumber] & {
+              resourceType: number;
+              amount: BigNumber;
+            })[]
+          ] & {
+            indexBlock: BigNumber;
+            entries: ([number, BigNumber] & {
+              resourceType: number;
+              amount: BigNumber;
+            })[];
+          })[];
+        }
+      ]
+    >;
 
-    buildingTimeController(overrides?: CallOverrides): Promise<[string]>;
+    encodeBill(
+      bills: {
+        totalValue: BigNumberish;
+        payloads: {
+          indexBlock: BigNumberish;
+          entries: { resourceType: BigNumberish; amount: BigNumberish }[];
+        }[];
+      },
+      overrides?: CallOverrides
+    ): Promise<[string]>;
 
-    ipfsStorageController(overrides?: CallOverrides): Promise<[string]>;
+    hashBill(
+      provider: string,
+      nonce: BigNumberish,
+      account: BytesLike,
+      bill: BytesLike,
+      overrides?: CallOverrides
+    ): Promise<[string]>;
 
-    isOperator(operator: string, overrides?: CallOverrides): Promise<[boolean]>;
-
-    operators(arg0: string, overrides?: CallOverrides): Promise<[boolean]>;
+    isPauser(account: string, overrides?: CallOverrides): Promise<[boolean]>;
 
     owner(overrides?: CallOverrides): Promise<[string]>;
 
-    removeOperator(
-      operator: string,
+    pause(
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<ContractTransaction>;
+
+    paused(overrides?: CallOverrides): Promise<[boolean]>;
+
+    pausers(arg0: string, overrides?: CallOverrides): Promise<[boolean]>;
+
+    providers(overrides?: CallOverrides): Promise<[string]>;
+
+    removePauser(
+      account: string,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<ContractTransaction>;
 
@@ -209,38 +316,101 @@ export class Billing extends BaseContract {
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<ContractTransaction>;
 
-    spend(
-      amount: BigNumberish,
+    renouncePauser(
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<ContractTransaction>;
+
+    token(overrides?: CallOverrides): Promise<[string]>;
 
     transferOwnership(
       newOwner: string,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<ContractTransaction>;
+
+    unpause(
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<ContractTransaction>;
   };
 
-  addOperator(
-    operator: string,
+  adaptor(overrides?: CallOverrides): Promise<string>;
+
+  addPauser(
+    account: string,
     overrides?: Overrides & { from?: string | Promise<string> }
   ): Promise<ContractTransaction>;
 
-  arStorageController(overrides?: CallOverrides): Promise<string>;
+  balanceOf(
+    provider: string,
+    account: BytesLike,
+    overrides?: CallOverrides
+  ): Promise<BigNumber>;
 
-  bandwidthController(overrides?: CallOverrides): Promise<string>;
+  decodeBill(
+    message: BytesLike,
+    overrides?: CallOverrides
+  ): Promise<
+    [
+      BigNumber,
+      ([
+        BigNumber,
+        ([number, BigNumber] & { resourceType: number; amount: BigNumber })[]
+      ] & {
+        indexBlock: BigNumber;
+        entries: ([number, BigNumber] & {
+          resourceType: number;
+          amount: BigNumber;
+        })[];
+      })[]
+    ] & {
+      totalValue: BigNumber;
+      payloads: ([
+        BigNumber,
+        ([number, BigNumber] & { resourceType: number; amount: BigNumber })[]
+      ] & {
+        indexBlock: BigNumber;
+        entries: ([number, BigNumber] & {
+          resourceType: number;
+          amount: BigNumber;
+        })[];
+      })[];
+    }
+  >;
 
-  buildingTimeController(overrides?: CallOverrides): Promise<string>;
+  encodeBill(
+    bills: {
+      totalValue: BigNumberish;
+      payloads: {
+        indexBlock: BigNumberish;
+        entries: { resourceType: BigNumberish; amount: BigNumberish }[];
+      }[];
+    },
+    overrides?: CallOverrides
+  ): Promise<string>;
 
-  ipfsStorageController(overrides?: CallOverrides): Promise<string>;
+  hashBill(
+    provider: string,
+    nonce: BigNumberish,
+    account: BytesLike,
+    bill: BytesLike,
+    overrides?: CallOverrides
+  ): Promise<string>;
 
-  isOperator(operator: string, overrides?: CallOverrides): Promise<boolean>;
-
-  operators(arg0: string, overrides?: CallOverrides): Promise<boolean>;
+  isPauser(account: string, overrides?: CallOverrides): Promise<boolean>;
 
   owner(overrides?: CallOverrides): Promise<string>;
 
-  removeOperator(
-    operator: string,
+  pause(
+    overrides?: Overrides & { from?: string | Promise<string> }
+  ): Promise<ContractTransaction>;
+
+  paused(overrides?: CallOverrides): Promise<boolean>;
+
+  pausers(arg0: string, overrides?: CallOverrides): Promise<boolean>;
+
+  providers(overrides?: CallOverrides): Promise<string>;
+
+  removePauser(
+    account: string,
     overrides?: Overrides & { from?: string | Promise<string> }
   ): Promise<ContractTransaction>;
 
@@ -248,53 +418,144 @@ export class Billing extends BaseContract {
     overrides?: Overrides & { from?: string | Promise<string> }
   ): Promise<ContractTransaction>;
 
-  spend(
-    amount: BigNumberish,
+  renouncePauser(
     overrides?: Overrides & { from?: string | Promise<string> }
   ): Promise<ContractTransaction>;
+
+  token(overrides?: CallOverrides): Promise<string>;
 
   transferOwnership(
     newOwner: string,
     overrides?: Overrides & { from?: string | Promise<string> }
   ): Promise<ContractTransaction>;
 
+  unpause(
+    overrides?: Overrides & { from?: string | Promise<string> }
+  ): Promise<ContractTransaction>;
+
   callStatic: {
-    addOperator(operator: string, overrides?: CallOverrides): Promise<void>;
+    adaptor(overrides?: CallOverrides): Promise<string>;
 
-    arStorageController(overrides?: CallOverrides): Promise<string>;
+    addPauser(account: string, overrides?: CallOverrides): Promise<void>;
 
-    bandwidthController(overrides?: CallOverrides): Promise<string>;
+    balanceOf(
+      provider: string,
+      account: BytesLike,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
 
-    buildingTimeController(overrides?: CallOverrides): Promise<string>;
+    decodeBill(
+      message: BytesLike,
+      overrides?: CallOverrides
+    ): Promise<
+      [
+        BigNumber,
+        ([
+          BigNumber,
+          ([number, BigNumber] & { resourceType: number; amount: BigNumber })[]
+        ] & {
+          indexBlock: BigNumber;
+          entries: ([number, BigNumber] & {
+            resourceType: number;
+            amount: BigNumber;
+          })[];
+        })[]
+      ] & {
+        totalValue: BigNumber;
+        payloads: ([
+          BigNumber,
+          ([number, BigNumber] & { resourceType: number; amount: BigNumber })[]
+        ] & {
+          indexBlock: BigNumber;
+          entries: ([number, BigNumber] & {
+            resourceType: number;
+            amount: BigNumber;
+          })[];
+        })[];
+      }
+    >;
 
-    ipfsStorageController(overrides?: CallOverrides): Promise<string>;
+    encodeBill(
+      bills: {
+        totalValue: BigNumberish;
+        payloads: {
+          indexBlock: BigNumberish;
+          entries: { resourceType: BigNumberish; amount: BigNumberish }[];
+        }[];
+      },
+      overrides?: CallOverrides
+    ): Promise<string>;
 
-    isOperator(operator: string, overrides?: CallOverrides): Promise<boolean>;
+    hashBill(
+      provider: string,
+      nonce: BigNumberish,
+      account: BytesLike,
+      bill: BytesLike,
+      overrides?: CallOverrides
+    ): Promise<string>;
 
-    operators(arg0: string, overrides?: CallOverrides): Promise<boolean>;
+    isPauser(account: string, overrides?: CallOverrides): Promise<boolean>;
 
     owner(overrides?: CallOverrides): Promise<string>;
 
-    removeOperator(operator: string, overrides?: CallOverrides): Promise<void>;
+    pause(overrides?: CallOverrides): Promise<void>;
+
+    paused(overrides?: CallOverrides): Promise<boolean>;
+
+    pausers(arg0: string, overrides?: CallOverrides): Promise<boolean>;
+
+    providers(overrides?: CallOverrides): Promise<string>;
+
+    removePauser(account: string, overrides?: CallOverrides): Promise<void>;
 
     renounceOwnership(overrides?: CallOverrides): Promise<void>;
 
-    spend(amount: BigNumberish, overrides?: CallOverrides): Promise<void>;
+    renouncePauser(overrides?: CallOverrides): Promise<void>;
+
+    token(overrides?: CallOverrides): Promise<string>;
 
     transferOwnership(
       newOwner: string,
       overrides?: CallOverrides
     ): Promise<void>;
+
+    unpause(overrides?: CallOverrides): Promise<void>;
   };
 
   filters: {
-    "AddOperator(address)"(
-      operator?: null
-    ): TypedEventFilter<[string], { operator: string }>;
+    "Billing(address,uint64,bytes32,bytes,uint256)"(
+      provider?: null,
+      nonce?: null,
+      account?: null,
+      bill?: null,
+      amount?: null
+    ): TypedEventFilter<
+      [string, BigNumber, string, string, BigNumber],
+      {
+        provider: string;
+        nonce: BigNumber;
+        account: string;
+        bill: string;
+        amount: BigNumber;
+      }
+    >;
 
-    AddOperator(
-      operator?: null
-    ): TypedEventFilter<[string], { operator: string }>;
+    Billing(
+      provider?: null,
+      nonce?: null,
+      account?: null,
+      bill?: null,
+      amount?: null
+    ): TypedEventFilter<
+      [string, BigNumber, string, string, BigNumber],
+      {
+        provider: string;
+        nonce: BigNumber;
+        account: string;
+        bill: string;
+        amount: BigNumber;
+      }
+    >;
 
     "OwnershipTransferred(address,address)"(
       previousOwner?: string | null,
@@ -312,13 +573,35 @@ export class Billing extends BaseContract {
       { previousOwner: string; newOwner: string }
     >;
 
-    "RemoveOperator(address)"(
-      operator?: null
-    ): TypedEventFilter<[string], { operator: string }>;
+    "Paused(address)"(
+      account?: null
+    ): TypedEventFilter<[string], { account: string }>;
 
-    RemoveOperator(
-      operator?: null
-    ): TypedEventFilter<[string], { operator: string }>;
+    Paused(account?: null): TypedEventFilter<[string], { account: string }>;
+
+    "PauserAdded(address)"(
+      account?: null
+    ): TypedEventFilter<[string], { account: string }>;
+
+    PauserAdded(
+      account?: null
+    ): TypedEventFilter<[string], { account: string }>;
+
+    "PauserRemoved(address)"(
+      account?: null
+    ): TypedEventFilter<[string], { account: string }>;
+
+    PauserRemoved(
+      account?: null
+    ): TypedEventFilter<[string], { account: string }>;
+
+    "ProvidersUpdated(address)"(
+      providers?: null
+    ): TypedEventFilter<[string], { providers: string }>;
+
+    ProvidersUpdated(
+      providers?: null
+    ): TypedEventFilter<[string], { providers: string }>;
 
     "ResourceAdaptorUpdated(address)"(
       adaptor?: null
@@ -328,45 +611,73 @@ export class Billing extends BaseContract {
       adaptor?: null
     ): TypedEventFilter<[string], { adaptor: string }>;
 
-    "SpendARStorage(bytes32,uint256)"(
-      account?: null,
-      amount?: null
-    ): TypedEventFilter<
-      [string, BigNumber],
-      { account: string; amount: BigNumber }
-    >;
+    "TokenUpdated(address)"(
+      token?: null
+    ): TypedEventFilter<[string], { token: string }>;
 
-    SpendARStorage(
-      account?: null,
-      amount?: null
-    ): TypedEventFilter<
-      [string, BigNumber],
-      { account: string; amount: BigNumber }
-    >;
+    TokenUpdated(token?: null): TypedEventFilter<[string], { token: string }>;
+
+    "Unpaused(address)"(
+      account?: null
+    ): TypedEventFilter<[string], { account: string }>;
+
+    Unpaused(account?: null): TypedEventFilter<[string], { account: string }>;
   };
 
   estimateGas: {
-    addOperator(
-      operator: string,
+    adaptor(overrides?: CallOverrides): Promise<BigNumber>;
+
+    addPauser(
+      account: string,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<BigNumber>;
 
-    arStorageController(overrides?: CallOverrides): Promise<BigNumber>;
+    balanceOf(
+      provider: string,
+      account: BytesLike,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
 
-    bandwidthController(overrides?: CallOverrides): Promise<BigNumber>;
+    decodeBill(
+      message: BytesLike,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
 
-    buildingTimeController(overrides?: CallOverrides): Promise<BigNumber>;
+    encodeBill(
+      bills: {
+        totalValue: BigNumberish;
+        payloads: {
+          indexBlock: BigNumberish;
+          entries: { resourceType: BigNumberish; amount: BigNumberish }[];
+        }[];
+      },
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
 
-    ipfsStorageController(overrides?: CallOverrides): Promise<BigNumber>;
+    hashBill(
+      provider: string,
+      nonce: BigNumberish,
+      account: BytesLike,
+      bill: BytesLike,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
 
-    isOperator(operator: string, overrides?: CallOverrides): Promise<BigNumber>;
-
-    operators(arg0: string, overrides?: CallOverrides): Promise<BigNumber>;
+    isPauser(account: string, overrides?: CallOverrides): Promise<BigNumber>;
 
     owner(overrides?: CallOverrides): Promise<BigNumber>;
 
-    removeOperator(
-      operator: string,
+    pause(
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<BigNumber>;
+
+    paused(overrides?: CallOverrides): Promise<BigNumber>;
+
+    pausers(arg0: string, overrides?: CallOverrides): Promise<BigNumber>;
+
+    providers(overrides?: CallOverrides): Promise<BigNumber>;
+
+    removePauser(
+      account: string,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<BigNumber>;
 
@@ -374,53 +685,82 @@ export class Billing extends BaseContract {
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<BigNumber>;
 
-    spend(
-      amount: BigNumberish,
+    renouncePauser(
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<BigNumber>;
 
+    token(overrides?: CallOverrides): Promise<BigNumber>;
+
     transferOwnership(
       newOwner: string,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<BigNumber>;
+
+    unpause(
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<BigNumber>;
   };
 
   populateTransaction: {
-    addOperator(
-      operator: string,
+    adaptor(overrides?: CallOverrides): Promise<PopulatedTransaction>;
+
+    addPauser(
+      account: string,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<PopulatedTransaction>;
 
-    arStorageController(
+    balanceOf(
+      provider: string,
+      account: BytesLike,
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
-    bandwidthController(
+    decodeBill(
+      message: BytesLike,
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
-    buildingTimeController(
+    encodeBill(
+      bills: {
+        totalValue: BigNumberish;
+        payloads: {
+          indexBlock: BigNumberish;
+          entries: { resourceType: BigNumberish; amount: BigNumberish }[];
+        }[];
+      },
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
-    ipfsStorageController(
+    hashBill(
+      provider: string,
+      nonce: BigNumberish,
+      account: BytesLike,
+      bill: BytesLike,
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
-    isOperator(
-      operator: string,
-      overrides?: CallOverrides
-    ): Promise<PopulatedTransaction>;
-
-    operators(
-      arg0: string,
+    isPauser(
+      account: string,
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
     owner(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
-    removeOperator(
-      operator: string,
+    pause(
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<PopulatedTransaction>;
+
+    paused(overrides?: CallOverrides): Promise<PopulatedTransaction>;
+
+    pausers(
+      arg0: string,
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
+
+    providers(overrides?: CallOverrides): Promise<PopulatedTransaction>;
+
+    removePauser(
+      account: string,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<PopulatedTransaction>;
 
@@ -428,13 +768,18 @@ export class Billing extends BaseContract {
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<PopulatedTransaction>;
 
-    spend(
-      amount: BigNumberish,
+    renouncePauser(
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<PopulatedTransaction>;
 
+    token(overrides?: CallOverrides): Promise<PopulatedTransaction>;
+
     transferOwnership(
       newOwner: string,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<PopulatedTransaction>;
+
+    unpause(
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<PopulatedTransaction>;
   };

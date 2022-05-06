@@ -21,17 +21,17 @@ import type { TypedEventFilter, TypedEvent, TypedListener } from "./common";
 
 interface FundWalletInterface extends ethers.utils.Interface {
   functions: {
+    "adaptor()": FunctionFragment;
     "addPauser(address)": FunctionFragment;
-    "balanceOf(bytes32)": FunctionFragment;
-    "billing()": FunctionFragment;
-    "charge(address,uint256,address,bytes32,uint256,bytes)": FunctionFragment;
+    "balanceOf(address,bytes32)": FunctionFragment;
+    "charge(address,uint64,address,bytes32,uint256,bytes)": FunctionFragment;
     "decodeBill(bytes)": FunctionFragment;
-    "encodeBill(tuple[])": FunctionFragment;
+    "encodeBill((uint256,tuple[]))": FunctionFragment;
+    "hashBill(address,uint64,bytes32,bytes)": FunctionFragment;
     "initialize(address,address,address,address)": FunctionFragment;
     "isPauser(address)": FunctionFragment;
-    "nonces(uint256)": FunctionFragment;
     "owner()": FunctionFragment;
-    "ownerOf(bytes32)": FunctionFragment;
+    "ownerOf(address,bytes32)": FunctionFragment;
     "pause()": FunctionFragment;
     "paused()": FunctionFragment;
     "pausers(address)": FunctionFragment;
@@ -39,19 +39,22 @@ interface FundWalletInterface extends ethers.utils.Interface {
     "removePauser(address)": FunctionFragment;
     "renounceOwnership()": FunctionFragment;
     "renouncePauser()": FunctionFragment;
+    "setToken(address)": FunctionFragment;
+    "spend(address,uint64,bytes32,bytes,bytes)": FunctionFragment;
     "token()": FunctionFragment;
     "transferOwnership(address)": FunctionFragment;
-    "transferWalletOwner(bytes32,address)": FunctionFragment;
+    "transferWalletOwner(address,bytes32,address,bytes)": FunctionFragment;
     "unpause()": FunctionFragment;
-    "withdraw(address,uint256,bytes32,address,bytes,bytes)": FunctionFragment;
+    "withdraw(address,uint64,bytes32,address,bytes,bytes)": FunctionFragment;
+    "withdrawNative(address,uint256)": FunctionFragment;
   };
 
+  encodeFunctionData(functionFragment: "adaptor", values?: undefined): string;
   encodeFunctionData(functionFragment: "addPauser", values: [string]): string;
   encodeFunctionData(
     functionFragment: "balanceOf",
-    values: [BytesLike]
+    values: [string, BytesLike]
   ): string;
-  encodeFunctionData(functionFragment: "billing", values?: undefined): string;
   encodeFunctionData(
     functionFragment: "charge",
     values: [string, BigNumberish, string, BytesLike, BigNumberish, BytesLike]
@@ -64,22 +67,28 @@ interface FundWalletInterface extends ethers.utils.Interface {
     functionFragment: "encodeBill",
     values: [
       {
-        indexBlock: BigNumberish;
-        payloads: { resourceType: BigNumberish; amount: BigNumberish }[];
-      }[]
+        totalValue: BigNumberish;
+        payloads: {
+          indexBlock: BigNumberish;
+          entries: { resourceType: BigNumberish; amount: BigNumberish }[];
+        }[];
+      }
     ]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "hashBill",
+    values: [string, BigNumberish, BytesLike, BytesLike]
   ): string;
   encodeFunctionData(
     functionFragment: "initialize",
     values: [string, string, string, string]
   ): string;
   encodeFunctionData(functionFragment: "isPauser", values: [string]): string;
-  encodeFunctionData(
-    functionFragment: "nonces",
-    values: [BigNumberish]
-  ): string;
   encodeFunctionData(functionFragment: "owner", values?: undefined): string;
-  encodeFunctionData(functionFragment: "ownerOf", values: [BytesLike]): string;
+  encodeFunctionData(
+    functionFragment: "ownerOf",
+    values: [string, BytesLike]
+  ): string;
   encodeFunctionData(functionFragment: "pause", values?: undefined): string;
   encodeFunctionData(functionFragment: "paused", values?: undefined): string;
   encodeFunctionData(functionFragment: "pausers", values: [string]): string;
@@ -96,6 +105,11 @@ interface FundWalletInterface extends ethers.utils.Interface {
     functionFragment: "renouncePauser",
     values?: undefined
   ): string;
+  encodeFunctionData(functionFragment: "setToken", values: [string]): string;
+  encodeFunctionData(
+    functionFragment: "spend",
+    values: [string, BigNumberish, BytesLike, BytesLike, BytesLike]
+  ): string;
   encodeFunctionData(functionFragment: "token", values?: undefined): string;
   encodeFunctionData(
     functionFragment: "transferOwnership",
@@ -103,23 +117,27 @@ interface FundWalletInterface extends ethers.utils.Interface {
   ): string;
   encodeFunctionData(
     functionFragment: "transferWalletOwner",
-    values: [BytesLike, string]
+    values: [string, BytesLike, string, BytesLike]
   ): string;
   encodeFunctionData(functionFragment: "unpause", values?: undefined): string;
   encodeFunctionData(
     functionFragment: "withdraw",
     values: [string, BigNumberish, BytesLike, string, BytesLike, BytesLike]
   ): string;
+  encodeFunctionData(
+    functionFragment: "withdrawNative",
+    values: [string, BigNumberish]
+  ): string;
 
+  decodeFunctionResult(functionFragment: "adaptor", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "addPauser", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "balanceOf", data: BytesLike): Result;
-  decodeFunctionResult(functionFragment: "billing", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "charge", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "decodeBill", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "encodeBill", data: BytesLike): Result;
+  decodeFunctionResult(functionFragment: "hashBill", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "initialize", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "isPauser", data: BytesLike): Result;
-  decodeFunctionResult(functionFragment: "nonces", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "owner", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "ownerOf", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "pause", data: BytesLike): Result;
@@ -138,6 +156,8 @@ interface FundWalletInterface extends ethers.utils.Interface {
     functionFragment: "renouncePauser",
     data: BytesLike
   ): Result;
+  decodeFunctionResult(functionFragment: "setToken", data: BytesLike): Result;
+  decodeFunctionResult(functionFragment: "spend", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "token", data: BytesLike): Result;
   decodeFunctionResult(
     functionFragment: "transferOwnership",
@@ -149,37 +169,55 @@ interface FundWalletInterface extends ethers.utils.Interface {
   ): Result;
   decodeFunctionResult(functionFragment: "unpause", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "withdraw", data: BytesLike): Result;
+  decodeFunctionResult(
+    functionFragment: "withdrawNative",
+    data: BytesLike
+  ): Result;
 
   events: {
-    "BillingUpdated(address)": EventFragment;
-    "Charge(address,uint256,address,bytes32,uint256)": EventFragment;
+    "Billing(address,uint64,bytes32,bytes,uint256)": EventFragment;
+    "Charge(address,uint64,address,bytes32,uint256)": EventFragment;
+    "NativeWithdrawal(address,uint256)": EventFragment;
     "OwnershipTransferred(address,address)": EventFragment;
     "Paused(address)": EventFragment;
     "PauserAdded(address)": EventFragment;
     "PauserRemoved(address)": EventFragment;
-    "ProvidesUpdated(address)": EventFragment;
-    "Spend(address,uint256,bytes32,uint256)": EventFragment;
+    "ProvidersUpdated(address)": EventFragment;
+    "ResourceAdaptorUpdated(address)": EventFragment;
+    "Spend(address,uint64,bytes32,uint256,uint256)": EventFragment;
     "TokenUpdated(address)": EventFragment;
     "Unpaused(address)": EventFragment;
-    "WalletOwnerTransferred(bytes32,address)": EventFragment;
-    "Withdrawn(address,uint256,bytes32,address,uint256)": EventFragment;
+    "WalletOwnerTransferred(address,bytes32,address)": EventFragment;
+    "Withdrawal(address,address,uint256)": EventFragment;
+    "Withdrawn(address,uint64,bytes32,address,uint256)": EventFragment;
   };
 
-  getEvent(nameOrSignatureOrTopic: "BillingUpdated"): EventFragment;
+  getEvent(nameOrSignatureOrTopic: "Billing"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "Charge"): EventFragment;
+  getEvent(nameOrSignatureOrTopic: "NativeWithdrawal"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "OwnershipTransferred"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "Paused"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "PauserAdded"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "PauserRemoved"): EventFragment;
-  getEvent(nameOrSignatureOrTopic: "ProvidesUpdated"): EventFragment;
+  getEvent(nameOrSignatureOrTopic: "ProvidersUpdated"): EventFragment;
+  getEvent(nameOrSignatureOrTopic: "ResourceAdaptorUpdated"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "Spend"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "TokenUpdated"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "Unpaused"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "WalletOwnerTransferred"): EventFragment;
+  getEvent(nameOrSignatureOrTopic: "Withdrawal"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "Withdrawn"): EventFragment;
 }
 
-export type BillingUpdatedEvent = TypedEvent<[string] & { billing: string }>;
+export type BillingEvent = TypedEvent<
+  [string, BigNumber, string, string, BigNumber] & {
+    provider: string;
+    nonce: BigNumber;
+    account: string;
+    bill: string;
+    amount: BigNumber;
+  }
+>;
 
 export type ChargeEvent = TypedEvent<
   [string, BigNumber, string, string, BigNumber] & {
@@ -189,6 +227,10 @@ export type ChargeEvent = TypedEvent<
     account: string;
     amount: BigNumber;
   }
+>;
+
+export type NativeWithdrawalEvent = TypedEvent<
+  [string, BigNumber] & { to: string; value: BigNumber }
 >;
 
 export type OwnershipTransferredEvent = TypedEvent<
@@ -201,14 +243,21 @@ export type PauserAddedEvent = TypedEvent<[string] & { account: string }>;
 
 export type PauserRemovedEvent = TypedEvent<[string] & { account: string }>;
 
-export type ProvidesUpdatedEvent = TypedEvent<[string] & { providers: string }>;
+export type ProvidersUpdatedEvent = TypedEvent<
+  [string] & { providers: string }
+>;
+
+export type ResourceAdaptorUpdatedEvent = TypedEvent<
+  [string] & { adaptor: string }
+>;
 
 export type SpendEvent = TypedEvent<
-  [string, BigNumber, string, BigNumber] & {
+  [string, BigNumber, string, BigNumber, BigNumber] & {
     provider: string;
     nonce: BigNumber;
     account: string;
     fee: BigNumber;
+    balance: BigNumber;
   }
 >;
 
@@ -217,7 +266,15 @@ export type TokenUpdatedEvent = TypedEvent<[string] & { token: string }>;
 export type UnpausedEvent = TypedEvent<[string] & { account: string }>;
 
 export type WalletOwnerTransferredEvent = TypedEvent<
-  [string, string] & { account: string; newOwner: string }
+  [string, string, string] & {
+    provider: string;
+    account: string;
+    newOwner: string;
+  }
+>;
+
+export type WithdrawalEvent = TypedEvent<
+  [string, string, BigNumber] & { token: string; to: string; value: BigNumber }
 >;
 
 export type WithdrawnEvent = TypedEvent<
@@ -274,17 +331,18 @@ export class FundWallet extends BaseContract {
   interface: FundWalletInterface;
 
   functions: {
+    adaptor(overrides?: CallOverrides): Promise<[string]>;
+
     addPauser(
       account: string,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<ContractTransaction>;
 
     balanceOf(
+      provider: string,
       account: BytesLike,
       overrides?: CallOverrides
     ): Promise<[BigNumber]>;
-
-    billing(overrides?: CallOverrides): Promise<[string]>;
 
     charge(
       provider: string,
@@ -301,42 +359,76 @@ export class FundWallet extends BaseContract {
       overrides?: CallOverrides
     ): Promise<
       [
-        ([
+        [
           BigNumber,
-          ([number, BigNumber] & { resourceType: number; amount: BigNumber })[]
+          ([
+            BigNumber,
+            ([number, BigNumber] & {
+              resourceType: number;
+              amount: BigNumber;
+            })[]
+          ] & {
+            indexBlock: BigNumber;
+            entries: ([number, BigNumber] & {
+              resourceType: number;
+              amount: BigNumber;
+            })[];
+          })[]
         ] & {
-          indexBlock: BigNumber;
-          payloads: ([number, BigNumber] & {
-            resourceType: number;
-            amount: BigNumber;
+          totalValue: BigNumber;
+          payloads: ([
+            BigNumber,
+            ([number, BigNumber] & {
+              resourceType: number;
+              amount: BigNumber;
+            })[]
+          ] & {
+            indexBlock: BigNumber;
+            entries: ([number, BigNumber] & {
+              resourceType: number;
+              amount: BigNumber;
+            })[];
           })[];
-        })[]
+        }
       ]
     >;
 
     encodeBill(
       bills: {
-        indexBlock: BigNumberish;
-        payloads: { resourceType: BigNumberish; amount: BigNumberish }[];
-      }[],
+        totalValue: BigNumberish;
+        payloads: {
+          indexBlock: BigNumberish;
+          entries: { resourceType: BigNumberish; amount: BigNumberish }[];
+        }[];
+      },
+      overrides?: CallOverrides
+    ): Promise<[string]>;
+
+    hashBill(
+      provider: string,
+      nonce: BigNumberish,
+      account: BytesLike,
+      bill: BytesLike,
       overrides?: CallOverrides
     ): Promise<[string]>;
 
     initialize(
       owner: string,
-      _token: string,
+      pauser: string,
       _providers: string,
-      _billing: string,
+      _token: string,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<ContractTransaction>;
 
     isPauser(account: string, overrides?: CallOverrides): Promise<[boolean]>;
 
-    nonces(arg0: BigNumberish, overrides?: CallOverrides): Promise<[boolean]>;
-
     owner(overrides?: CallOverrides): Promise<[string]>;
 
-    ownerOf(account: BytesLike, overrides?: CallOverrides): Promise<[string]>;
+    ownerOf(
+      provider: string,
+      account: BytesLike,
+      overrides?: CallOverrides
+    ): Promise<[string]>;
 
     pause(
       overrides?: Overrides & { from?: string | Promise<string> }
@@ -361,6 +453,20 @@ export class FundWallet extends BaseContract {
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<ContractTransaction>;
 
+    setToken(
+      _token: string,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<ContractTransaction>;
+
+    spend(
+      provider: string,
+      nonce: BigNumberish,
+      account: BytesLike,
+      bill: BytesLike,
+      signature: BytesLike,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<ContractTransaction>;
+
     token(overrides?: CallOverrides): Promise<[string]>;
 
     transferOwnership(
@@ -369,8 +475,10 @@ export class FundWallet extends BaseContract {
     ): Promise<ContractTransaction>;
 
     transferWalletOwner(
+      provider: string,
       account: BytesLike,
       newOwner: string,
+      signature: BytesLike,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<ContractTransaction>;
 
@@ -378,25 +486,42 @@ export class FundWallet extends BaseContract {
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<ContractTransaction>;
 
-    withdraw(
+    "withdraw(address,uint64,bytes32,address,bytes,bytes)"(
       provider: string,
       nonce: BigNumberish,
       account: BytesLike,
       to: string,
-      billMessage: BytesLike,
+      bill: BytesLike,
       signature: BytesLike,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<ContractTransaction>;
+
+    "withdraw(address,address,uint256)"(
+      token: string,
+      to: string,
+      value: BigNumberish,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<ContractTransaction>;
+
+    withdrawNative(
+      to: string,
+      value: BigNumberish,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<ContractTransaction>;
   };
+
+  adaptor(overrides?: CallOverrides): Promise<string>;
 
   addPauser(
     account: string,
     overrides?: Overrides & { from?: string | Promise<string> }
   ): Promise<ContractTransaction>;
 
-  balanceOf(account: BytesLike, overrides?: CallOverrides): Promise<BigNumber>;
-
-  billing(overrides?: CallOverrides): Promise<string>;
+  balanceOf(
+    provider: string,
+    account: BytesLike,
+    overrides?: CallOverrides
+  ): Promise<BigNumber>;
 
   charge(
     provider: string,
@@ -412,41 +537,69 @@ export class FundWallet extends BaseContract {
     message: BytesLike,
     overrides?: CallOverrides
   ): Promise<
-    ([
+    [
       BigNumber,
-      ([number, BigNumber] & { resourceType: number; amount: BigNumber })[]
+      ([
+        BigNumber,
+        ([number, BigNumber] & { resourceType: number; amount: BigNumber })[]
+      ] & {
+        indexBlock: BigNumber;
+        entries: ([number, BigNumber] & {
+          resourceType: number;
+          amount: BigNumber;
+        })[];
+      })[]
     ] & {
-      indexBlock: BigNumber;
-      payloads: ([number, BigNumber] & {
-        resourceType: number;
-        amount: BigNumber;
+      totalValue: BigNumber;
+      payloads: ([
+        BigNumber,
+        ([number, BigNumber] & { resourceType: number; amount: BigNumber })[]
+      ] & {
+        indexBlock: BigNumber;
+        entries: ([number, BigNumber] & {
+          resourceType: number;
+          amount: BigNumber;
+        })[];
       })[];
-    })[]
+    }
   >;
 
   encodeBill(
     bills: {
-      indexBlock: BigNumberish;
-      payloads: { resourceType: BigNumberish; amount: BigNumberish }[];
-    }[],
+      totalValue: BigNumberish;
+      payloads: {
+        indexBlock: BigNumberish;
+        entries: { resourceType: BigNumberish; amount: BigNumberish }[];
+      }[];
+    },
+    overrides?: CallOverrides
+  ): Promise<string>;
+
+  hashBill(
+    provider: string,
+    nonce: BigNumberish,
+    account: BytesLike,
+    bill: BytesLike,
     overrides?: CallOverrides
   ): Promise<string>;
 
   initialize(
     owner: string,
-    _token: string,
+    pauser: string,
     _providers: string,
-    _billing: string,
+    _token: string,
     overrides?: Overrides & { from?: string | Promise<string> }
   ): Promise<ContractTransaction>;
 
   isPauser(account: string, overrides?: CallOverrides): Promise<boolean>;
 
-  nonces(arg0: BigNumberish, overrides?: CallOverrides): Promise<boolean>;
-
   owner(overrides?: CallOverrides): Promise<string>;
 
-  ownerOf(account: BytesLike, overrides?: CallOverrides): Promise<string>;
+  ownerOf(
+    provider: string,
+    account: BytesLike,
+    overrides?: CallOverrides
+  ): Promise<string>;
 
   pause(
     overrides?: Overrides & { from?: string | Promise<string> }
@@ -471,6 +624,20 @@ export class FundWallet extends BaseContract {
     overrides?: Overrides & { from?: string | Promise<string> }
   ): Promise<ContractTransaction>;
 
+  setToken(
+    _token: string,
+    overrides?: Overrides & { from?: string | Promise<string> }
+  ): Promise<ContractTransaction>;
+
+  spend(
+    provider: string,
+    nonce: BigNumberish,
+    account: BytesLike,
+    bill: BytesLike,
+    signature: BytesLike,
+    overrides?: Overrides & { from?: string | Promise<string> }
+  ): Promise<ContractTransaction>;
+
   token(overrides?: CallOverrides): Promise<string>;
 
   transferOwnership(
@@ -479,8 +646,10 @@ export class FundWallet extends BaseContract {
   ): Promise<ContractTransaction>;
 
   transferWalletOwner(
+    provider: string,
     account: BytesLike,
     newOwner: string,
+    signature: BytesLike,
     overrides?: Overrides & { from?: string | Promise<string> }
   ): Promise<ContractTransaction>;
 
@@ -488,25 +657,39 @@ export class FundWallet extends BaseContract {
     overrides?: Overrides & { from?: string | Promise<string> }
   ): Promise<ContractTransaction>;
 
-  withdraw(
+  "withdraw(address,uint64,bytes32,address,bytes,bytes)"(
     provider: string,
     nonce: BigNumberish,
     account: BytesLike,
     to: string,
-    billMessage: BytesLike,
+    bill: BytesLike,
     signature: BytesLike,
     overrides?: Overrides & { from?: string | Promise<string> }
   ): Promise<ContractTransaction>;
 
+  "withdraw(address,address,uint256)"(
+    token: string,
+    to: string,
+    value: BigNumberish,
+    overrides?: Overrides & { from?: string | Promise<string> }
+  ): Promise<ContractTransaction>;
+
+  withdrawNative(
+    to: string,
+    value: BigNumberish,
+    overrides?: Overrides & { from?: string | Promise<string> }
+  ): Promise<ContractTransaction>;
+
   callStatic: {
+    adaptor(overrides?: CallOverrides): Promise<string>;
+
     addPauser(account: string, overrides?: CallOverrides): Promise<void>;
 
     balanceOf(
+      provider: string,
       account: BytesLike,
       overrides?: CallOverrides
     ): Promise<BigNumber>;
-
-    billing(overrides?: CallOverrides): Promise<string>;
 
     charge(
       provider: string,
@@ -522,41 +705,69 @@ export class FundWallet extends BaseContract {
       message: BytesLike,
       overrides?: CallOverrides
     ): Promise<
-      ([
+      [
         BigNumber,
-        ([number, BigNumber] & { resourceType: number; amount: BigNumber })[]
+        ([
+          BigNumber,
+          ([number, BigNumber] & { resourceType: number; amount: BigNumber })[]
+        ] & {
+          indexBlock: BigNumber;
+          entries: ([number, BigNumber] & {
+            resourceType: number;
+            amount: BigNumber;
+          })[];
+        })[]
       ] & {
-        indexBlock: BigNumber;
-        payloads: ([number, BigNumber] & {
-          resourceType: number;
-          amount: BigNumber;
+        totalValue: BigNumber;
+        payloads: ([
+          BigNumber,
+          ([number, BigNumber] & { resourceType: number; amount: BigNumber })[]
+        ] & {
+          indexBlock: BigNumber;
+          entries: ([number, BigNumber] & {
+            resourceType: number;
+            amount: BigNumber;
+          })[];
         })[];
-      })[]
+      }
     >;
 
     encodeBill(
       bills: {
-        indexBlock: BigNumberish;
-        payloads: { resourceType: BigNumberish; amount: BigNumberish }[];
-      }[],
+        totalValue: BigNumberish;
+        payloads: {
+          indexBlock: BigNumberish;
+          entries: { resourceType: BigNumberish; amount: BigNumberish }[];
+        }[];
+      },
+      overrides?: CallOverrides
+    ): Promise<string>;
+
+    hashBill(
+      provider: string,
+      nonce: BigNumberish,
+      account: BytesLike,
+      bill: BytesLike,
       overrides?: CallOverrides
     ): Promise<string>;
 
     initialize(
       owner: string,
-      _token: string,
+      pauser: string,
       _providers: string,
-      _billing: string,
+      _token: string,
       overrides?: CallOverrides
     ): Promise<void>;
 
     isPauser(account: string, overrides?: CallOverrides): Promise<boolean>;
 
-    nonces(arg0: BigNumberish, overrides?: CallOverrides): Promise<boolean>;
-
     owner(overrides?: CallOverrides): Promise<string>;
 
-    ownerOf(account: BytesLike, overrides?: CallOverrides): Promise<string>;
+    ownerOf(
+      provider: string,
+      account: BytesLike,
+      overrides?: CallOverrides
+    ): Promise<string>;
 
     pause(overrides?: CallOverrides): Promise<void>;
 
@@ -572,6 +783,17 @@ export class FundWallet extends BaseContract {
 
     renouncePauser(overrides?: CallOverrides): Promise<void>;
 
+    setToken(_token: string, overrides?: CallOverrides): Promise<void>;
+
+    spend(
+      provider: string,
+      nonce: BigNumberish,
+      account: BytesLike,
+      bill: BytesLike,
+      signature: BytesLike,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
+
     token(overrides?: CallOverrides): Promise<string>;
 
     transferOwnership(
@@ -580,34 +802,75 @@ export class FundWallet extends BaseContract {
     ): Promise<void>;
 
     transferWalletOwner(
+      provider: string,
       account: BytesLike,
       newOwner: string,
+      signature: BytesLike,
       overrides?: CallOverrides
     ): Promise<void>;
 
     unpause(overrides?: CallOverrides): Promise<void>;
 
-    withdraw(
+    "withdraw(address,uint64,bytes32,address,bytes,bytes)"(
       provider: string,
       nonce: BigNumberish,
       account: BytesLike,
       to: string,
-      billMessage: BytesLike,
+      bill: BytesLike,
       signature: BytesLike,
       overrides?: CallOverrides
     ): Promise<BigNumber>;
+
+    "withdraw(address,address,uint256)"(
+      token: string,
+      to: string,
+      value: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<void>;
+
+    withdrawNative(
+      to: string,
+      value: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<void>;
   };
 
   filters: {
-    "BillingUpdated(address)"(
-      billing?: null
-    ): TypedEventFilter<[string], { billing: string }>;
+    "Billing(address,uint64,bytes32,bytes,uint256)"(
+      provider?: null,
+      nonce?: null,
+      account?: null,
+      bill?: null,
+      amount?: null
+    ): TypedEventFilter<
+      [string, BigNumber, string, string, BigNumber],
+      {
+        provider: string;
+        nonce: BigNumber;
+        account: string;
+        bill: string;
+        amount: BigNumber;
+      }
+    >;
 
-    BillingUpdated(
-      billing?: null
-    ): TypedEventFilter<[string], { billing: string }>;
+    Billing(
+      provider?: null,
+      nonce?: null,
+      account?: null,
+      bill?: null,
+      amount?: null
+    ): TypedEventFilter<
+      [string, BigNumber, string, string, BigNumber],
+      {
+        provider: string;
+        nonce: BigNumber;
+        account: string;
+        bill: string;
+        amount: BigNumber;
+      }
+    >;
 
-    "Charge(address,uint256,address,bytes32,uint256)"(
+    "Charge(address,uint64,address,bytes32,uint256)"(
       provider?: null,
       nonce?: null,
       owner?: null,
@@ -640,6 +903,16 @@ export class FundWallet extends BaseContract {
         amount: BigNumber;
       }
     >;
+
+    "NativeWithdrawal(address,uint256)"(
+      to?: null,
+      value?: null
+    ): TypedEventFilter<[string, BigNumber], { to: string; value: BigNumber }>;
+
+    NativeWithdrawal(
+      to?: null,
+      value?: null
+    ): TypedEventFilter<[string, BigNumber], { to: string; value: BigNumber }>;
 
     "OwnershipTransferred(address,address)"(
       previousOwner?: string | null,
@@ -679,32 +952,54 @@ export class FundWallet extends BaseContract {
       account?: null
     ): TypedEventFilter<[string], { account: string }>;
 
-    "ProvidesUpdated(address)"(
+    "ProvidersUpdated(address)"(
       providers?: null
     ): TypedEventFilter<[string], { providers: string }>;
 
-    ProvidesUpdated(
+    ProvidersUpdated(
       providers?: null
     ): TypedEventFilter<[string], { providers: string }>;
 
-    "Spend(address,uint256,bytes32,uint256)"(
+    "ResourceAdaptorUpdated(address)"(
+      adaptor?: null
+    ): TypedEventFilter<[string], { adaptor: string }>;
+
+    ResourceAdaptorUpdated(
+      adaptor?: null
+    ): TypedEventFilter<[string], { adaptor: string }>;
+
+    "Spend(address,uint64,bytes32,uint256,uint256)"(
       provider?: null,
       nonce?: null,
       account?: null,
-      fee?: null
+      fee?: null,
+      balance?: null
     ): TypedEventFilter<
-      [string, BigNumber, string, BigNumber],
-      { provider: string; nonce: BigNumber; account: string; fee: BigNumber }
+      [string, BigNumber, string, BigNumber, BigNumber],
+      {
+        provider: string;
+        nonce: BigNumber;
+        account: string;
+        fee: BigNumber;
+        balance: BigNumber;
+      }
     >;
 
     Spend(
       provider?: null,
       nonce?: null,
       account?: null,
-      fee?: null
+      fee?: null,
+      balance?: null
     ): TypedEventFilter<
-      [string, BigNumber, string, BigNumber],
-      { provider: string; nonce: BigNumber; account: string; fee: BigNumber }
+      [string, BigNumber, string, BigNumber, BigNumber],
+      {
+        provider: string;
+        nonce: BigNumber;
+        account: string;
+        fee: BigNumber;
+        balance: BigNumber;
+      }
     >;
 
     "TokenUpdated(address)"(
@@ -719,23 +1014,43 @@ export class FundWallet extends BaseContract {
 
     Unpaused(account?: null): TypedEventFilter<[string], { account: string }>;
 
-    "WalletOwnerTransferred(bytes32,address)"(
+    "WalletOwnerTransferred(address,bytes32,address)"(
+      provider?: null,
       account?: null,
       newOwner?: null
     ): TypedEventFilter<
-      [string, string],
-      { account: string; newOwner: string }
+      [string, string, string],
+      { provider: string; account: string; newOwner: string }
     >;
 
     WalletOwnerTransferred(
+      provider?: null,
       account?: null,
       newOwner?: null
     ): TypedEventFilter<
-      [string, string],
-      { account: string; newOwner: string }
+      [string, string, string],
+      { provider: string; account: string; newOwner: string }
     >;
 
-    "Withdrawn(address,uint256,bytes32,address,uint256)"(
+    "Withdrawal(address,address,uint256)"(
+      token?: null,
+      to?: null,
+      value?: null
+    ): TypedEventFilter<
+      [string, string, BigNumber],
+      { token: string; to: string; value: BigNumber }
+    >;
+
+    Withdrawal(
+      token?: null,
+      to?: null,
+      value?: null
+    ): TypedEventFilter<
+      [string, string, BigNumber],
+      { token: string; to: string; value: BigNumber }
+    >;
+
+    "Withdrawn(address,uint64,bytes32,address,uint256)"(
       provider?: null,
       nonce?: null,
       account?: null,
@@ -771,17 +1086,18 @@ export class FundWallet extends BaseContract {
   };
 
   estimateGas: {
+    adaptor(overrides?: CallOverrides): Promise<BigNumber>;
+
     addPauser(
       account: string,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<BigNumber>;
 
     balanceOf(
+      provider: string,
       account: BytesLike,
       overrides?: CallOverrides
     ): Promise<BigNumber>;
-
-    billing(overrides?: CallOverrides): Promise<BigNumber>;
 
     charge(
       provider: string,
@@ -800,27 +1116,40 @@ export class FundWallet extends BaseContract {
 
     encodeBill(
       bills: {
-        indexBlock: BigNumberish;
-        payloads: { resourceType: BigNumberish; amount: BigNumberish }[];
-      }[],
+        totalValue: BigNumberish;
+        payloads: {
+          indexBlock: BigNumberish;
+          entries: { resourceType: BigNumberish; amount: BigNumberish }[];
+        }[];
+      },
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
+
+    hashBill(
+      provider: string,
+      nonce: BigNumberish,
+      account: BytesLike,
+      bill: BytesLike,
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
     initialize(
       owner: string,
-      _token: string,
+      pauser: string,
       _providers: string,
-      _billing: string,
+      _token: string,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<BigNumber>;
 
     isPauser(account: string, overrides?: CallOverrides): Promise<BigNumber>;
 
-    nonces(arg0: BigNumberish, overrides?: CallOverrides): Promise<BigNumber>;
-
     owner(overrides?: CallOverrides): Promise<BigNumber>;
 
-    ownerOf(account: BytesLike, overrides?: CallOverrides): Promise<BigNumber>;
+    ownerOf(
+      provider: string,
+      account: BytesLike,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
 
     pause(
       overrides?: Overrides & { from?: string | Promise<string> }
@@ -845,6 +1174,20 @@ export class FundWallet extends BaseContract {
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<BigNumber>;
 
+    setToken(
+      _token: string,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<BigNumber>;
+
+    spend(
+      provider: string,
+      nonce: BigNumberish,
+      account: BytesLike,
+      bill: BytesLike,
+      signature: BytesLike,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<BigNumber>;
+
     token(overrides?: CallOverrides): Promise<BigNumber>;
 
     transferOwnership(
@@ -853,8 +1196,10 @@ export class FundWallet extends BaseContract {
     ): Promise<BigNumber>;
 
     transferWalletOwner(
+      provider: string,
       account: BytesLike,
       newOwner: string,
+      signature: BytesLike,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<BigNumber>;
 
@@ -862,29 +1207,43 @@ export class FundWallet extends BaseContract {
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<BigNumber>;
 
-    withdraw(
+    "withdraw(address,uint64,bytes32,address,bytes,bytes)"(
       provider: string,
       nonce: BigNumberish,
       account: BytesLike,
       to: string,
-      billMessage: BytesLike,
+      bill: BytesLike,
       signature: BytesLike,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<BigNumber>;
+
+    "withdraw(address,address,uint256)"(
+      token: string,
+      to: string,
+      value: BigNumberish,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<BigNumber>;
+
+    withdrawNative(
+      to: string,
+      value: BigNumberish,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<BigNumber>;
   };
 
   populateTransaction: {
+    adaptor(overrides?: CallOverrides): Promise<PopulatedTransaction>;
+
     addPauser(
       account: string,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<PopulatedTransaction>;
 
     balanceOf(
+      provider: string,
       account: BytesLike,
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
-
-    billing(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
     charge(
       provider: string,
@@ -903,17 +1262,28 @@ export class FundWallet extends BaseContract {
 
     encodeBill(
       bills: {
-        indexBlock: BigNumberish;
-        payloads: { resourceType: BigNumberish; amount: BigNumberish }[];
-      }[],
+        totalValue: BigNumberish;
+        payloads: {
+          indexBlock: BigNumberish;
+          entries: { resourceType: BigNumberish; amount: BigNumberish }[];
+        }[];
+      },
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
+
+    hashBill(
+      provider: string,
+      nonce: BigNumberish,
+      account: BytesLike,
+      bill: BytesLike,
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
     initialize(
       owner: string,
-      _token: string,
+      pauser: string,
       _providers: string,
-      _billing: string,
+      _token: string,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<PopulatedTransaction>;
 
@@ -922,14 +1292,10 @@ export class FundWallet extends BaseContract {
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
-    nonces(
-      arg0: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<PopulatedTransaction>;
-
     owner(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
     ownerOf(
+      provider: string,
       account: BytesLike,
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
@@ -960,6 +1326,20 @@ export class FundWallet extends BaseContract {
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<PopulatedTransaction>;
 
+    setToken(
+      _token: string,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<PopulatedTransaction>;
+
+    spend(
+      provider: string,
+      nonce: BigNumberish,
+      account: BytesLike,
+      bill: BytesLike,
+      signature: BytesLike,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<PopulatedTransaction>;
+
     token(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
     transferOwnership(
@@ -968,8 +1348,10 @@ export class FundWallet extends BaseContract {
     ): Promise<PopulatedTransaction>;
 
     transferWalletOwner(
+      provider: string,
       account: BytesLike,
       newOwner: string,
+      signature: BytesLike,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<PopulatedTransaction>;
 
@@ -977,13 +1359,26 @@ export class FundWallet extends BaseContract {
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<PopulatedTransaction>;
 
-    withdraw(
+    "withdraw(address,uint64,bytes32,address,bytes,bytes)"(
       provider: string,
       nonce: BigNumberish,
       account: BytesLike,
       to: string,
-      billMessage: BytesLike,
+      bill: BytesLike,
       signature: BytesLike,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<PopulatedTransaction>;
+
+    "withdraw(address,address,uint256)"(
+      token: string,
+      to: string,
+      value: BigNumberish,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<PopulatedTransaction>;
+
+    withdrawNative(
+      to: string,
+      value: BigNumberish,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<PopulatedTransaction>;
   };

@@ -2,11 +2,9 @@
 
 pragma solidity >=0.8.0;
 
-import '@openzeppelin/contracts-upgradeable/interfaces/IERC20Upgradeable.sol';
 import '../../libraries/ResourceData.sol';
 
 interface IResourceAdaptor {
-	function token() external view returns (IERC20Upgradeable);
 
 	function priceAt(ResourceData.ResourceType resourceType, uint256 _indexBlock) external view returns (uint256);
 

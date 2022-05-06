@@ -23,14 +23,16 @@ interface BuildingTimeControllerInterface extends ethers.utils.Interface {
   functions: {
     "adaptor()": FunctionFragment;
     "balanceOf(bytes32)": FunctionFragment;
+    "dstChainPayment()": FunctionFragment;
     "expand(bytes32,uint256)": FunctionFragment;
     "getAmountOf(uint256)": FunctionFragment;
     "getValueOf(uint256)": FunctionFragment;
-    "initialize(address,address)": FunctionFragment;
+    "initialize(address,address,address)": FunctionFragment;
     "owner()": FunctionFragment;
     "price()": FunctionFragment;
     "renounceOwnership()": FunctionFragment;
     "resourceType()": FunctionFragment;
+    "setDstChainPayment(address)": FunctionFragment;
     "setResourceAdaptor(address)": FunctionFragment;
     "setResourceType(uint8)": FunctionFragment;
     "transferOwnership(address)": FunctionFragment;
@@ -40,6 +42,10 @@ interface BuildingTimeControllerInterface extends ethers.utils.Interface {
   encodeFunctionData(
     functionFragment: "balanceOf",
     values: [BytesLike]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "dstChainPayment",
+    values?: undefined
   ): string;
   encodeFunctionData(
     functionFragment: "expand",
@@ -55,7 +61,7 @@ interface BuildingTimeControllerInterface extends ethers.utils.Interface {
   ): string;
   encodeFunctionData(
     functionFragment: "initialize",
-    values: [string, string]
+    values: [string, string, string]
   ): string;
   encodeFunctionData(functionFragment: "owner", values?: undefined): string;
   encodeFunctionData(functionFragment: "price", values?: undefined): string;
@@ -66,6 +72,10 @@ interface BuildingTimeControllerInterface extends ethers.utils.Interface {
   encodeFunctionData(
     functionFragment: "resourceType",
     values?: undefined
+  ): string;
+  encodeFunctionData(
+    functionFragment: "setDstChainPayment",
+    values: [string]
   ): string;
   encodeFunctionData(
     functionFragment: "setResourceAdaptor",
@@ -82,6 +92,10 @@ interface BuildingTimeControllerInterface extends ethers.utils.Interface {
 
   decodeFunctionResult(functionFragment: "adaptor", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "balanceOf", data: BytesLike): Result;
+  decodeFunctionResult(
+    functionFragment: "dstChainPayment",
+    data: BytesLike
+  ): Result;
   decodeFunctionResult(functionFragment: "expand", data: BytesLike): Result;
   decodeFunctionResult(
     functionFragment: "getAmountOf",
@@ -100,6 +114,10 @@ interface BuildingTimeControllerInterface extends ethers.utils.Interface {
     data: BytesLike
   ): Result;
   decodeFunctionResult(
+    functionFragment: "setDstChainPayment",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
     functionFragment: "setResourceAdaptor",
     data: BytesLike
   ): Result;
@@ -113,17 +131,23 @@ interface BuildingTimeControllerInterface extends ethers.utils.Interface {
   ): Result;
 
   events: {
+    "DstChainPaymentUpdated(address)": EventFragment;
     "Expanded(bytes32,uint256)": EventFragment;
     "OwnershipTransferred(address,address)": EventFragment;
     "ResourceAdaptorUpdated(address)": EventFragment;
     "ResourceTypeUpdated(uint8)": EventFragment;
   };
 
+  getEvent(nameOrSignatureOrTopic: "DstChainPaymentUpdated"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "Expanded"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "OwnershipTransferred"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "ResourceAdaptorUpdated"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "ResourceTypeUpdated"): EventFragment;
 }
+
+export type DstChainPaymentUpdatedEvent = TypedEvent<
+  [string] & { dstChainPayment: string }
+>;
 
 export type ExpandedEvent = TypedEvent<
   [string, BigNumber] & { account: string; value: BigNumber }
@@ -192,6 +216,8 @@ export class BuildingTimeController extends BaseContract {
       overrides?: CallOverrides
     ): Promise<[BigNumber]>;
 
+    dstChainPayment(overrides?: CallOverrides): Promise<[string]>;
+
     expand(
       account: BytesLike,
       value: BigNumberish,
@@ -210,6 +236,7 @@ export class BuildingTimeController extends BaseContract {
 
     initialize(
       owner: string,
+      dstChainPayment: string,
       adaptor: string,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<ContractTransaction>;
@@ -223,6 +250,11 @@ export class BuildingTimeController extends BaseContract {
     ): Promise<ContractTransaction>;
 
     resourceType(overrides?: CallOverrides): Promise<[number]>;
+
+    setDstChainPayment(
+      _dstChainPayment: string,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<ContractTransaction>;
 
     setResourceAdaptor(
       _adaptor: string,
@@ -244,6 +276,8 @@ export class BuildingTimeController extends BaseContract {
 
   balanceOf(account: BytesLike, overrides?: CallOverrides): Promise<BigNumber>;
 
+  dstChainPayment(overrides?: CallOverrides): Promise<string>;
+
   expand(
     account: BytesLike,
     value: BigNumberish,
@@ -262,6 +296,7 @@ export class BuildingTimeController extends BaseContract {
 
   initialize(
     owner: string,
+    dstChainPayment: string,
     adaptor: string,
     overrides?: Overrides & { from?: string | Promise<string> }
   ): Promise<ContractTransaction>;
@@ -275,6 +310,11 @@ export class BuildingTimeController extends BaseContract {
   ): Promise<ContractTransaction>;
 
   resourceType(overrides?: CallOverrides): Promise<number>;
+
+  setDstChainPayment(
+    _dstChainPayment: string,
+    overrides?: Overrides & { from?: string | Promise<string> }
+  ): Promise<ContractTransaction>;
 
   setResourceAdaptor(
     _adaptor: string,
@@ -299,11 +339,13 @@ export class BuildingTimeController extends BaseContract {
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
+    dstChainPayment(overrides?: CallOverrides): Promise<string>;
+
     expand(
       account: BytesLike,
       value: BigNumberish,
       overrides?: CallOverrides
-    ): Promise<void>;
+    ): Promise<BigNumber>;
 
     getAmountOf(
       value: BigNumberish,
@@ -317,6 +359,7 @@ export class BuildingTimeController extends BaseContract {
 
     initialize(
       owner: string,
+      dstChainPayment: string,
       adaptor: string,
       overrides?: CallOverrides
     ): Promise<void>;
@@ -328,6 +371,11 @@ export class BuildingTimeController extends BaseContract {
     renounceOwnership(overrides?: CallOverrides): Promise<void>;
 
     resourceType(overrides?: CallOverrides): Promise<number>;
+
+    setDstChainPayment(
+      _dstChainPayment: string,
+      overrides?: CallOverrides
+    ): Promise<void>;
 
     setResourceAdaptor(
       _adaptor: string,
@@ -346,6 +394,14 @@ export class BuildingTimeController extends BaseContract {
   };
 
   filters: {
+    "DstChainPaymentUpdated(address)"(
+      dstChainPayment?: null
+    ): TypedEventFilter<[string], { dstChainPayment: string }>;
+
+    DstChainPaymentUpdated(
+      dstChainPayment?: null
+    ): TypedEventFilter<[string], { dstChainPayment: string }>;
+
     "Expanded(bytes32,uint256)"(
       account?: null,
       value?: null
@@ -403,6 +459,8 @@ export class BuildingTimeController extends BaseContract {
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
+    dstChainPayment(overrides?: CallOverrides): Promise<BigNumber>;
+
     expand(
       account: BytesLike,
       value: BigNumberish,
@@ -421,6 +479,7 @@ export class BuildingTimeController extends BaseContract {
 
     initialize(
       owner: string,
+      dstChainPayment: string,
       adaptor: string,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<BigNumber>;
@@ -434,6 +493,11 @@ export class BuildingTimeController extends BaseContract {
     ): Promise<BigNumber>;
 
     resourceType(overrides?: CallOverrides): Promise<BigNumber>;
+
+    setDstChainPayment(
+      _dstChainPayment: string,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<BigNumber>;
 
     setResourceAdaptor(
       _adaptor: string,
@@ -459,6 +523,8 @@ export class BuildingTimeController extends BaseContract {
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
+    dstChainPayment(overrides?: CallOverrides): Promise<PopulatedTransaction>;
+
     expand(
       account: BytesLike,
       value: BigNumberish,
@@ -477,6 +543,7 @@ export class BuildingTimeController extends BaseContract {
 
     initialize(
       owner: string,
+      dstChainPayment: string,
       adaptor: string,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<PopulatedTransaction>;
@@ -490,6 +557,11 @@ export class BuildingTimeController extends BaseContract {
     ): Promise<PopulatedTransaction>;
 
     resourceType(overrides?: CallOverrides): Promise<PopulatedTransaction>;
+
+    setDstChainPayment(
+      _dstChainPayment: string,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<PopulatedTransaction>;
 
     setResourceAdaptor(
       _adaptor: string,

@@ -26,14 +26,12 @@ interface ResourceAdaptorInterface extends ethers.utils.Interface {
     "getValueAt(uint8,uint256,uint256)": FunctionFragment;
     "getValueOf(uint8,uint256)": FunctionFragment;
     "indexBlock()": FunctionFragment;
-    "initialize(address,address,tuple[])": FunctionFragment;
+    "initialize(address,tuple[])": FunctionFragment;
     "owner()": FunctionFragment;
     "priceAt(uint8,uint256)": FunctionFragment;
     "priceOf(uint8)": FunctionFragment;
     "renounceOwnership()": FunctionFragment;
     "setPriceAdaptors(tuple[])": FunctionFragment;
-    "setToken(address)": FunctionFragment;
-    "token()": FunctionFragment;
     "transferOwnership(address)": FunctionFragment;
   };
 
@@ -59,11 +57,7 @@ interface ResourceAdaptorInterface extends ethers.utils.Interface {
   ): string;
   encodeFunctionData(
     functionFragment: "initialize",
-    values: [
-      string,
-      string,
-      { resourceType: BigNumberish; price: BigNumberish }[]
-    ]
+    values: [string, { resourceType: BigNumberish; price: BigNumberish }[]]
   ): string;
   encodeFunctionData(functionFragment: "owner", values?: undefined): string;
   encodeFunctionData(
@@ -82,8 +76,6 @@ interface ResourceAdaptorInterface extends ethers.utils.Interface {
     functionFragment: "setPriceAdaptors",
     values: [{ resourceType: BigNumberish; price: BigNumberish }[]]
   ): string;
-  encodeFunctionData(functionFragment: "setToken", values: [string]): string;
-  encodeFunctionData(functionFragment: "token", values?: undefined): string;
   encodeFunctionData(
     functionFragment: "transferOwnership",
     values: [string]
@@ -112,8 +104,6 @@ interface ResourceAdaptorInterface extends ethers.utils.Interface {
     functionFragment: "setPriceAdaptors",
     data: BytesLike
   ): Result;
-  decodeFunctionResult(functionFragment: "setToken", data: BytesLike): Result;
-  decodeFunctionResult(functionFragment: "token", data: BytesLike): Result;
   decodeFunctionResult(
     functionFragment: "transferOwnership",
     data: BytesLike
@@ -122,12 +112,10 @@ interface ResourceAdaptorInterface extends ethers.utils.Interface {
   events: {
     "OwnershipTransferred(address,address)": EventFragment;
     "SetPriceAdaptors(tuple[])": EventFragment;
-    "SetToken(address)": EventFragment;
   };
 
   getEvent(nameOrSignatureOrTopic: "OwnershipTransferred"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "SetPriceAdaptors"): EventFragment;
-  getEvent(nameOrSignatureOrTopic: "SetToken"): EventFragment;
 }
 
 export type OwnershipTransferredEvent = TypedEvent<
@@ -142,8 +130,6 @@ export type SetPriceAdaptorsEvent = TypedEvent<
     })[];
   }
 >;
-
-export type SetTokenEvent = TypedEvent<[string] & { token: string }>;
 
 export class ResourceAdaptor extends BaseContract {
   connect(signerOrProvider: Signer | Provider | string): this;
@@ -219,7 +205,6 @@ export class ResourceAdaptor extends BaseContract {
 
     initialize(
       owner: string,
-      _token: string,
       adaptors: { resourceType: BigNumberish; price: BigNumberish }[],
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<ContractTransaction>;
@@ -245,13 +230,6 @@ export class ResourceAdaptor extends BaseContract {
       adaptors: { resourceType: BigNumberish; price: BigNumberish }[],
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<ContractTransaction>;
-
-    setToken(
-      _token: string,
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<ContractTransaction>;
-
-    token(overrides?: CallOverrides): Promise<[string]>;
 
     transferOwnership(
       newOwner: string,
@@ -289,7 +267,6 @@ export class ResourceAdaptor extends BaseContract {
 
   initialize(
     owner: string,
-    _token: string,
     adaptors: { resourceType: BigNumberish; price: BigNumberish }[],
     overrides?: Overrides & { from?: string | Promise<string> }
   ): Promise<ContractTransaction>;
@@ -315,13 +292,6 @@ export class ResourceAdaptor extends BaseContract {
     adaptors: { resourceType: BigNumberish; price: BigNumberish }[],
     overrides?: Overrides & { from?: string | Promise<string> }
   ): Promise<ContractTransaction>;
-
-  setToken(
-    _token: string,
-    overrides?: Overrides & { from?: string | Promise<string> }
-  ): Promise<ContractTransaction>;
-
-  token(overrides?: CallOverrides): Promise<string>;
 
   transferOwnership(
     newOwner: string,
@@ -359,7 +329,6 @@ export class ResourceAdaptor extends BaseContract {
 
     initialize(
       owner: string,
-      _token: string,
       adaptors: { resourceType: BigNumberish; price: BigNumberish }[],
       overrides?: CallOverrides
     ): Promise<void>;
@@ -383,10 +352,6 @@ export class ResourceAdaptor extends BaseContract {
       adaptors: { resourceType: BigNumberish; price: BigNumberish }[],
       overrides?: CallOverrides
     ): Promise<void>;
-
-    setToken(_token: string, overrides?: CallOverrides): Promise<void>;
-
-    token(overrides?: CallOverrides): Promise<string>;
 
     transferOwnership(
       newOwner: string,
@@ -434,12 +399,6 @@ export class ResourceAdaptor extends BaseContract {
         })[];
       }
     >;
-
-    "SetToken(address)"(
-      token?: null
-    ): TypedEventFilter<[string], { token: string }>;
-
-    SetToken(token?: null): TypedEventFilter<[string], { token: string }>;
   };
 
   estimateGas: {
@@ -473,7 +432,6 @@ export class ResourceAdaptor extends BaseContract {
 
     initialize(
       owner: string,
-      _token: string,
       adaptors: { resourceType: BigNumberish; price: BigNumberish }[],
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<BigNumber>;
@@ -499,13 +457,6 @@ export class ResourceAdaptor extends BaseContract {
       adaptors: { resourceType: BigNumberish; price: BigNumberish }[],
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<BigNumber>;
-
-    setToken(
-      _token: string,
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<BigNumber>;
-
-    token(overrides?: CallOverrides): Promise<BigNumber>;
 
     transferOwnership(
       newOwner: string,
@@ -544,7 +495,6 @@ export class ResourceAdaptor extends BaseContract {
 
     initialize(
       owner: string,
-      _token: string,
       adaptors: { resourceType: BigNumberish; price: BigNumberish }[],
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<PopulatedTransaction>;
@@ -570,13 +520,6 @@ export class ResourceAdaptor extends BaseContract {
       adaptors: { resourceType: BigNumberish; price: BigNumberish }[],
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<PopulatedTransaction>;
-
-    setToken(
-      _token: string,
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<PopulatedTransaction>;
-
-    token(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
     transferOwnership(
       newOwner: string,

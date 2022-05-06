@@ -26,7 +26,6 @@ interface IResourceAdaptorInterface extends ethers.utils.Interface {
     "getValueOf(uint8,uint256)": FunctionFragment;
     "priceAt(uint8,uint256)": FunctionFragment;
     "priceOf(uint8)": FunctionFragment;
-    "token()": FunctionFragment;
   };
 
   encodeFunctionData(
@@ -53,7 +52,6 @@ interface IResourceAdaptorInterface extends ethers.utils.Interface {
     functionFragment: "priceOf",
     values: [BigNumberish]
   ): string;
-  encodeFunctionData(functionFragment: "token", values?: undefined): string;
 
   decodeFunctionResult(
     functionFragment: "getAmountAt",
@@ -67,7 +65,6 @@ interface IResourceAdaptorInterface extends ethers.utils.Interface {
   decodeFunctionResult(functionFragment: "getValueOf", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "priceAt", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "priceOf", data: BytesLike): Result;
-  decodeFunctionResult(functionFragment: "token", data: BytesLike): Result;
 
   events: {};
 }
@@ -152,8 +149,6 @@ export class IResourceAdaptor extends BaseContract {
       resourceType: BigNumberish,
       overrides?: CallOverrides
     ): Promise<[BigNumber]>;
-
-    token(overrides?: CallOverrides): Promise<[string]>;
   };
 
   getAmountAt(
@@ -193,8 +188,6 @@ export class IResourceAdaptor extends BaseContract {
     overrides?: CallOverrides
   ): Promise<BigNumber>;
 
-  token(overrides?: CallOverrides): Promise<string>;
-
   callStatic: {
     getAmountAt(
       resourceType: BigNumberish,
@@ -232,8 +225,6 @@ export class IResourceAdaptor extends BaseContract {
       resourceType: BigNumberish,
       overrides?: CallOverrides
     ): Promise<BigNumber>;
-
-    token(overrides?: CallOverrides): Promise<string>;
   };
 
   filters: {};
@@ -275,8 +266,6 @@ export class IResourceAdaptor extends BaseContract {
       resourceType: BigNumberish,
       overrides?: CallOverrides
     ): Promise<BigNumber>;
-
-    token(overrides?: CallOverrides): Promise<BigNumber>;
   };
 
   populateTransaction: {
@@ -316,7 +305,5 @@ export class IResourceAdaptor extends BaseContract {
       resourceType: BigNumberish,
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
-
-    token(overrides?: CallOverrides): Promise<PopulatedTransaction>;
   };
 }

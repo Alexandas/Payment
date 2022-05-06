@@ -8,38 +8,34 @@ import '@openzeppelin/contracts-upgradeable/utils/math/SafeMathUpgradeable.sol';
 import './interfaces/IResourceAdaptor.sol';
 
 contract ResourceAdaptor is IResourceAdaptor, OwnableUpgradeable {
+	using SafeMathUpgradeable for uint256;
+
 	struct PriceAdaptor {
 		ResourceData.ResourceType resourceType;
 		uint256 price;
 	}
-
-	using SafeMathUpgradeable for uint256;
-
-	IERC20Upgradeable public override token;
 
 	uint256 public indexBlock;
 
 	// type -> block -> price
 	mapping(ResourceData.ResourceType => mapping(uint256 => uint256)) internal priceTraces;
 
-	event SetToken(IERC20Upgradeable token);
-
 	event SetPriceAdaptors(PriceAdaptor[] adaptors);
 
-	constructor() initializer {}
-
-	function initialize(
+	constructor(
 		address owner,
-		IERC20Upgradeable _token,
 		PriceAdaptor[] memory adaptors
-	) external initializer {
+	) initializer {
 		_transferOwnership(owner);
-		__Init_Token(_token);
 		__Init_Price_Adaptors(adaptors);
 	}
 
-	function __Init_Token(IERC20Upgradeable _token) internal onlyInitializing {
-		_setToken(_token);
+	function initialize(
+		address owner,
+		PriceAdaptor[] memory adaptors
+	) external initializer {
+		_transferOwnership(owner);
+		__Init_Price_Adaptors(adaptors);
 	}
 
 	function __Init_Price_Adaptors(PriceAdaptor[] memory adaptors) internal onlyInitializing {
@@ -59,15 +55,6 @@ contract ResourceAdaptor is IResourceAdaptor, OwnableUpgradeable {
 		}
 		indexBlock = block.number;
 		emit SetPriceAdaptors(adaptors);
-	}
-
-	function setToken(IERC20Upgradeable _token) external onlyOwner {
-		_setToken(_token);
-	}
-
-	function _setToken(IERC20Upgradeable _token) internal {
-		token = _token;
-		emit SetToken(token);
 	}
 
 	function priceAt(ResourceData.ResourceType resourceType, uint256 _indexBlock) public view override returns (uint256) {

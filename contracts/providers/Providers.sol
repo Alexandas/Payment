@@ -9,25 +9,53 @@ import '../interfaces/IProviders.sol';
 contract Providers is IProviders, OwnableUpgradeable {
 	mapping(address => bool) internal providers;
 
-	constructor() initializer {}
+	mapping(address => address) public override wallets;
 
-	function initialize(address owner, address[] memory _providers) external initializer {
-		_transferOwnership(owner);
-		__Init_Providers(_providers);
+	modifier onlyProvider() {
+		require(isProvider(msg.sender), 'Providers: caller is not a provider');
+		_;
 	}
 
-	function __Init_Providers(address[] memory _providers) internal onlyInitializing {
+	constructor(
+		address owner,
+		address[] memory _providers,
+		address[] memory _wallets
+	) initializer {
+		_transferOwnership(owner);
+		__Init_Providers_And_Wallets(_providers, _wallets);
+	}
+
+	function initialize(
+		address owner,
+		address[] memory _providers,
+		address[] memory _wallets
+	) external initializer {
+		_transferOwnership(owner);
+		__Init_Providers_And_Wallets(_providers, _wallets);
+	}
+
+	function __Init_Providers_And_Wallets(address[] memory _providers, address[] memory _wallets) internal onlyInitializing {
+		require(_providers.length == _wallets.length, 'Providers: inconsistent length');
 		for (uint256 i = 0; i < _providers.length; i++) {
-			_addProvider(_providers[i]);
+			_addProvider(_providers[i], _wallets[i]);
 		}
+	}
+
+	function setWallet(address wallet) external onlyProvider {
+		_setWallet(msg.sender, wallet);
+	}
+
+	function _setWallet(address provider, address newWallet) internal {
+		wallets[provider] = newWallet;
+		emit ProviderUpdated(provider, newWallet);
 	}
 
 	function isProvider(address provider) public view override returns (bool) {
 		return providers[provider];
 	}
 
-	function addProvider(address provider) external onlyOwner {
-		_addProvider(provider);
+	function addProvider(address provider, address wallet) external onlyOwner {
+		_addProvider(provider, wallet);
 	}
 
 	function removeProvider(address provider) external onlyOwner {
@@ -40,10 +68,12 @@ contract Providers is IProviders, OwnableUpgradeable {
 		delete providers[provider];
 	}
 
-	function _addProvider(address provider) internal {
+	function _addProvider(address provider, address wallet) internal {
 		require(!isProvider(provider), 'Providers: provider existed');
 		providers[provider] = true;
-		emit AddProvider(provider);
+		wallets[provider] = wallet;
+
+		emit ProviderUpdated(provider, wallet);
 	}
 
 	function isValidSignature(

@@ -13,11 +13,35 @@ const _abi = [
       {
         indexed: false,
         internalType: "address",
-        name: "billing",
+        name: "provider",
         type: "address",
       },
+      {
+        indexed: false,
+        internalType: "uint64",
+        name: "nonce",
+        type: "uint64",
+      },
+      {
+        indexed: false,
+        internalType: "bytes32",
+        name: "account",
+        type: "bytes32",
+      },
+      {
+        indexed: false,
+        internalType: "bytes",
+        name: "bill",
+        type: "bytes",
+      },
+      {
+        indexed: false,
+        internalType: "uint256",
+        name: "amount",
+        type: "uint256",
+      },
     ],
-    name: "BillingUpdated",
+    name: "Billing",
     type: "event",
   },
   {
@@ -25,15 +49,15 @@ const _abi = [
     inputs: [
       {
         indexed: false,
-        internalType: "contract IProviders",
+        internalType: "address",
         name: "provider",
         type: "address",
       },
       {
         indexed: false,
-        internalType: "uint256",
+        internalType: "uint64",
         name: "nonce",
-        type: "uint256",
+        type: "uint64",
       },
       {
         indexed: false,
@@ -67,7 +91,7 @@ const _abi = [
         type: "address",
       },
     ],
-    name: "ProvidesUpdated",
+    name: "ProvidersUpdated",
     type: "event",
   },
   {
@@ -75,15 +99,28 @@ const _abi = [
     inputs: [
       {
         indexed: false,
-        internalType: "contract IProviders",
+        internalType: "contract IResourceAdaptor",
+        name: "adaptor",
+        type: "address",
+      },
+    ],
+    name: "ResourceAdaptorUpdated",
+    type: "event",
+  },
+  {
+    anonymous: false,
+    inputs: [
+      {
+        indexed: false,
+        internalType: "address",
         name: "provider",
         type: "address",
       },
       {
         indexed: false,
-        internalType: "uint256",
+        internalType: "uint64",
         name: "nonce",
-        type: "uint256",
+        type: "uint64",
       },
       {
         indexed: false,
@@ -95,6 +132,12 @@ const _abi = [
         indexed: false,
         internalType: "uint256",
         name: "fee",
+        type: "uint256",
+      },
+      {
+        indexed: false,
+        internalType: "uint256",
+        name: "balance",
         type: "uint256",
       },
     ],
@@ -119,6 +162,12 @@ const _abi = [
     inputs: [
       {
         indexed: false,
+        internalType: "address",
+        name: "provider",
+        type: "address",
+      },
+      {
+        indexed: false,
         internalType: "bytes32",
         name: "account",
         type: "bytes32",
@@ -138,15 +187,15 @@ const _abi = [
     inputs: [
       {
         indexed: false,
-        internalType: "contract IProviders",
+        internalType: "address",
         name: "provider",
         type: "address",
       },
       {
         indexed: false,
-        internalType: "uint256",
+        internalType: "uint64",
         name: "nonce",
-        type: "uint256",
+        type: "uint64",
       },
       {
         indexed: false,
@@ -171,30 +220,11 @@ const _abi = [
     type: "event",
   },
   {
-    inputs: [
-      {
-        internalType: "bytes32",
-        name: "account",
-        type: "bytes32",
-      },
-    ],
-    name: "balanceOf",
-    outputs: [
-      {
-        internalType: "uint256",
-        name: "",
-        type: "uint256",
-      },
-    ],
-    stateMutability: "view",
-    type: "function",
-  },
-  {
     inputs: [],
-    name: "billing",
+    name: "adaptor",
     outputs: [
       {
-        internalType: "address",
+        internalType: "contract IResourceAdaptor",
         name: "",
         type: "address",
       },
@@ -205,14 +235,14 @@ const _abi = [
   {
     inputs: [
       {
-        internalType: "contract IProviders",
+        internalType: "address",
         name: "provider",
         type: "address",
       },
       {
-        internalType: "uint256",
+        internalType: "uint64",
         name: "nonce",
-        type: "uint256",
+        type: "uint64",
       },
       {
         internalType: "address",
@@ -242,6 +272,11 @@ const _abi = [
   },
   {
     inputs: [
+      {
+        internalType: "address",
+        name: "provider",
+        type: "address",
+      },
       {
         internalType: "bytes32",
         name: "account",
@@ -273,6 +308,45 @@ const _abi = [
     type: "function",
   },
   {
+    inputs: [
+      {
+        internalType: "address",
+        name: "provider",
+        type: "address",
+      },
+      {
+        internalType: "uint64",
+        name: "nonce",
+        type: "uint64",
+      },
+      {
+        internalType: "bytes32",
+        name: "account",
+        type: "bytes32",
+      },
+      {
+        internalType: "bytes",
+        name: "bill",
+        type: "bytes",
+      },
+      {
+        internalType: "bytes",
+        name: "signature",
+        type: "bytes",
+      },
+    ],
+    name: "spend",
+    outputs: [
+      {
+        internalType: "uint256",
+        name: "fee",
+        type: "uint256",
+      },
+    ],
+    stateMutability: "nonpayable",
+    type: "function",
+  },
+  {
     inputs: [],
     name: "token",
     outputs: [
@@ -288,6 +362,11 @@ const _abi = [
   {
     inputs: [
       {
+        internalType: "address",
+        name: "provider",
+        type: "address",
+      },
+      {
         internalType: "bytes32",
         name: "account",
         type: "bytes32",
@@ -296,6 +375,11 @@ const _abi = [
         internalType: "address",
         name: "newOwner",
         type: "address",
+      },
+      {
+        internalType: "bytes",
+        name: "signature",
+        type: "bytes",
       },
     ],
     name: "transferWalletOwner",
@@ -306,14 +390,14 @@ const _abi = [
   {
     inputs: [
       {
-        internalType: "contract IProviders",
+        internalType: "address",
         name: "provider",
         type: "address",
       },
       {
-        internalType: "uint256",
+        internalType: "uint64",
         name: "nonce",
-        type: "uint256",
+        type: "uint64",
       },
       {
         internalType: "bytes32",

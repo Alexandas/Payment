@@ -46,7 +46,7 @@ function buy(bytes28 uuid,uint256 tokenIndex,uint256 level,uint256 expiration_) 
 #### Declaration
 
 ```
-function renew(uint256 nonce,bytes28 uuid,uint256 tokenIndex,uint256 expiration_) external validateNonce validateToken validateExpiration onlyUnlock returns (uint256 cost)
+function renew(uint64 nonce,bytes28 uuid,uint256 tokenIndex,uint256 expiration_) external validateNonce validateToken validateExpiration onlyUnlock returns (uint256 cost)
 ```
 
 #### Args

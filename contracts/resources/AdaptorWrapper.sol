@@ -1,8 +1,8 @@
 // SPDX-License-Identifier: UNLICENSE
 
 pragma solidity >=0.8.0;
-
 import '@openzeppelin/contracts-upgradeable/access/OwnableUpgradeable.sol';
+
 import './interfaces/IAdaptorWrapper.sol';
 import '../libraries/ResourceData.sol';
 

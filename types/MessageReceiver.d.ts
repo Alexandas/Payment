@@ -22,23 +22,27 @@ import type { TypedEventFilter, TypedEvent, TypedListener } from "./common";
 
 interface MessageReceiverInterface extends ethers.utils.Interface {
   functions: {
-    "executeMessage(address,uint64,bytes,address)": FunctionFragment;
+    "dstChainPayment()": FunctionFragment;
     "executeMessageWithTransfer(address,address,uint256,uint64,bytes,address)": FunctionFragment;
     "executeMessageWithTransferFallback(address,address,uint256,uint64,bytes,address)": FunctionFragment;
-    "executeMessageWithTransferRefund(address,uint256,bytes,address)": FunctionFragment;
     "executor()": FunctionFragment;
-    "message()": FunctionFragment;
+    "getChainID()": FunctionFragment;
+    "initialize(address,address,address)": FunctionFragment;
     "messageBus()": FunctionFragment;
+    "messageId((address,address,uint64,bytes32),uint64,bytes)": FunctionFragment;
     "owner()": FunctionFragment;
-    "sender()": FunctionFragment;
+    "renounceOwnership()": FunctionFragment;
+    "setDstChainPayment(address)": FunctionFragment;
+    "setExecutor(address)": FunctionFragment;
     "setMessageBus(address)": FunctionFragment;
-    "src()": FunctionFragment;
     "transferOwnership(address)": FunctionFragment;
+    "withdraw(address,address,uint256)": FunctionFragment;
+    "withdrawNative(address,uint256)": FunctionFragment;
   };
 
   encodeFunctionData(
-    functionFragment: "executeMessage",
-    values: [string, BigNumberish, BytesLike, string]
+    functionFragment: "dstChainPayment",
+    values?: undefined
   ): string;
   encodeFunctionData(
     functionFragment: "executeMessageWithTransfer",
@@ -48,30 +52,61 @@ interface MessageReceiverInterface extends ethers.utils.Interface {
     functionFragment: "executeMessageWithTransferFallback",
     values: [string, string, BigNumberish, BigNumberish, BytesLike, string]
   ): string;
-  encodeFunctionData(
-    functionFragment: "executeMessageWithTransferRefund",
-    values: [string, BigNumberish, BytesLike, string]
-  ): string;
   encodeFunctionData(functionFragment: "executor", values?: undefined): string;
-  encodeFunctionData(functionFragment: "message", values?: undefined): string;
+  encodeFunctionData(
+    functionFragment: "getChainID",
+    values?: undefined
+  ): string;
+  encodeFunctionData(
+    functionFragment: "initialize",
+    values: [string, string, string]
+  ): string;
   encodeFunctionData(
     functionFragment: "messageBus",
     values?: undefined
   ): string;
+  encodeFunctionData(
+    functionFragment: "messageId",
+    values: [
+      {
+        sender: string;
+        receiver: string;
+        srcChainId: BigNumberish;
+        srcTxHash: BytesLike;
+      },
+      BigNumberish,
+      BytesLike
+    ]
+  ): string;
   encodeFunctionData(functionFragment: "owner", values?: undefined): string;
-  encodeFunctionData(functionFragment: "sender", values?: undefined): string;
+  encodeFunctionData(
+    functionFragment: "renounceOwnership",
+    values?: undefined
+  ): string;
+  encodeFunctionData(
+    functionFragment: "setDstChainPayment",
+    values: [string]
+  ): string;
+  encodeFunctionData(functionFragment: "setExecutor", values: [string]): string;
   encodeFunctionData(
     functionFragment: "setMessageBus",
     values: [string]
   ): string;
-  encodeFunctionData(functionFragment: "src", values?: undefined): string;
   encodeFunctionData(
     functionFragment: "transferOwnership",
     values: [string]
   ): string;
+  encodeFunctionData(
+    functionFragment: "withdraw",
+    values: [string, string, BigNumberish]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "withdrawNative",
+    values: [string, BigNumberish]
+  ): string;
 
   decodeFunctionResult(
-    functionFragment: "executeMessage",
+    functionFragment: "dstChainPayment",
     data: BytesLike
   ): Result;
   decodeFunctionResult(
@@ -82,40 +117,119 @@ interface MessageReceiverInterface extends ethers.utils.Interface {
     functionFragment: "executeMessageWithTransferFallback",
     data: BytesLike
   ): Result;
+  decodeFunctionResult(functionFragment: "executor", data: BytesLike): Result;
+  decodeFunctionResult(functionFragment: "getChainID", data: BytesLike): Result;
+  decodeFunctionResult(functionFragment: "initialize", data: BytesLike): Result;
+  decodeFunctionResult(functionFragment: "messageBus", data: BytesLike): Result;
+  decodeFunctionResult(functionFragment: "messageId", data: BytesLike): Result;
+  decodeFunctionResult(functionFragment: "owner", data: BytesLike): Result;
   decodeFunctionResult(
-    functionFragment: "executeMessageWithTransferRefund",
+    functionFragment: "renounceOwnership",
     data: BytesLike
   ): Result;
-  decodeFunctionResult(functionFragment: "executor", data: BytesLike): Result;
-  decodeFunctionResult(functionFragment: "message", data: BytesLike): Result;
-  decodeFunctionResult(functionFragment: "messageBus", data: BytesLike): Result;
-  decodeFunctionResult(functionFragment: "owner", data: BytesLike): Result;
-  decodeFunctionResult(functionFragment: "sender", data: BytesLike): Result;
+  decodeFunctionResult(
+    functionFragment: "setDstChainPayment",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "setExecutor",
+    data: BytesLike
+  ): Result;
   decodeFunctionResult(
     functionFragment: "setMessageBus",
     data: BytesLike
   ): Result;
-  decodeFunctionResult(functionFragment: "src", data: BytesLike): Result;
   decodeFunctionResult(
     functionFragment: "transferOwnership",
     data: BytesLike
   ): Result;
+  decodeFunctionResult(functionFragment: "withdraw", data: BytesLike): Result;
+  decodeFunctionResult(
+    functionFragment: "withdrawNative",
+    data: BytesLike
+  ): Result;
 
   events: {
+    "DstChainPaymentUpdated(address)": EventFragment;
+    "ExecutorUpdated(address)": EventFragment;
     "MessageBusUpdated(address)": EventFragment;
+    "MessageWithTransferExecuted(address,address,uint256,uint64,bytes,address)": EventFragment;
+    "MessageWithTransferFailed(address,address,uint256,uint64,bytes,address,string)": EventFragment;
+    "MessageWithTransferFallback(address,address,uint256,uint64,bytes,address)": EventFragment;
+    "NativeWithdrawal(address,uint256)": EventFragment;
     "OwnershipTransferred(address,address)": EventFragment;
+    "Withdrawal(address,address,uint256)": EventFragment;
   };
 
+  getEvent(nameOrSignatureOrTopic: "DstChainPaymentUpdated"): EventFragment;
+  getEvent(nameOrSignatureOrTopic: "ExecutorUpdated"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "MessageBusUpdated"): EventFragment;
+  getEvent(
+    nameOrSignatureOrTopic: "MessageWithTransferExecuted"
+  ): EventFragment;
+  getEvent(nameOrSignatureOrTopic: "MessageWithTransferFailed"): EventFragment;
+  getEvent(
+    nameOrSignatureOrTopic: "MessageWithTransferFallback"
+  ): EventFragment;
+  getEvent(nameOrSignatureOrTopic: "NativeWithdrawal"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "OwnershipTransferred"): EventFragment;
+  getEvent(nameOrSignatureOrTopic: "Withdrawal"): EventFragment;
 }
+
+export type DstChainPaymentUpdatedEvent = TypedEvent<
+  [string] & { _dstChainPayment: string }
+>;
+
+export type ExecutorUpdatedEvent = TypedEvent<[string] & { executor: string }>;
 
 export type MessageBusUpdatedEvent = TypedEvent<
   [string] & { messageBus: string }
 >;
 
+export type MessageWithTransferExecutedEvent = TypedEvent<
+  [string, string, BigNumber, BigNumber, string, string] & {
+    sender: string;
+    token: string;
+    amount: BigNumber;
+    srcChainId: BigNumber;
+    message: string;
+    executor: string;
+  }
+>;
+
+export type MessageWithTransferFailedEvent = TypedEvent<
+  [string, string, BigNumber, BigNumber, string, string, string] & {
+    sender: string;
+    token: string;
+    amount: BigNumber;
+    srcChainId: BigNumber;
+    message: string;
+    executor: string;
+    error: string;
+  }
+>;
+
+export type MessageWithTransferFallbackEvent = TypedEvent<
+  [string, string, BigNumber, BigNumber, string, string] & {
+    _sender: string;
+    _token: string;
+    _amount: BigNumber;
+    _srcChainId: BigNumber;
+    _message: string;
+    executor: string;
+  }
+>;
+
+export type NativeWithdrawalEvent = TypedEvent<
+  [string, BigNumber] & { to: string; value: BigNumber }
+>;
+
 export type OwnershipTransferredEvent = TypedEvent<
   [string, string] & { previousOwner: string; newOwner: string }
+>;
+
+export type WithdrawalEvent = TypedEvent<
+  [string, string, BigNumber] & { token: string; to: string; value: BigNumber }
 >;
 
 export class MessageReceiver extends BaseContract {
@@ -162,20 +276,14 @@ export class MessageReceiver extends BaseContract {
   interface: MessageReceiverInterface;
 
   functions: {
-    executeMessage(
-      _sender: string,
-      _srcChainId: BigNumberish,
-      _message: BytesLike,
-      _executor: string,
-      overrides?: PayableOverrides & { from?: string | Promise<string> }
-    ): Promise<ContractTransaction>;
+    dstChainPayment(overrides?: CallOverrides): Promise<[string]>;
 
     executeMessageWithTransfer(
-      _sender: string,
-      _token: string,
-      _amount: BigNumberish,
-      _srcChainId: BigNumberish,
-      _message: BytesLike,
+      sender: string,
+      token: string,
+      amount: BigNumberish,
+      srcChainId: BigNumberish,
+      message: BytesLike,
       _executor: string,
       overrides?: PayableOverrides & { from?: string | Promise<string> }
     ): Promise<ContractTransaction>;
@@ -186,55 +294,85 @@ export class MessageReceiver extends BaseContract {
       _amount: BigNumberish,
       _srcChainId: BigNumberish,
       _message: BytesLike,
-      _executor: string,
-      overrides?: PayableOverrides & { from?: string | Promise<string> }
-    ): Promise<ContractTransaction>;
-
-    executeMessageWithTransferRefund(
-      _token: string,
-      _amount: BigNumberish,
-      _message: BytesLike,
-      _executor: string,
+      executor: string,
       overrides?: PayableOverrides & { from?: string | Promise<string> }
     ): Promise<ContractTransaction>;
 
     executor(overrides?: CallOverrides): Promise<[string]>;
 
-    message(overrides?: CallOverrides): Promise<[string]>;
+    getChainID(
+      overrides?: CallOverrides
+    ): Promise<[BigNumber] & { id: BigNumber }>;
 
-    messageBus(overrides?: CallOverrides): Promise<[string]>;
-
-    owner(overrides?: CallOverrides): Promise<[string]>;
-
-    sender(overrides?: CallOverrides): Promise<[string]>;
-
-    setMessageBus(
+    initialize(
+      owner: string,
       _messageBus: string,
+      _executor: string,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<ContractTransaction>;
 
-    src(overrides?: CallOverrides): Promise<[BigNumber]>;
+    messageBus(overrides?: CallOverrides): Promise<[string]>;
+
+    messageId(
+      route: {
+        sender: string;
+        receiver: string;
+        srcChainId: BigNumberish;
+        srcTxHash: BytesLike;
+      },
+      dstChainId: BigNumberish,
+      message: BytesLike,
+      overrides?: CallOverrides
+    ): Promise<[string]>;
+
+    owner(overrides?: CallOverrides): Promise<[string]>;
+
+    renounceOwnership(
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<ContractTransaction>;
+
+    setDstChainPayment(
+      _dstChainPayment: string,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<ContractTransaction>;
+
+    setExecutor(
+      _executor: string,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<ContractTransaction>;
+
+    setMessageBus(
+      messageBus: string,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<ContractTransaction>;
 
     transferOwnership(
       newOwner: string,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<ContractTransaction>;
+
+    withdraw(
+      token: string,
+      to: string,
+      value: BigNumberish,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<ContractTransaction>;
+
+    withdrawNative(
+      to: string,
+      value: BigNumberish,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<ContractTransaction>;
   };
 
-  executeMessage(
-    _sender: string,
-    _srcChainId: BigNumberish,
-    _message: BytesLike,
-    _executor: string,
-    overrides?: PayableOverrides & { from?: string | Promise<string> }
-  ): Promise<ContractTransaction>;
+  dstChainPayment(overrides?: CallOverrides): Promise<string>;
 
   executeMessageWithTransfer(
-    _sender: string,
-    _token: string,
-    _amount: BigNumberish,
-    _srcChainId: BigNumberish,
-    _message: BytesLike,
+    sender: string,
+    token: string,
+    amount: BigNumberish,
+    srcChainId: BigNumberish,
+    message: BytesLike,
     _executor: string,
     overrides?: PayableOverrides & { from?: string | Promise<string> }
   ): Promise<ContractTransaction>;
@@ -245,55 +383,83 @@ export class MessageReceiver extends BaseContract {
     _amount: BigNumberish,
     _srcChainId: BigNumberish,
     _message: BytesLike,
-    _executor: string,
-    overrides?: PayableOverrides & { from?: string | Promise<string> }
-  ): Promise<ContractTransaction>;
-
-  executeMessageWithTransferRefund(
-    _token: string,
-    _amount: BigNumberish,
-    _message: BytesLike,
-    _executor: string,
+    executor: string,
     overrides?: PayableOverrides & { from?: string | Promise<string> }
   ): Promise<ContractTransaction>;
 
   executor(overrides?: CallOverrides): Promise<string>;
 
-  message(overrides?: CallOverrides): Promise<string>;
+  getChainID(overrides?: CallOverrides): Promise<BigNumber>;
 
-  messageBus(overrides?: CallOverrides): Promise<string>;
-
-  owner(overrides?: CallOverrides): Promise<string>;
-
-  sender(overrides?: CallOverrides): Promise<string>;
-
-  setMessageBus(
+  initialize(
+    owner: string,
     _messageBus: string,
+    _executor: string,
     overrides?: Overrides & { from?: string | Promise<string> }
   ): Promise<ContractTransaction>;
 
-  src(overrides?: CallOverrides): Promise<BigNumber>;
+  messageBus(overrides?: CallOverrides): Promise<string>;
+
+  messageId(
+    route: {
+      sender: string;
+      receiver: string;
+      srcChainId: BigNumberish;
+      srcTxHash: BytesLike;
+    },
+    dstChainId: BigNumberish,
+    message: BytesLike,
+    overrides?: CallOverrides
+  ): Promise<string>;
+
+  owner(overrides?: CallOverrides): Promise<string>;
+
+  renounceOwnership(
+    overrides?: Overrides & { from?: string | Promise<string> }
+  ): Promise<ContractTransaction>;
+
+  setDstChainPayment(
+    _dstChainPayment: string,
+    overrides?: Overrides & { from?: string | Promise<string> }
+  ): Promise<ContractTransaction>;
+
+  setExecutor(
+    _executor: string,
+    overrides?: Overrides & { from?: string | Promise<string> }
+  ): Promise<ContractTransaction>;
+
+  setMessageBus(
+    messageBus: string,
+    overrides?: Overrides & { from?: string | Promise<string> }
+  ): Promise<ContractTransaction>;
 
   transferOwnership(
     newOwner: string,
     overrides?: Overrides & { from?: string | Promise<string> }
   ): Promise<ContractTransaction>;
 
+  withdraw(
+    token: string,
+    to: string,
+    value: BigNumberish,
+    overrides?: Overrides & { from?: string | Promise<string> }
+  ): Promise<ContractTransaction>;
+
+  withdrawNative(
+    to: string,
+    value: BigNumberish,
+    overrides?: Overrides & { from?: string | Promise<string> }
+  ): Promise<ContractTransaction>;
+
   callStatic: {
-    executeMessage(
-      _sender: string,
-      _srcChainId: BigNumberish,
-      _message: BytesLike,
-      _executor: string,
-      overrides?: CallOverrides
-    ): Promise<number>;
+    dstChainPayment(overrides?: CallOverrides): Promise<string>;
 
     executeMessageWithTransfer(
-      _sender: string,
-      _token: string,
-      _amount: BigNumberish,
-      _srcChainId: BigNumberish,
-      _message: BytesLike,
+      sender: string,
+      token: string,
+      amount: BigNumberish,
+      srcChainId: BigNumberish,
+      message: BytesLike,
       _executor: string,
       overrides?: CallOverrides
     ): Promise<number>;
@@ -304,42 +470,84 @@ export class MessageReceiver extends BaseContract {
       _amount: BigNumberish,
       _srcChainId: BigNumberish,
       _message: BytesLike,
-      _executor: string,
-      overrides?: CallOverrides
-    ): Promise<number>;
-
-    executeMessageWithTransferRefund(
-      _token: string,
-      _amount: BigNumberish,
-      _message: BytesLike,
-      _executor: string,
+      executor: string,
       overrides?: CallOverrides
     ): Promise<number>;
 
     executor(overrides?: CallOverrides): Promise<string>;
 
-    message(overrides?: CallOverrides): Promise<string>;
+    getChainID(overrides?: CallOverrides): Promise<BigNumber>;
 
-    messageBus(overrides?: CallOverrides): Promise<string>;
-
-    owner(overrides?: CallOverrides): Promise<string>;
-
-    sender(overrides?: CallOverrides): Promise<string>;
-
-    setMessageBus(
+    initialize(
+      owner: string,
       _messageBus: string,
+      _executor: string,
       overrides?: CallOverrides
     ): Promise<void>;
 
-    src(overrides?: CallOverrides): Promise<BigNumber>;
+    messageBus(overrides?: CallOverrides): Promise<string>;
+
+    messageId(
+      route: {
+        sender: string;
+        receiver: string;
+        srcChainId: BigNumberish;
+        srcTxHash: BytesLike;
+      },
+      dstChainId: BigNumberish,
+      message: BytesLike,
+      overrides?: CallOverrides
+    ): Promise<string>;
+
+    owner(overrides?: CallOverrides): Promise<string>;
+
+    renounceOwnership(overrides?: CallOverrides): Promise<void>;
+
+    setDstChainPayment(
+      _dstChainPayment: string,
+      overrides?: CallOverrides
+    ): Promise<void>;
+
+    setExecutor(_executor: string, overrides?: CallOverrides): Promise<void>;
+
+    setMessageBus(messageBus: string, overrides?: CallOverrides): Promise<void>;
 
     transferOwnership(
       newOwner: string,
       overrides?: CallOverrides
     ): Promise<void>;
+
+    withdraw(
+      token: string,
+      to: string,
+      value: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<void>;
+
+    withdrawNative(
+      to: string,
+      value: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<void>;
   };
 
   filters: {
+    "DstChainPaymentUpdated(address)"(
+      _dstChainPayment?: null
+    ): TypedEventFilter<[string], { _dstChainPayment: string }>;
+
+    DstChainPaymentUpdated(
+      _dstChainPayment?: null
+    ): TypedEventFilter<[string], { _dstChainPayment: string }>;
+
+    "ExecutorUpdated(address)"(
+      executor?: null
+    ): TypedEventFilter<[string], { executor: string }>;
+
+    ExecutorUpdated(
+      executor?: null
+    ): TypedEventFilter<[string], { executor: string }>;
+
     "MessageBusUpdated(address)"(
       messageBus?: null
     ): TypedEventFilter<[string], { messageBus: string }>;
@@ -347,6 +555,134 @@ export class MessageReceiver extends BaseContract {
     MessageBusUpdated(
       messageBus?: null
     ): TypedEventFilter<[string], { messageBus: string }>;
+
+    "MessageWithTransferExecuted(address,address,uint256,uint64,bytes,address)"(
+      sender?: null,
+      token?: null,
+      amount?: null,
+      srcChainId?: null,
+      message?: null,
+      executor?: null
+    ): TypedEventFilter<
+      [string, string, BigNumber, BigNumber, string, string],
+      {
+        sender: string;
+        token: string;
+        amount: BigNumber;
+        srcChainId: BigNumber;
+        message: string;
+        executor: string;
+      }
+    >;
+
+    MessageWithTransferExecuted(
+      sender?: null,
+      token?: null,
+      amount?: null,
+      srcChainId?: null,
+      message?: null,
+      executor?: null
+    ): TypedEventFilter<
+      [string, string, BigNumber, BigNumber, string, string],
+      {
+        sender: string;
+        token: string;
+        amount: BigNumber;
+        srcChainId: BigNumber;
+        message: string;
+        executor: string;
+      }
+    >;
+
+    "MessageWithTransferFailed(address,address,uint256,uint64,bytes,address,string)"(
+      sender?: null,
+      token?: null,
+      amount?: null,
+      srcChainId?: null,
+      message?: null,
+      executor?: null,
+      error?: null
+    ): TypedEventFilter<
+      [string, string, BigNumber, BigNumber, string, string, string],
+      {
+        sender: string;
+        token: string;
+        amount: BigNumber;
+        srcChainId: BigNumber;
+        message: string;
+        executor: string;
+        error: string;
+      }
+    >;
+
+    MessageWithTransferFailed(
+      sender?: null,
+      token?: null,
+      amount?: null,
+      srcChainId?: null,
+      message?: null,
+      executor?: null,
+      error?: null
+    ): TypedEventFilter<
+      [string, string, BigNumber, BigNumber, string, string, string],
+      {
+        sender: string;
+        token: string;
+        amount: BigNumber;
+        srcChainId: BigNumber;
+        message: string;
+        executor: string;
+        error: string;
+      }
+    >;
+
+    "MessageWithTransferFallback(address,address,uint256,uint64,bytes,address)"(
+      _sender?: null,
+      _token?: null,
+      _amount?: null,
+      _srcChainId?: null,
+      _message?: null,
+      executor?: null
+    ): TypedEventFilter<
+      [string, string, BigNumber, BigNumber, string, string],
+      {
+        _sender: string;
+        _token: string;
+        _amount: BigNumber;
+        _srcChainId: BigNumber;
+        _message: string;
+        executor: string;
+      }
+    >;
+
+    MessageWithTransferFallback(
+      _sender?: null,
+      _token?: null,
+      _amount?: null,
+      _srcChainId?: null,
+      _message?: null,
+      executor?: null
+    ): TypedEventFilter<
+      [string, string, BigNumber, BigNumber, string, string],
+      {
+        _sender: string;
+        _token: string;
+        _amount: BigNumber;
+        _srcChainId: BigNumber;
+        _message: string;
+        executor: string;
+      }
+    >;
+
+    "NativeWithdrawal(address,uint256)"(
+      to?: null,
+      value?: null
+    ): TypedEventFilter<[string, BigNumber], { to: string; value: BigNumber }>;
+
+    NativeWithdrawal(
+      to?: null,
+      value?: null
+    ): TypedEventFilter<[string, BigNumber], { to: string; value: BigNumber }>;
 
     "OwnershipTransferred(address,address)"(
       previousOwner?: string | null,
@@ -363,23 +699,35 @@ export class MessageReceiver extends BaseContract {
       [string, string],
       { previousOwner: string; newOwner: string }
     >;
+
+    "Withdrawal(address,address,uint256)"(
+      token?: null,
+      to?: null,
+      value?: null
+    ): TypedEventFilter<
+      [string, string, BigNumber],
+      { token: string; to: string; value: BigNumber }
+    >;
+
+    Withdrawal(
+      token?: null,
+      to?: null,
+      value?: null
+    ): TypedEventFilter<
+      [string, string, BigNumber],
+      { token: string; to: string; value: BigNumber }
+    >;
   };
 
   estimateGas: {
-    executeMessage(
-      _sender: string,
-      _srcChainId: BigNumberish,
-      _message: BytesLike,
-      _executor: string,
-      overrides?: PayableOverrides & { from?: string | Promise<string> }
-    ): Promise<BigNumber>;
+    dstChainPayment(overrides?: CallOverrides): Promise<BigNumber>;
 
     executeMessageWithTransfer(
-      _sender: string,
-      _token: string,
-      _amount: BigNumberish,
-      _srcChainId: BigNumberish,
-      _message: BytesLike,
+      sender: string,
+      token: string,
+      amount: BigNumberish,
+      srcChainId: BigNumberish,
+      message: BytesLike,
       _executor: string,
       overrides?: PayableOverrides & { from?: string | Promise<string> }
     ): Promise<BigNumber>;
@@ -390,56 +738,84 @@ export class MessageReceiver extends BaseContract {
       _amount: BigNumberish,
       _srcChainId: BigNumberish,
       _message: BytesLike,
-      _executor: string,
-      overrides?: PayableOverrides & { from?: string | Promise<string> }
-    ): Promise<BigNumber>;
-
-    executeMessageWithTransferRefund(
-      _token: string,
-      _amount: BigNumberish,
-      _message: BytesLike,
-      _executor: string,
+      executor: string,
       overrides?: PayableOverrides & { from?: string | Promise<string> }
     ): Promise<BigNumber>;
 
     executor(overrides?: CallOverrides): Promise<BigNumber>;
 
-    message(overrides?: CallOverrides): Promise<BigNumber>;
+    getChainID(overrides?: CallOverrides): Promise<BigNumber>;
 
-    messageBus(overrides?: CallOverrides): Promise<BigNumber>;
-
-    owner(overrides?: CallOverrides): Promise<BigNumber>;
-
-    sender(overrides?: CallOverrides): Promise<BigNumber>;
-
-    setMessageBus(
+    initialize(
+      owner: string,
       _messageBus: string,
+      _executor: string,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<BigNumber>;
 
-    src(overrides?: CallOverrides): Promise<BigNumber>;
+    messageBus(overrides?: CallOverrides): Promise<BigNumber>;
+
+    messageId(
+      route: {
+        sender: string;
+        receiver: string;
+        srcChainId: BigNumberish;
+        srcTxHash: BytesLike;
+      },
+      dstChainId: BigNumberish,
+      message: BytesLike,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
+
+    owner(overrides?: CallOverrides): Promise<BigNumber>;
+
+    renounceOwnership(
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<BigNumber>;
+
+    setDstChainPayment(
+      _dstChainPayment: string,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<BigNumber>;
+
+    setExecutor(
+      _executor: string,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<BigNumber>;
+
+    setMessageBus(
+      messageBus: string,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<BigNumber>;
 
     transferOwnership(
       newOwner: string,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<BigNumber>;
+
+    withdraw(
+      token: string,
+      to: string,
+      value: BigNumberish,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<BigNumber>;
+
+    withdrawNative(
+      to: string,
+      value: BigNumberish,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<BigNumber>;
   };
 
   populateTransaction: {
-    executeMessage(
-      _sender: string,
-      _srcChainId: BigNumberish,
-      _message: BytesLike,
-      _executor: string,
-      overrides?: PayableOverrides & { from?: string | Promise<string> }
-    ): Promise<PopulatedTransaction>;
+    dstChainPayment(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
     executeMessageWithTransfer(
-      _sender: string,
-      _token: string,
-      _amount: BigNumberish,
-      _srcChainId: BigNumberish,
-      _message: BytesLike,
+      sender: string,
+      token: string,
+      amount: BigNumberish,
+      srcChainId: BigNumberish,
+      message: BytesLike,
       _executor: string,
       overrides?: PayableOverrides & { from?: string | Promise<string> }
     ): Promise<PopulatedTransaction>;
@@ -450,37 +826,71 @@ export class MessageReceiver extends BaseContract {
       _amount: BigNumberish,
       _srcChainId: BigNumberish,
       _message: BytesLike,
-      _executor: string,
-      overrides?: PayableOverrides & { from?: string | Promise<string> }
-    ): Promise<PopulatedTransaction>;
-
-    executeMessageWithTransferRefund(
-      _token: string,
-      _amount: BigNumberish,
-      _message: BytesLike,
-      _executor: string,
+      executor: string,
       overrides?: PayableOverrides & { from?: string | Promise<string> }
     ): Promise<PopulatedTransaction>;
 
     executor(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
-    message(overrides?: CallOverrides): Promise<PopulatedTransaction>;
+    getChainID(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
-    messageBus(overrides?: CallOverrides): Promise<PopulatedTransaction>;
-
-    owner(overrides?: CallOverrides): Promise<PopulatedTransaction>;
-
-    sender(overrides?: CallOverrides): Promise<PopulatedTransaction>;
-
-    setMessageBus(
+    initialize(
+      owner: string,
       _messageBus: string,
+      _executor: string,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<PopulatedTransaction>;
 
-    src(overrides?: CallOverrides): Promise<PopulatedTransaction>;
+    messageBus(overrides?: CallOverrides): Promise<PopulatedTransaction>;
+
+    messageId(
+      route: {
+        sender: string;
+        receiver: string;
+        srcChainId: BigNumberish;
+        srcTxHash: BytesLike;
+      },
+      dstChainId: BigNumberish,
+      message: BytesLike,
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
+
+    owner(overrides?: CallOverrides): Promise<PopulatedTransaction>;
+
+    renounceOwnership(
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<PopulatedTransaction>;
+
+    setDstChainPayment(
+      _dstChainPayment: string,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<PopulatedTransaction>;
+
+    setExecutor(
+      _executor: string,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<PopulatedTransaction>;
+
+    setMessageBus(
+      messageBus: string,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<PopulatedTransaction>;
 
     transferOwnership(
       newOwner: string,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<PopulatedTransaction>;
+
+    withdraw(
+      token: string,
+      to: string,
+      value: BigNumberish,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<PopulatedTransaction>;
+
+    withdrawNative(
+      to: string,
+      value: BigNumberish,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<PopulatedTransaction>;
   };

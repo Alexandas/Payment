@@ -16,8 +16,14 @@ const _abi = [
         name: "provider",
         type: "address",
       },
+      {
+        indexed: false,
+        internalType: "address",
+        name: "wallet",
+        type: "address",
+      },
     ],
-    name: "AddProvider",
+    name: "ProviderUpdated",
     type: "event",
   },
   {
@@ -79,6 +85,25 @@ const _abi = [
       },
     ],
     stateMutability: "nonpayable",
+    type: "function",
+  },
+  {
+    inputs: [
+      {
+        internalType: "address",
+        name: "provider",
+        type: "address",
+      },
+    ],
+    name: "wallets",
+    outputs: [
+      {
+        internalType: "address",
+        name: "",
+        type: "address",
+      },
+    ],
+    stateMutability: "view",
     type: "function",
   },
 ];
