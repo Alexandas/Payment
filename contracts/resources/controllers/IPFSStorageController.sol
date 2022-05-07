@@ -102,7 +102,7 @@ contract IPFSStorageController is IIPFSStorageController, DstChainPaymentWrapper
 		if (isExpired(account)) {
 			require(expandedStorageFee > 0 && expandedExpirationFee > 0, 'IPFSStorageController: invalid params with expired account');
 			expandedStorage = expandedStorageFee.div(price());
-			expandedExpiration = expandedExpirationFee.div(expandedStorage);
+			expandedExpiration = expandedExpirationFee.div(expandedStorageFee);
 		} else {
 			require(expandedStorageFee > 0 || expandedExpirationFee > 0, 'IPFSStorageController: invalid params');
 			expandedStorage = expandedStorageFee.div(getValueOf(availableExpiration(account)));

@@ -62,18 +62,19 @@ contract Providers is IProviders, OwnableUpgradeable {
 		_removeProvider(provider);
 	}
 
-	function _removeProvider(address provider) internal {
-		require(isProvider(provider), 'Providers: nonexistent provider');
-		emit RemoveProvider(provider);
-		delete providers[provider];
-	}
-
 	function _addProvider(address provider, address wallet) internal {
 		require(!isProvider(provider), 'Providers: provider existed');
 		providers[provider] = true;
 		wallets[provider] = wallet;
 
 		emit ProviderUpdated(provider, wallet);
+	}
+
+	function _removeProvider(address provider) internal {
+		require(isProvider(provider), 'Providers: nonexistent provider');
+		delete providers[provider];
+	
+		emit RemoveProvider(provider);
 	}
 
 	function isValidSignature(

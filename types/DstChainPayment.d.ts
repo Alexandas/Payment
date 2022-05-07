@@ -28,6 +28,7 @@ interface DstChainPaymentInterface extends ethers.utils.Interface {
     "buildingTimeController()": FunctionFragment;
     "convertSourceChainPayloads(uint256,tuple[])": FunctionFragment;
     "decodeSourceChainMessage(bytes)": FunctionFragment;
+    "initialize(address,address,address,address,address)": FunctionFragment;
     "ipfsStorageController()": FunctionFragment;
     "isPauser(address)": FunctionFragment;
     "messageReceiver()": FunctionFragment;
@@ -84,6 +85,10 @@ interface DstChainPaymentInterface extends ethers.utils.Interface {
   encodeFunctionData(
     functionFragment: "decodeSourceChainMessage",
     values: [BytesLike]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "initialize",
+    values: [string, string, string, string, string]
   ): string;
   encodeFunctionData(
     functionFragment: "ipfsStorageController",
@@ -199,6 +204,7 @@ interface DstChainPaymentInterface extends ethers.utils.Interface {
     functionFragment: "decodeSourceChainMessage",
     data: BytesLike
   ): Result;
+  decodeFunctionResult(functionFragment: "initialize", data: BytesLike): Result;
   decodeFunctionResult(
     functionFragment: "ipfsStorageController",
     data: BytesLike
@@ -506,6 +512,15 @@ export class DstChainPayment extends BaseContract {
       }
     >;
 
+    initialize(
+      owner: string,
+      pauser: string,
+      providers: string,
+      messageReceiver: string,
+      token: string,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<ContractTransaction>;
+
     ipfsStorageController(overrides?: CallOverrides): Promise<[string]>;
 
     isPauser(account: string, overrides?: CallOverrides): Promise<[boolean]>;
@@ -674,6 +689,15 @@ export class DstChainPayment extends BaseContract {
     }
   >;
 
+  initialize(
+    owner: string,
+    pauser: string,
+    providers: string,
+    messageReceiver: string,
+    token: string,
+    overrides?: Overrides & { from?: string | Promise<string> }
+  ): Promise<ContractTransaction>;
+
   ipfsStorageController(overrides?: CallOverrides): Promise<string>;
 
   isPauser(account: string, overrides?: CallOverrides): Promise<boolean>;
@@ -838,6 +862,15 @@ export class DstChainPayment extends BaseContract {
         })[];
       }
     >;
+
+    initialize(
+      owner: string,
+      pauser: string,
+      providers: string,
+      messageReceiver: string,
+      token: string,
+      overrides?: CallOverrides
+    ): Promise<void>;
 
     ipfsStorageController(overrides?: CallOverrides): Promise<string>;
 
@@ -1223,6 +1256,15 @@ export class DstChainPayment extends BaseContract {
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
+    initialize(
+      owner: string,
+      pauser: string,
+      providers: string,
+      messageReceiver: string,
+      token: string,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<BigNumber>;
+
     ipfsStorageController(overrides?: CallOverrides): Promise<BigNumber>;
 
     isPauser(account: string, overrides?: CallOverrides): Promise<BigNumber>;
@@ -1379,6 +1421,15 @@ export class DstChainPayment extends BaseContract {
     decodeSourceChainMessage(
       message: BytesLike,
       overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
+
+    initialize(
+      owner: string,
+      pauser: string,
+      providers: string,
+      messageReceiver: string,
+      token: string,
+      overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<PopulatedTransaction>;
 
     ipfsStorageController(

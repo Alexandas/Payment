@@ -77,6 +77,38 @@ declare module "hardhat/types/runtime" {
       signerOrOptions?: ethers.Signer | FactoryOptions
     ): Promise<Contracts.IERC20Upgradeable__factory>;
     getContractFactory(
+      name: "Ownable",
+      signerOrOptions?: ethers.Signer | FactoryOptions
+    ): Promise<Contracts.Ownable__factory>;
+    getContractFactory(
+      name: "IERC1822Proxiable",
+      signerOrOptions?: ethers.Signer | FactoryOptions
+    ): Promise<Contracts.IERC1822Proxiable__factory>;
+    getContractFactory(
+      name: "IBeacon",
+      signerOrOptions?: ethers.Signer | FactoryOptions
+    ): Promise<Contracts.IBeacon__factory>;
+    getContractFactory(
+      name: "ERC1967Proxy",
+      signerOrOptions?: ethers.Signer | FactoryOptions
+    ): Promise<Contracts.ERC1967Proxy__factory>;
+    getContractFactory(
+      name: "ERC1967Upgrade",
+      signerOrOptions?: ethers.Signer | FactoryOptions
+    ): Promise<Contracts.ERC1967Upgrade__factory>;
+    getContractFactory(
+      name: "Proxy",
+      signerOrOptions?: ethers.Signer | FactoryOptions
+    ): Promise<Contracts.Proxy__factory>;
+    getContractFactory(
+      name: "ProxyAdmin",
+      signerOrOptions?: ethers.Signer | FactoryOptions
+    ): Promise<Contracts.ProxyAdmin__factory>;
+    getContractFactory(
+      name: "TransparentUpgradeableProxy",
+      signerOrOptions?: ethers.Signer | FactoryOptions
+    ): Promise<Contracts.TransparentUpgradeableProxy__factory>;
+    getContractFactory(
       name: "IERC20",
       signerOrOptions?: ethers.Signer | FactoryOptions
     ): Promise<Contracts.IERC20__factory>;
@@ -113,21 +145,17 @@ declare module "hardhat/types/runtime" {
       signerOrOptions?: ethers.Signer | FactoryOptions
     ): Promise<Contracts.IProvidersWrapper__factory>;
     getContractFactory(
-      name: "MessageReceiverUpgradeable",
+      name: "MessageReceiver",
       signerOrOptions?: ethers.Signer | FactoryOptions
-    ): Promise<Contracts.MessageReceiverUpgradeable__factory>;
+    ): Promise<Contracts.MessageReceiver__factory>;
     getContractFactory(
       name: "MessageReceiverWrapper",
       signerOrOptions?: ethers.Signer | FactoryOptions
     ): Promise<Contracts.MessageReceiverWrapper__factory>;
     getContractFactory(
-      name: "MessageSenderUpgradeable",
+      name: "MessageSender",
       signerOrOptions?: ethers.Signer | FactoryOptions
-    ): Promise<Contracts.MessageSenderUpgradeable__factory>;
-    getContractFactory(
-      name: "MsgTest",
-      signerOrOptions?: ethers.Signer | FactoryOptions
-    ): Promise<Contracts.MsgTest__factory>;
+    ): Promise<Contracts.MessageSender__factory>;
     getContractFactory(
       name: "Token",
       signerOrOptions?: ethers.Signer | FactoryOptions
@@ -156,6 +184,14 @@ declare module "hardhat/types/runtime" {
       name: "ProvidersWrapper",
       signerOrOptions?: ethers.Signer | FactoryOptions
     ): Promise<Contracts.ProvidersWrapper__factory>;
+    getContractFactory(
+      name: "Admin",
+      signerOrOptions?: ethers.Signer | FactoryOptions
+    ): Promise<Contracts.Admin__factory>;
+    getContractFactory(
+      name: "ContractProxy",
+      signerOrOptions?: ethers.Signer | FactoryOptions
+    ): Promise<Contracts.ContractProxy__factory>;
     getContractFactory(
       name: "AdaptorWrapper",
       signerOrOptions?: ethers.Signer | FactoryOptions
@@ -237,45 +273,9 @@ declare module "hardhat/types/runtime" {
       signerOrOptions?: ethers.Signer | FactoryOptions
     ): Promise<Contracts.IPeggedTokenBridgeV2__factory>;
     getContractFactory(
-      name: "ISigsVerifier",
-      signerOrOptions?: ethers.Signer | FactoryOptions
-    ): Promise<Contracts.ISigsVerifier__factory>;
-    getContractFactory(
-      name: "MessageBusAddress",
-      signerOrOptions?: ethers.Signer | FactoryOptions
-    ): Promise<Contracts.MessageBusAddress__factory>;
-    getContractFactory(
-      name: "MessageReceiverApp",
-      signerOrOptions?: ethers.Signer | FactoryOptions
-    ): Promise<Contracts.MessageReceiverApp__factory>;
-    getContractFactory(
-      name: "MessageSenderApp",
-      signerOrOptions?: ethers.Signer | FactoryOptions
-    ): Promise<Contracts.MessageSenderApp__factory>;
-    getContractFactory(
       name: "IMessageBus",
       signerOrOptions?: ethers.Signer | FactoryOptions
     ): Promise<Contracts.IMessageBus__factory>;
-    getContractFactory(
-      name: "IMessageReceiverApp",
-      signerOrOptions?: ethers.Signer | FactoryOptions
-    ): Promise<Contracts.IMessageReceiverApp__factory>;
-    getContractFactory(
-      name: "MessageBus",
-      signerOrOptions?: ethers.Signer | FactoryOptions
-    ): Promise<Contracts.MessageBus__factory>;
-    getContractFactory(
-      name: "MessageBusReceiver",
-      signerOrOptions?: ethers.Signer | FactoryOptions
-    ): Promise<Contracts.MessageBusReceiver__factory>;
-    getContractFactory(
-      name: "MessageBusSender",
-      signerOrOptions?: ethers.Signer | FactoryOptions
-    ): Promise<Contracts.MessageBusSender__factory>;
-    getContractFactory(
-      name: "Ownable",
-      signerOrOptions?: ethers.Signer | FactoryOptions
-    ): Promise<Contracts.Ownable__factory>;
 
     getContractAt(
       name: "FallbackManager",
@@ -358,6 +358,46 @@ declare module "hardhat/types/runtime" {
       signer?: ethers.Signer
     ): Promise<Contracts.IERC20Upgradeable>;
     getContractAt(
+      name: "Ownable",
+      address: string,
+      signer?: ethers.Signer
+    ): Promise<Contracts.Ownable>;
+    getContractAt(
+      name: "IERC1822Proxiable",
+      address: string,
+      signer?: ethers.Signer
+    ): Promise<Contracts.IERC1822Proxiable>;
+    getContractAt(
+      name: "IBeacon",
+      address: string,
+      signer?: ethers.Signer
+    ): Promise<Contracts.IBeacon>;
+    getContractAt(
+      name: "ERC1967Proxy",
+      address: string,
+      signer?: ethers.Signer
+    ): Promise<Contracts.ERC1967Proxy>;
+    getContractAt(
+      name: "ERC1967Upgrade",
+      address: string,
+      signer?: ethers.Signer
+    ): Promise<Contracts.ERC1967Upgrade>;
+    getContractAt(
+      name: "Proxy",
+      address: string,
+      signer?: ethers.Signer
+    ): Promise<Contracts.Proxy>;
+    getContractAt(
+      name: "ProxyAdmin",
+      address: string,
+      signer?: ethers.Signer
+    ): Promise<Contracts.ProxyAdmin>;
+    getContractAt(
+      name: "TransparentUpgradeableProxy",
+      address: string,
+      signer?: ethers.Signer
+    ): Promise<Contracts.TransparentUpgradeableProxy>;
+    getContractAt(
       name: "IERC20",
       address: string,
       signer?: ethers.Signer
@@ -403,25 +443,20 @@ declare module "hardhat/types/runtime" {
       signer?: ethers.Signer
     ): Promise<Contracts.IProvidersWrapper>;
     getContractAt(
-      name: "MessageReceiverUpgradeable",
+      name: "MessageReceiver",
       address: string,
       signer?: ethers.Signer
-    ): Promise<Contracts.MessageReceiverUpgradeable>;
+    ): Promise<Contracts.MessageReceiver>;
     getContractAt(
       name: "MessageReceiverWrapper",
       address: string,
       signer?: ethers.Signer
     ): Promise<Contracts.MessageReceiverWrapper>;
     getContractAt(
-      name: "MessageSenderUpgradeable",
+      name: "MessageSender",
       address: string,
       signer?: ethers.Signer
-    ): Promise<Contracts.MessageSenderUpgradeable>;
-    getContractAt(
-      name: "MsgTest",
-      address: string,
-      signer?: ethers.Signer
-    ): Promise<Contracts.MsgTest>;
+    ): Promise<Contracts.MessageSender>;
     getContractAt(
       name: "Token",
       address: string,
@@ -457,6 +492,16 @@ declare module "hardhat/types/runtime" {
       address: string,
       signer?: ethers.Signer
     ): Promise<Contracts.ProvidersWrapper>;
+    getContractAt(
+      name: "Admin",
+      address: string,
+      signer?: ethers.Signer
+    ): Promise<Contracts.Admin>;
+    getContractAt(
+      name: "ContractProxy",
+      address: string,
+      signer?: ethers.Signer
+    ): Promise<Contracts.ContractProxy>;
     getContractAt(
       name: "AdaptorWrapper",
       address: string,
@@ -558,55 +603,10 @@ declare module "hardhat/types/runtime" {
       signer?: ethers.Signer
     ): Promise<Contracts.IPeggedTokenBridgeV2>;
     getContractAt(
-      name: "ISigsVerifier",
-      address: string,
-      signer?: ethers.Signer
-    ): Promise<Contracts.ISigsVerifier>;
-    getContractAt(
-      name: "MessageBusAddress",
-      address: string,
-      signer?: ethers.Signer
-    ): Promise<Contracts.MessageBusAddress>;
-    getContractAt(
-      name: "MessageReceiverApp",
-      address: string,
-      signer?: ethers.Signer
-    ): Promise<Contracts.MessageReceiverApp>;
-    getContractAt(
-      name: "MessageSenderApp",
-      address: string,
-      signer?: ethers.Signer
-    ): Promise<Contracts.MessageSenderApp>;
-    getContractAt(
       name: "IMessageBus",
       address: string,
       signer?: ethers.Signer
     ): Promise<Contracts.IMessageBus>;
-    getContractAt(
-      name: "IMessageReceiverApp",
-      address: string,
-      signer?: ethers.Signer
-    ): Promise<Contracts.IMessageReceiverApp>;
-    getContractAt(
-      name: "MessageBus",
-      address: string,
-      signer?: ethers.Signer
-    ): Promise<Contracts.MessageBus>;
-    getContractAt(
-      name: "MessageBusReceiver",
-      address: string,
-      signer?: ethers.Signer
-    ): Promise<Contracts.MessageBusReceiver>;
-    getContractAt(
-      name: "MessageBusSender",
-      address: string,
-      signer?: ethers.Signer
-    ): Promise<Contracts.MessageBusSender>;
-    getContractAt(
-      name: "Ownable",
-      address: string,
-      signer?: ethers.Signer
-    ): Promise<Contracts.Ownable>;
 
     // default types
     getContractFactory(

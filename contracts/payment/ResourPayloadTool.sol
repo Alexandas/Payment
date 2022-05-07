@@ -12,7 +12,7 @@ abstract contract ResourPayloadTool {
 	function _convertSourceChainPayloads(uint256 dstAmount, ResourceData.Payload[] memory payloads) internal pure returns (ResourceData.Payload[] memory newPayloads) {
 		require(payloads.length > 0, 'ResourPayloadTool: invalid payload length');
 		uint256 total = totalValue(payloads);
-		require(total > 0, 'ResourPayloadTool: zero values');
+		require(total > 0, 'ResourPayloadTool: zero total value');
 		for (uint256 i = 0; i < payloads.length; i++) {
 			require(payloads[i].values.length > 0, 'ResourPayloadTool: invalid value length');
 			for (uint256 j = 0; j < payloads[i].values.length; j++) {

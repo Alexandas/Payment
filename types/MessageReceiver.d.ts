@@ -26,7 +26,6 @@ interface MessageReceiverInterface extends ethers.utils.Interface {
     "executeMessageWithTransfer(address,address,uint256,uint64,bytes,address)": FunctionFragment;
     "executeMessageWithTransferFallback(address,address,uint256,uint64,bytes,address)": FunctionFragment;
     "executor()": FunctionFragment;
-    "getChainID()": FunctionFragment;
     "initialize(address,address,address)": FunctionFragment;
     "messageBus()": FunctionFragment;
     "messageId((address,address,uint64,bytes32),uint64,bytes)": FunctionFragment;
@@ -53,10 +52,6 @@ interface MessageReceiverInterface extends ethers.utils.Interface {
     values: [string, string, BigNumberish, BigNumberish, BytesLike, string]
   ): string;
   encodeFunctionData(functionFragment: "executor", values?: undefined): string;
-  encodeFunctionData(
-    functionFragment: "getChainID",
-    values?: undefined
-  ): string;
   encodeFunctionData(
     functionFragment: "initialize",
     values: [string, string, string]
@@ -118,7 +113,6 @@ interface MessageReceiverInterface extends ethers.utils.Interface {
     data: BytesLike
   ): Result;
   decodeFunctionResult(functionFragment: "executor", data: BytesLike): Result;
-  decodeFunctionResult(functionFragment: "getChainID", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "initialize", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "messageBus", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "messageId", data: BytesLike): Result;
@@ -154,7 +148,7 @@ interface MessageReceiverInterface extends ethers.utils.Interface {
     "ExecutorUpdated(address)": EventFragment;
     "MessageBusUpdated(address)": EventFragment;
     "MessageWithTransferExecuted(address,address,uint256,uint64,bytes,address)": EventFragment;
-    "MessageWithTransferFailed(address,address,uint256,uint64,bytes,address,string)": EventFragment;
+    "MessageWithTransferFailed(address,address,uint256,uint64,bytes,address,bytes)": EventFragment;
     "MessageWithTransferFallback(address,address,uint256,uint64,bytes,address)": EventFragment;
     "NativeWithdrawal(address,uint256)": EventFragment;
     "OwnershipTransferred(address,address)": EventFragment;
@@ -300,10 +294,6 @@ export class MessageReceiver extends BaseContract {
 
     executor(overrides?: CallOverrides): Promise<[string]>;
 
-    getChainID(
-      overrides?: CallOverrides
-    ): Promise<[BigNumber] & { id: BigNumber }>;
-
     initialize(
       owner: string,
       _messageBus: string,
@@ -389,8 +379,6 @@ export class MessageReceiver extends BaseContract {
 
   executor(overrides?: CallOverrides): Promise<string>;
 
-  getChainID(overrides?: CallOverrides): Promise<BigNumber>;
-
   initialize(
     owner: string,
     _messageBus: string,
@@ -475,8 +463,6 @@ export class MessageReceiver extends BaseContract {
     ): Promise<number>;
 
     executor(overrides?: CallOverrides): Promise<string>;
-
-    getChainID(overrides?: CallOverrides): Promise<BigNumber>;
 
     initialize(
       owner: string,
@@ -594,7 +580,7 @@ export class MessageReceiver extends BaseContract {
       }
     >;
 
-    "MessageWithTransferFailed(address,address,uint256,uint64,bytes,address,string)"(
+    "MessageWithTransferFailed(address,address,uint256,uint64,bytes,address,bytes)"(
       sender?: null,
       token?: null,
       amount?: null,
@@ -744,8 +730,6 @@ export class MessageReceiver extends BaseContract {
 
     executor(overrides?: CallOverrides): Promise<BigNumber>;
 
-    getChainID(overrides?: CallOverrides): Promise<BigNumber>;
-
     initialize(
       owner: string,
       _messageBus: string,
@@ -831,8 +815,6 @@ export class MessageReceiver extends BaseContract {
     ): Promise<PopulatedTransaction>;
 
     executor(overrides?: CallOverrides): Promise<PopulatedTransaction>;
-
-    getChainID(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
     initialize(
       owner: string,

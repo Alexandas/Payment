@@ -44,6 +44,18 @@ contract SrcChainPayment is OwnerWithdrawable, Pauser, ResourPayloadTool, Reentr
 		__Init_Token(token);
 	}
 
+	function initialize(
+		address owner,
+		address pauser,
+		IMessageSender _messageSender,
+		IERC20Upgradeable token
+	) external initializer {
+		_transferOwnership(owner);
+		__Init_Pauser(pauser);
+		__Init_Message_Sender(_messageSender);
+		__Init_Token(token);
+	}
+
 	function Init_Payment(
 		address owner,
 		address pauser,

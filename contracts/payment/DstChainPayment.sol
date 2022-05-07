@@ -41,6 +41,20 @@ contract DstChainPayment is
 		__Init_Token(token);
 	}
 
+	function initialize(
+		address owner,
+		address pauser,
+		IProviders providers,
+		address messageReceiver,
+		IERC20Upgradeable token
+	) external initializer {
+		_transferOwnership(owner);
+		__Init_Pauser(pauser);
+		__Init_Providers(providers);
+		__Init_Message_Receiver(messageReceiver);
+		__Init_Token(token);
+	}
+
 	function Init_Payment(
 		address owner,
 		address pauser,
@@ -71,37 +85,50 @@ contract DstChainPayment is
 		require(token == _token, 'DstChainPayment: invalid token');
 		(address provider, uint64 nonce, bytes32 account, ResourceData.Payload[] memory payloads) = decodeSourceChainMessage(message);
 		PaymentPayload memory payload = PaymentPayload(provider, nonce, account, _convertSourceChainPayloads(matchResourceDecimals(dstAmount), payloads));
-		return _pay(payload);
-	}
-
-	function pay(PaymentPayload memory payload) public override whenNotPaused nonReentrant returns (uint256 value) {
-		return _pay(payload);
-	}
-
-	function _pay(PaymentPayload memory payload) internal returns (uint256 value) {
-		require(providers.isProvider(payload.provider), 'DstChainPayment: nonexistent provider');
-		value = _processPayloads(payload.account, payload.payloads);
-		value = matchTokenDecimals(value);
-		token.safeTransferFrom(msg.sender, address(this), value);
-		providerBalances[payload.provider] = providerBalances[payload.provider].add(value);
+		_processPayloads(payload.account, payload.payloads, false);
+		_pay(payload.provider, dstAmount);
 
 		emit Paid(msg.sender, token, payload);
 	}
 
-	function _processPayloads(bytes32 account, ResourceData.Payload[] memory payloads) internal returns (uint256 value) {
+	function pay(PaymentPayload memory payload) public override whenNotPaused nonReentrant returns (uint256 value) {
+		value = _processPayloads(payload.account, payload.payloads, true);
+		value = matchTokenDecimals(value);
+		_pay(payload.provider, value);
+	
+		emit Paid(msg.sender, token, payload);
+	}
+
+	function _pay(address provider, uint256 amount) internal returns (uint256 value) {
+		require(providers.isProvider(provider), 'DstChainPayment: nonexistent provider');
+		token.safeTransferFrom(msg.sender, address(this), amount);
+		providerBalances[provider] = providerBalances[provider].add(amount);
+
+	}
+
+	function _processPayloads(bytes32 account, ResourceData.Payload[] memory payloads, bool withValue) internal returns (uint256 value) {
 		require(payloads.length > 0, 'DstChainPayment: invalid payloads');
 		for (uint256 i = 0; i < payloads.length; i++) {
 			ResourceData.Payload memory payload = payloads[i];
 			if (payload.resourceType == ResourceData.ResourceType.BuildingTime) {
-				value = value.add(_processNormalResource(buildingTimeController, account, payload));
+				require(payload.values.length == 1, 'DstChainPayment: invalid value length for BuildingTime');
+				buildingTimeController.expand(account, payload.values[0]);
 			} else if (payload.resourceType == ResourceData.ResourceType.ARStorage) {
-				value = value.add(_processNormalResource(arStorageController, account, payload));
+				require(payload.values.length == 1, 'DstChainPayment: invalid value length for ARStorage');
+				arStorageController.expand(account, payload.values[0]);
 			} else if (payload.resourceType == ResourceData.ResourceType.Bandwidth) {
-				value = value.add(_processNormalResource(bandwidthController, account, payload));
+				require(payload.values.length == 1, 'DstChainPayment: invalid value length for Bandwidth');
+				bandwidthController.expand(account, payload.values[0]);
 			} else if (payload.resourceType == ResourceData.ResourceType.IPFSStorage) {
-				value = value.add(_processIPFSStorage(ipfsStorageController, account, payload));
+				require(payload.values.length == 2, 'DstChainPayment: invalid value length for IPFSStorage');
+				ipfsStorageController.expand(account, payload.values[0], payload.values[1]);
 			} else {
 				revert('DstChainPayment: unknown resource type');
+			}
+			if (withValue) {
+				for (uint256 j = 0; j < payload.values.length; j++) {
+					value = value.add(payload.values[0]);
+				}
 			}
 		}
 	}
@@ -112,24 +139,6 @@ contract DstChainPayment is
 
 	function matchTokenDecimals(uint256 amount) internal view returns (uint256 value) {
 		return amount.div(10**12);
-	}
-
-	function _processNormalResource(
-		INormalResourceController controller,
-		bytes32 account,
-		ResourceData.Payload memory payload
-	) internal returns (uint256 value) {
-		require(payload.values.length == 1, 'DstChainPayment: invalid token value length');
-		return controller.expand(account, payload.values[0]);
-	}
-
-	function _processIPFSStorage(
-		IIPFSStorageController controller,
-		bytes32 account,
-		ResourceData.Payload memory payload
-	) internal returns (uint256 value) {
-		require(payload.values.length == 2, 'DstChainPayment: invalid token value length');
-		return controller.expand(account, payload.values[0], payload.values[1]);
 	}
 
 	function providerWithdraw(

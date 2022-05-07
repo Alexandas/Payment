@@ -56,10 +56,6 @@ contract FundWallet is IFundWallet, Billing, OwnerWithdrawable, ReentrancyGuardU
 		_setToken(_token);
 	}
 
-	function setToken(IERC20Upgradeable _token) external onlyOwner {
-		_setToken(_token);
-	}
-
 	function charge(
 		address provider,
 		uint64 nonce,
@@ -112,6 +108,7 @@ contract FundWallet is IFundWallet, Billing, OwnerWithdrawable, ReentrancyGuardU
 		bytes32 hash = keccak256(abi.encodePacked(provider, newOwner, account));
 		require(providers.isValidSignature(provider, hash, signature), 'FundWallet: invalid signature');
 		wallets[provider][account].owner = newOwner;
+
 		emit WalletOwnerTransferred(provider, account, newOwner);
 	}
 
@@ -121,6 +118,10 @@ contract FundWallet is IFundWallet, Billing, OwnerWithdrawable, ReentrancyGuardU
 
 	function balanceOf(address provider, bytes32 account) public view override returns (uint256) {
 		return wallets[provider][account].amount;
+	}
+
+	function setToken(IERC20Upgradeable _token) external onlyOwner {
+		_setToken(_token);
 	}
 
 }
