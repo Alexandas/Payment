@@ -21,7 +21,6 @@ import type { TypedEventFilter, TypedEvent, TypedListener } from "./common";
 
 interface DstChainPaymentInterface extends ethers.utils.Interface {
   functions: {
-    "Init_Payment(address,address,address,address,address)": FunctionFragment;
     "addPauser(address)": FunctionFragment;
     "arStorageController()": FunctionFragment;
     "bandwidthController()": FunctionFragment;
@@ -33,13 +32,14 @@ interface DstChainPaymentInterface extends ethers.utils.Interface {
     "isPauser(address)": FunctionFragment;
     "messageReceiver()": FunctionFragment;
     "owner()": FunctionFragment;
+    "ownerWithdrawERC20(address,address,uint256)": FunctionFragment;
+    "ownerWithdrawNative(address,uint256)": FunctionFragment;
     "pause()": FunctionFragment;
     "paused()": FunctionFragment;
     "pausers(address)": FunctionFragment;
     "pay((address,uint64,bytes32,tuple[]))": FunctionFragment;
     "payFromSourceChain(address,uint256,bytes)": FunctionFragment;
     "providerBalances(address)": FunctionFragment;
-    "providerWithdraw(address,address,uint256)": FunctionFragment;
     "providers()": FunctionFragment;
     "removePauser(address)": FunctionFragment;
     "renounceOwnership()": FunctionFragment;
@@ -54,14 +54,8 @@ interface DstChainPaymentInterface extends ethers.utils.Interface {
     "totalValue(tuple[])": FunctionFragment;
     "transferOwnership(address)": FunctionFragment;
     "unpause()": FunctionFragment;
-    "withdraw(address,address,uint256)": FunctionFragment;
-    "withdrawNative(address,uint256)": FunctionFragment;
   };
 
-  encodeFunctionData(
-    functionFragment: "Init_Payment",
-    values: [string, string, string, string, string]
-  ): string;
   encodeFunctionData(functionFragment: "addPauser", values: [string]): string;
   encodeFunctionData(
     functionFragment: "arStorageController",
@@ -100,6 +94,14 @@ interface DstChainPaymentInterface extends ethers.utils.Interface {
     values?: undefined
   ): string;
   encodeFunctionData(functionFragment: "owner", values?: undefined): string;
+  encodeFunctionData(
+    functionFragment: "ownerWithdrawERC20",
+    values: [string, string, BigNumberish]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "ownerWithdrawNative",
+    values: [string, BigNumberish]
+  ): string;
   encodeFunctionData(functionFragment: "pause", values?: undefined): string;
   encodeFunctionData(functionFragment: "paused", values?: undefined): string;
   encodeFunctionData(functionFragment: "pausers", values: [string]): string;
@@ -121,10 +123,6 @@ interface DstChainPaymentInterface extends ethers.utils.Interface {
   encodeFunctionData(
     functionFragment: "providerBalances",
     values: [string]
-  ): string;
-  encodeFunctionData(
-    functionFragment: "providerWithdraw",
-    values: [string, string, BigNumberish]
   ): string;
   encodeFunctionData(functionFragment: "providers", values?: undefined): string;
   encodeFunctionData(
@@ -170,19 +168,7 @@ interface DstChainPaymentInterface extends ethers.utils.Interface {
     values: [string]
   ): string;
   encodeFunctionData(functionFragment: "unpause", values?: undefined): string;
-  encodeFunctionData(
-    functionFragment: "withdraw",
-    values: [string, string, BigNumberish]
-  ): string;
-  encodeFunctionData(
-    functionFragment: "withdrawNative",
-    values: [string, BigNumberish]
-  ): string;
 
-  decodeFunctionResult(
-    functionFragment: "Init_Payment",
-    data: BytesLike
-  ): Result;
   decodeFunctionResult(functionFragment: "addPauser", data: BytesLike): Result;
   decodeFunctionResult(
     functionFragment: "arStorageController",
@@ -215,6 +201,14 @@ interface DstChainPaymentInterface extends ethers.utils.Interface {
     data: BytesLike
   ): Result;
   decodeFunctionResult(functionFragment: "owner", data: BytesLike): Result;
+  decodeFunctionResult(
+    functionFragment: "ownerWithdrawERC20",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "ownerWithdrawNative",
+    data: BytesLike
+  ): Result;
   decodeFunctionResult(functionFragment: "pause", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "paused", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "pausers", data: BytesLike): Result;
@@ -225,10 +219,6 @@ interface DstChainPaymentInterface extends ethers.utils.Interface {
   ): Result;
   decodeFunctionResult(
     functionFragment: "providerBalances",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(
-    functionFragment: "providerWithdraw",
     data: BytesLike
   ): Result;
   decodeFunctionResult(functionFragment: "providers", data: BytesLike): Result;
@@ -272,11 +262,6 @@ interface DstChainPaymentInterface extends ethers.utils.Interface {
     data: BytesLike
   ): Result;
   decodeFunctionResult(functionFragment: "unpause", data: BytesLike): Result;
-  decodeFunctionResult(functionFragment: "withdraw", data: BytesLike): Result;
-  decodeFunctionResult(
-    functionFragment: "withdrawNative",
-    data: BytesLike
-  ): Result;
 
   events: {
     "ARStorageControllerUpdated(address)": EventFragment;
@@ -291,7 +276,6 @@ interface DstChainPaymentInterface extends ethers.utils.Interface {
     "PauserAdded(address)": EventFragment;
     "PauserRemoved(address)": EventFragment;
     "ProvidersUpdated(address)": EventFragment;
-    "ProvidetWithdraw(address,address,address,uint256)": EventFragment;
     "TokenUpdated(address)": EventFragment;
     "Unpaused(address)": EventFragment;
     "Withdrawal(address,address,uint256)": EventFragment;
@@ -313,7 +297,6 @@ interface DstChainPaymentInterface extends ethers.utils.Interface {
   getEvent(nameOrSignatureOrTopic: "PauserAdded"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "PauserRemoved"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "ProvidersUpdated"): EventFragment;
-  getEvent(nameOrSignatureOrTopic: "ProvidetWithdraw"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "TokenUpdated"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "Unpaused"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "Withdrawal"): EventFragment;
@@ -395,15 +378,6 @@ export type ProvidersUpdatedEvent = TypedEvent<
   [string] & { providers: string }
 >;
 
-export type ProvidetWithdrawEvent = TypedEvent<
-  [string, string, string, BigNumber] & {
-    provider: string;
-    token: string;
-    to: string;
-    value: BigNumber;
-  }
->;
-
 export type TokenUpdatedEvent = TypedEvent<[string] & { token: string }>;
 
 export type UnpausedEvent = TypedEvent<[string] & { account: string }>;
@@ -456,15 +430,6 @@ export class DstChainPayment extends BaseContract {
   interface: DstChainPaymentInterface;
 
   functions: {
-    Init_Payment(
-      owner: string,
-      pauser: string,
-      providers: string,
-      messageReceiver: string,
-      token: string,
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<ContractTransaction>;
-
     addPauser(
       account: string,
       overrides?: Overrides & { from?: string | Promise<string> }
@@ -529,6 +494,19 @@ export class DstChainPayment extends BaseContract {
 
     owner(overrides?: CallOverrides): Promise<[string]>;
 
+    ownerWithdrawERC20(
+      token: string,
+      to: string,
+      value: BigNumberish,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<ContractTransaction>;
+
+    ownerWithdrawNative(
+      to: string,
+      value: BigNumberish,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<ContractTransaction>;
+
     pause(
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<ContractTransaction>;
@@ -558,13 +536,6 @@ export class DstChainPayment extends BaseContract {
       arg0: string,
       overrides?: CallOverrides
     ): Promise<[BigNumber]>;
-
-    providerWithdraw(
-      token: string,
-      to: string,
-      value: BigNumberish,
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<ContractTransaction>;
 
     providers(overrides?: CallOverrides): Promise<[string]>;
 
@@ -626,29 +597,7 @@ export class DstChainPayment extends BaseContract {
     unpause(
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<ContractTransaction>;
-
-    withdraw(
-      token: string,
-      to: string,
-      value: BigNumberish,
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<ContractTransaction>;
-
-    withdrawNative(
-      to: string,
-      value: BigNumberish,
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<ContractTransaction>;
   };
-
-  Init_Payment(
-    owner: string,
-    pauser: string,
-    providers: string,
-    messageReceiver: string,
-    token: string,
-    overrides?: Overrides & { from?: string | Promise<string> }
-  ): Promise<ContractTransaction>;
 
   addPauser(
     account: string,
@@ -706,6 +655,19 @@ export class DstChainPayment extends BaseContract {
 
   owner(overrides?: CallOverrides): Promise<string>;
 
+  ownerWithdrawERC20(
+    token: string,
+    to: string,
+    value: BigNumberish,
+    overrides?: Overrides & { from?: string | Promise<string> }
+  ): Promise<ContractTransaction>;
+
+  ownerWithdrawNative(
+    to: string,
+    value: BigNumberish,
+    overrides?: Overrides & { from?: string | Promise<string> }
+  ): Promise<ContractTransaction>;
+
   pause(
     overrides?: Overrides & { from?: string | Promise<string> }
   ): Promise<ContractTransaction>;
@@ -732,13 +694,6 @@ export class DstChainPayment extends BaseContract {
   ): Promise<ContractTransaction>;
 
   providerBalances(arg0: string, overrides?: CallOverrides): Promise<BigNumber>;
-
-  providerWithdraw(
-    token: string,
-    to: string,
-    value: BigNumberish,
-    overrides?: Overrides & { from?: string | Promise<string> }
-  ): Promise<ContractTransaction>;
 
   providers(overrides?: CallOverrides): Promise<string>;
 
@@ -801,29 +756,7 @@ export class DstChainPayment extends BaseContract {
     overrides?: Overrides & { from?: string | Promise<string> }
   ): Promise<ContractTransaction>;
 
-  withdraw(
-    token: string,
-    to: string,
-    value: BigNumberish,
-    overrides?: Overrides & { from?: string | Promise<string> }
-  ): Promise<ContractTransaction>;
-
-  withdrawNative(
-    to: string,
-    value: BigNumberish,
-    overrides?: Overrides & { from?: string | Promise<string> }
-  ): Promise<ContractTransaction>;
-
   callStatic: {
-    Init_Payment(
-      owner: string,
-      pauser: string,
-      providers: string,
-      messageReceiver: string,
-      token: string,
-      overrides?: CallOverrides
-    ): Promise<void>;
-
     addPauser(account: string, overrides?: CallOverrides): Promise<void>;
 
     arStorageController(overrides?: CallOverrides): Promise<string>;
@@ -880,6 +813,19 @@ export class DstChainPayment extends BaseContract {
 
     owner(overrides?: CallOverrides): Promise<string>;
 
+    ownerWithdrawERC20(
+      token: string,
+      to: string,
+      value: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<void>;
+
+    ownerWithdrawNative(
+      to: string,
+      value: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<void>;
+
     pause(overrides?: CallOverrides): Promise<void>;
 
     paused(overrides?: CallOverrides): Promise<boolean>;
@@ -907,13 +853,6 @@ export class DstChainPayment extends BaseContract {
       arg0: string,
       overrides?: CallOverrides
     ): Promise<BigNumber>;
-
-    providerWithdraw(
-      token: string,
-      to: string,
-      value: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<void>;
 
     providers(overrides?: CallOverrides): Promise<string>;
 
@@ -963,19 +902,6 @@ export class DstChainPayment extends BaseContract {
     ): Promise<void>;
 
     unpause(overrides?: CallOverrides): Promise<void>;
-
-    withdraw(
-      token: string,
-      to: string,
-      value: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<void>;
-
-    withdrawNative(
-      to: string,
-      value: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<void>;
   };
 
   filters: {
@@ -1173,26 +1099,6 @@ export class DstChainPayment extends BaseContract {
       providers?: null
     ): TypedEventFilter<[string], { providers: string }>;
 
-    "ProvidetWithdraw(address,address,address,uint256)"(
-      provider?: null,
-      token?: null,
-      to?: null,
-      value?: null
-    ): TypedEventFilter<
-      [string, string, string, BigNumber],
-      { provider: string; token: string; to: string; value: BigNumber }
-    >;
-
-    ProvidetWithdraw(
-      provider?: null,
-      token?: null,
-      to?: null,
-      value?: null
-    ): TypedEventFilter<
-      [string, string, string, BigNumber],
-      { provider: string; token: string; to: string; value: BigNumber }
-    >;
-
     "TokenUpdated(address)"(
       token?: null
     ): TypedEventFilter<[string], { token: string }>;
@@ -1225,15 +1131,6 @@ export class DstChainPayment extends BaseContract {
   };
 
   estimateGas: {
-    Init_Payment(
-      owner: string,
-      pauser: string,
-      providers: string,
-      messageReceiver: string,
-      token: string,
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<BigNumber>;
-
     addPauser(
       account: string,
       overrides?: Overrides & { from?: string | Promise<string> }
@@ -1273,6 +1170,19 @@ export class DstChainPayment extends BaseContract {
 
     owner(overrides?: CallOverrides): Promise<BigNumber>;
 
+    ownerWithdrawERC20(
+      token: string,
+      to: string,
+      value: BigNumberish,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<BigNumber>;
+
+    ownerWithdrawNative(
+      to: string,
+      value: BigNumberish,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<BigNumber>;
+
     pause(
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<BigNumber>;
@@ -1301,13 +1211,6 @@ export class DstChainPayment extends BaseContract {
     providerBalances(
       arg0: string,
       overrides?: CallOverrides
-    ): Promise<BigNumber>;
-
-    providerWithdraw(
-      token: string,
-      to: string,
-      value: BigNumberish,
-      overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<BigNumber>;
 
     providers(overrides?: CallOverrides): Promise<BigNumber>;
@@ -1370,31 +1273,9 @@ export class DstChainPayment extends BaseContract {
     unpause(
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<BigNumber>;
-
-    withdraw(
-      token: string,
-      to: string,
-      value: BigNumberish,
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<BigNumber>;
-
-    withdrawNative(
-      to: string,
-      value: BigNumberish,
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<BigNumber>;
   };
 
   populateTransaction: {
-    Init_Payment(
-      owner: string,
-      pauser: string,
-      providers: string,
-      messageReceiver: string,
-      token: string,
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<PopulatedTransaction>;
-
     addPauser(
       account: string,
       overrides?: Overrides & { from?: string | Promise<string> }
@@ -1445,6 +1326,19 @@ export class DstChainPayment extends BaseContract {
 
     owner(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
+    ownerWithdrawERC20(
+      token: string,
+      to: string,
+      value: BigNumberish,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<PopulatedTransaction>;
+
+    ownerWithdrawNative(
+      to: string,
+      value: BigNumberish,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<PopulatedTransaction>;
+
     pause(
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<PopulatedTransaction>;
@@ -1476,13 +1370,6 @@ export class DstChainPayment extends BaseContract {
     providerBalances(
       arg0: string,
       overrides?: CallOverrides
-    ): Promise<PopulatedTransaction>;
-
-    providerWithdraw(
-      token: string,
-      to: string,
-      value: BigNumberish,
-      overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<PopulatedTransaction>;
 
     providers(overrides?: CallOverrides): Promise<PopulatedTransaction>;
@@ -1543,19 +1430,6 @@ export class DstChainPayment extends BaseContract {
     ): Promise<PopulatedTransaction>;
 
     unpause(
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<PopulatedTransaction>;
-
-    withdraw(
-      token: string,
-      to: string,
-      value: BigNumberish,
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<PopulatedTransaction>;
-
-    withdrawNative(
-      to: string,
-      value: BigNumberish,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<PopulatedTransaction>;
   };

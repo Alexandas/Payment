@@ -49,12 +49,10 @@ interface IDstChainPaymentInterface extends ethers.utils.Interface {
 
   events: {
     "Paid(address,address,tuple)": EventFragment;
-    "ProvidetWithdraw(address,address,address,uint256)": EventFragment;
     "TokenUpdated(address)": EventFragment;
   };
 
   getEvent(nameOrSignatureOrTopic: "Paid"): EventFragment;
-  getEvent(nameOrSignatureOrTopic: "ProvidetWithdraw"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "TokenUpdated"): EventFragment;
 }
 
@@ -93,15 +91,6 @@ export type PaidEvent = TypedEvent<
         values: BigNumber[];
       })[];
     };
-  }
->;
-
-export type ProvidetWithdrawEvent = TypedEvent<
-  [string, string, string, BigNumber] & {
-    provider: string;
-    token: string;
-    to: string;
-    value: BigNumber;
   }
 >;
 
@@ -302,26 +291,6 @@ export class IDstChainPayment extends BaseContract {
           })[];
         };
       }
-    >;
-
-    "ProvidetWithdraw(address,address,address,uint256)"(
-      provider?: null,
-      token?: null,
-      to?: null,
-      value?: null
-    ): TypedEventFilter<
-      [string, string, string, BigNumber],
-      { provider: string; token: string; to: string; value: BigNumber }
-    >;
-
-    ProvidetWithdraw(
-      provider?: null,
-      token?: null,
-      to?: null,
-      value?: null
-    ): TypedEventFilter<
-      [string, string, string, BigNumber],
-      { provider: string; token: string; to: string; value: BigNumber }
     >;
 
     "TokenUpdated(address)"(

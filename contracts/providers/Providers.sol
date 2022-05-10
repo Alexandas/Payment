@@ -16,14 +16,7 @@ contract Providers is IProviders, OwnableUpgradeable {
 		_;
 	}
 
-	constructor(
-		address owner,
-		address[] memory _providers,
-		address[] memory _wallets
-	) initializer {
-		_transferOwnership(owner);
-		__Init_Providers_And_Wallets(_providers, _wallets);
-	}
+	constructor() initializer {}
 
 	function initialize(
 		address owner,

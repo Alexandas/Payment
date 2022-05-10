@@ -22,13 +22,7 @@ contract ResourceAdaptor is IResourceAdaptor, OwnableUpgradeable {
 
 	event SetPriceAdaptors(PriceAdaptor[] adaptors);
 
-	constructor(
-		address owner,
-		PriceAdaptor[] memory adaptors
-	) initializer {
-		_transferOwnership(owner);
-		__Init_Price_Adaptors(adaptors);
-	}
+	constructor() initializer {}
 
 	function initialize(
 		address owner,

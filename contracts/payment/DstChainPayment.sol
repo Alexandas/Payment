@@ -27,19 +27,7 @@ contract DstChainPayment is
 
 	mapping(address => uint256) public providerBalances;
 
-	constructor(
-		address owner,
-		address pauser,
-		IProviders providers,
-		address messageReceiver,
-		IERC20Upgradeable token
-	) initializer {
-		_transferOwnership(owner);
-		__Init_Pauser(pauser);
-		__Init_Providers(providers);
-		__Init_Message_Receiver(messageReceiver);
-		__Init_Token(token);
-	}
+	constructor() initializer {}
 
 	function initialize(
 		address owner,
@@ -55,26 +43,8 @@ contract DstChainPayment is
 		__Init_Token(token);
 	}
 
-	function Init_Payment(
-		address owner,
-		address pauser,
-		IProviders providers,
-		address messageReceiver,
-		IERC20Upgradeable token
-	) external initializer {
-		_transferOwnership(owner);
-		__Init_Pauser(pauser);
-		__Init_Providers(providers);
-		__Init_Message_Receiver(messageReceiver);
-		__Init_Token(token);
-	}
-
 	function __Init_Token(IERC20Upgradeable _token) internal onlyInitializing {
 		_setToken(_token);
-	}
-
-	function convertSourceChainPayloads(uint256 amount, ResourceData.Payload[] memory payloads) public view returns (ResourceData.Payload[] memory) {
-		return _convertSourceChainPayloads(amount, payloads);
 	}
 
 	function payFromSourceChain(
@@ -103,7 +73,6 @@ contract DstChainPayment is
 		require(providers.isProvider(provider), 'DstChainPayment: nonexistent provider');
 		token.safeTransferFrom(msg.sender, address(this), amount);
 		providerBalances[provider] = providerBalances[provider].add(amount);
-
 	}
 
 	function _processPayloads(bytes32 account, ResourceData.Payload[] memory payloads, bool withValue) internal returns (uint256 value) {
@@ -141,19 +110,6 @@ contract DstChainPayment is
 		return amount.div(10**12);
 	}
 
-	function providerWithdraw(
-		IERC20Upgradeable token,
-		address to,
-		uint256 value
-	) external whenNotPaused nonReentrant {
-		require(providers.isProvider(msg.sender), 'DstChainPayment: caller is not a provider');
-		require(providerBalances[msg.sender] >= value, 'DstChainPayment: insufficient provider balance');
-		providerBalances[msg.sender] = providerBalances[msg.sender].sub(value);
-		token.safeTransfer(to, value);
-
-		emit ProvidetWithdraw(msg.sender, token, to, value);
-	}
-
 	function setToken(IERC20Upgradeable _token) external onlyOwner {
 		_setToken(_token);
 	}
@@ -161,6 +117,10 @@ contract DstChainPayment is
 	function _setToken(IERC20Upgradeable _token) internal {
 		token = _token;
 		emit TokenUpdated(_token);
+	}
+
+	function convertSourceChainPayloads(uint256 amount, ResourceData.Payload[] memory payloads) public view returns (ResourceData.Payload[] memory) {
+		return _convertSourceChainPayloads(amount, payloads);
 	}
 
 	function decodeSourceChainMessage(bytes memory message)

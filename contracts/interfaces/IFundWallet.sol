@@ -5,16 +5,28 @@ pragma solidity >=0.8.0;
 import './IBilling.sol';
 
 interface IFundWallet is IBilling {
+
+	enum Purpose {
+		Null,
+		Recharge,
+		Spend,
+		Withdraw
+	}
+
 	struct Wallet {
 		address owner;
 		uint256 amount;
 	}
 
+	event RechargeTypedHashUpdated(bytes32 hash);
+
+	event NonceUpdated(address provider, bytes32 account, uint64 nonce, Purpose purpose);
+
 	event WalletOwnerTransferred(address provider, bytes32 account, address newOwner);
 
 	event Charge(address provider, uint64 nonce, address owner, bytes32 account, uint256 amount);
 
-	event Spend(address provider, uint64 nonce, bytes32 account, uint256 fee, uint256 balance);
+	event Spend(address provider, uint64 nonce, bytes32 account, uint256 fee);
 
 	event Withdrawn(address provider, uint64 nonce, bytes32 account, address to, uint256 amount);
 
@@ -22,7 +34,7 @@ interface IFundWallet is IBilling {
 
 	function transferWalletOwner(address provider, bytes32 account, address newOwner, bytes memory signature) external;
 
-	function charge(
+	function recharge(
 		address provider,
 		uint64 nonce,
 		address owner,

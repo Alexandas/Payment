@@ -32,17 +32,7 @@ contract SrcChainPayment is OwnerWithdrawable, Pauser, ResourPayloadTool, Reentr
 		uint32 maxSlippage
 	);
 
-	constructor(
-		address owner,
-		address pauser,
-		IMessageSender _messageSender,
-		IERC20Upgradeable token
-	) initializer {
-		_transferOwnership(owner);
-		__Init_Pauser(pauser);
-		__Init_Message_Sender(_messageSender);
-		__Init_Token(token);
-	}
+	constructor() initializer {}
 
 	function initialize(
 		address owner,

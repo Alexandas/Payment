@@ -24,21 +24,31 @@ interface FundWalletInterface extends ethers.utils.Interface {
     "adaptor()": FunctionFragment;
     "addPauser(address)": FunctionFragment;
     "balanceOf(address,bytes32)": FunctionFragment;
-    "charge(address,uint64,address,bytes32,uint256,bytes)": FunctionFragment;
+    "billHash(address,uint64,bytes32,bytes)": FunctionFragment;
+    "billTypedHash()": FunctionFragment;
     "decodeBill(bytes)": FunctionFragment;
     "encodeBill((uint256,tuple[]))": FunctionFragment;
-    "hashBill(address,uint64,bytes32,bytes)": FunctionFragment;
-    "initialize(address,address,address,address)": FunctionFragment;
+    "hashTypedDataV4ForBill(address,uint64,bytes32,bytes)": FunctionFragment;
+    "hashTypedDataV4ForRecharge(address,uint64,address,bytes32,uint256)": FunctionFragment;
+    "initialize(address,address,address,address,address,string,string,string,string)": FunctionFragment;
     "isPauser(address)": FunctionFragment;
+    "nonces(address,bytes32,uint64)": FunctionFragment;
     "owner()": FunctionFragment;
     "ownerOf(address,bytes32)": FunctionFragment;
+    "ownerWithdrawERC20(address,address,uint256)": FunctionFragment;
+    "ownerWithdrawNative(address,uint256)": FunctionFragment;
     "pause()": FunctionFragment;
     "paused()": FunctionFragment;
     "pausers(address)": FunctionFragment;
     "providers()": FunctionFragment;
+    "recharge(address,uint64,address,bytes32,uint256,bytes)": FunctionFragment;
+    "rechargeHash(address,uint64,address,bytes32,uint256)": FunctionFragment;
+    "rechargeTypedHash()": FunctionFragment;
     "removePauser(address)": FunctionFragment;
     "renounceOwnership()": FunctionFragment;
     "renouncePauser()": FunctionFragment;
+    "setBillTypedHash(string)": FunctionFragment;
+    "setRechargeTypedHash(string)": FunctionFragment;
     "setToken(address)": FunctionFragment;
     "spend(address,uint64,bytes32,bytes,bytes)": FunctionFragment;
     "token()": FunctionFragment;
@@ -46,7 +56,6 @@ interface FundWalletInterface extends ethers.utils.Interface {
     "transferWalletOwner(address,bytes32,address,bytes)": FunctionFragment;
     "unpause()": FunctionFragment;
     "withdraw(address,uint64,bytes32,address,bytes,bytes)": FunctionFragment;
-    "withdrawNative(address,uint256)": FunctionFragment;
   };
 
   encodeFunctionData(functionFragment: "adaptor", values?: undefined): string;
@@ -56,8 +65,12 @@ interface FundWalletInterface extends ethers.utils.Interface {
     values: [string, BytesLike]
   ): string;
   encodeFunctionData(
-    functionFragment: "charge",
-    values: [string, BigNumberish, string, BytesLike, BigNumberish, BytesLike]
+    functionFragment: "billHash",
+    values: [string, BigNumberish, BytesLike, BytesLike]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "billTypedHash",
+    values?: undefined
   ): string;
   encodeFunctionData(
     functionFragment: "decodeBill",
@@ -76,23 +89,61 @@ interface FundWalletInterface extends ethers.utils.Interface {
     ]
   ): string;
   encodeFunctionData(
-    functionFragment: "hashBill",
+    functionFragment: "hashTypedDataV4ForBill",
     values: [string, BigNumberish, BytesLike, BytesLike]
   ): string;
   encodeFunctionData(
+    functionFragment: "hashTypedDataV4ForRecharge",
+    values: [string, BigNumberish, string, BytesLike, BigNumberish]
+  ): string;
+  encodeFunctionData(
     functionFragment: "initialize",
-    values: [string, string, string, string]
+    values: [
+      string,
+      string,
+      string,
+      string,
+      string,
+      string,
+      string,
+      string,
+      string
+    ]
   ): string;
   encodeFunctionData(functionFragment: "isPauser", values: [string]): string;
+  encodeFunctionData(
+    functionFragment: "nonces",
+    values: [string, BytesLike, BigNumberish]
+  ): string;
   encodeFunctionData(functionFragment: "owner", values?: undefined): string;
   encodeFunctionData(
     functionFragment: "ownerOf",
     values: [string, BytesLike]
   ): string;
+  encodeFunctionData(
+    functionFragment: "ownerWithdrawERC20",
+    values: [string, string, BigNumberish]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "ownerWithdrawNative",
+    values: [string, BigNumberish]
+  ): string;
   encodeFunctionData(functionFragment: "pause", values?: undefined): string;
   encodeFunctionData(functionFragment: "paused", values?: undefined): string;
   encodeFunctionData(functionFragment: "pausers", values: [string]): string;
   encodeFunctionData(functionFragment: "providers", values?: undefined): string;
+  encodeFunctionData(
+    functionFragment: "recharge",
+    values: [string, BigNumberish, string, BytesLike, BigNumberish, BytesLike]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "rechargeHash",
+    values: [string, BigNumberish, string, BytesLike, BigNumberish]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "rechargeTypedHash",
+    values?: undefined
+  ): string;
   encodeFunctionData(
     functionFragment: "removePauser",
     values: [string]
@@ -104,6 +155,14 @@ interface FundWalletInterface extends ethers.utils.Interface {
   encodeFunctionData(
     functionFragment: "renouncePauser",
     values?: undefined
+  ): string;
+  encodeFunctionData(
+    functionFragment: "setBillTypedHash",
+    values: [string]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "setRechargeTypedHash",
+    values: [string]
   ): string;
   encodeFunctionData(functionFragment: "setToken", values: [string]): string;
   encodeFunctionData(
@@ -124,26 +183,51 @@ interface FundWalletInterface extends ethers.utils.Interface {
     functionFragment: "withdraw",
     values: [string, BigNumberish, BytesLike, string, BytesLike, BytesLike]
   ): string;
-  encodeFunctionData(
-    functionFragment: "withdrawNative",
-    values: [string, BigNumberish]
-  ): string;
 
   decodeFunctionResult(functionFragment: "adaptor", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "addPauser", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "balanceOf", data: BytesLike): Result;
-  decodeFunctionResult(functionFragment: "charge", data: BytesLike): Result;
+  decodeFunctionResult(functionFragment: "billHash", data: BytesLike): Result;
+  decodeFunctionResult(
+    functionFragment: "billTypedHash",
+    data: BytesLike
+  ): Result;
   decodeFunctionResult(functionFragment: "decodeBill", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "encodeBill", data: BytesLike): Result;
-  decodeFunctionResult(functionFragment: "hashBill", data: BytesLike): Result;
+  decodeFunctionResult(
+    functionFragment: "hashTypedDataV4ForBill",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "hashTypedDataV4ForRecharge",
+    data: BytesLike
+  ): Result;
   decodeFunctionResult(functionFragment: "initialize", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "isPauser", data: BytesLike): Result;
+  decodeFunctionResult(functionFragment: "nonces", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "owner", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "ownerOf", data: BytesLike): Result;
+  decodeFunctionResult(
+    functionFragment: "ownerWithdrawERC20",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "ownerWithdrawNative",
+    data: BytesLike
+  ): Result;
   decodeFunctionResult(functionFragment: "pause", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "paused", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "pausers", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "providers", data: BytesLike): Result;
+  decodeFunctionResult(functionFragment: "recharge", data: BytesLike): Result;
+  decodeFunctionResult(
+    functionFragment: "rechargeHash",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "rechargeTypedHash",
+    data: BytesLike
+  ): Result;
   decodeFunctionResult(
     functionFragment: "removePauser",
     data: BytesLike
@@ -154,6 +238,14 @@ interface FundWalletInterface extends ethers.utils.Interface {
   ): Result;
   decodeFunctionResult(
     functionFragment: "renouncePauser",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "setBillTypedHash",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "setRechargeTypedHash",
     data: BytesLike
   ): Result;
   decodeFunctionResult(functionFragment: "setToken", data: BytesLike): Result;
@@ -169,22 +261,21 @@ interface FundWalletInterface extends ethers.utils.Interface {
   ): Result;
   decodeFunctionResult(functionFragment: "unpause", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "withdraw", data: BytesLike): Result;
-  decodeFunctionResult(
-    functionFragment: "withdrawNative",
-    data: BytesLike
-  ): Result;
 
   events: {
+    "BillTypedHashUpdated(bytes32)": EventFragment;
     "Billing(address,uint64,bytes32,bytes,uint256)": EventFragment;
     "Charge(address,uint64,address,bytes32,uint256)": EventFragment;
     "NativeWithdrawal(address,uint256)": EventFragment;
+    "NonceUpdated(address,bytes32,uint64,uint8)": EventFragment;
     "OwnershipTransferred(address,address)": EventFragment;
     "Paused(address)": EventFragment;
     "PauserAdded(address)": EventFragment;
     "PauserRemoved(address)": EventFragment;
     "ProvidersUpdated(address)": EventFragment;
+    "RechargeTypedHashUpdated(bytes32)": EventFragment;
     "ResourceAdaptorUpdated(address)": EventFragment;
-    "Spend(address,uint64,bytes32,uint256,uint256)": EventFragment;
+    "Spend(address,uint64,bytes32,uint256)": EventFragment;
     "TokenUpdated(address)": EventFragment;
     "Unpaused(address)": EventFragment;
     "WalletOwnerTransferred(address,bytes32,address)": EventFragment;
@@ -192,14 +283,17 @@ interface FundWalletInterface extends ethers.utils.Interface {
     "Withdrawn(address,uint64,bytes32,address,uint256)": EventFragment;
   };
 
+  getEvent(nameOrSignatureOrTopic: "BillTypedHashUpdated"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "Billing"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "Charge"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "NativeWithdrawal"): EventFragment;
+  getEvent(nameOrSignatureOrTopic: "NonceUpdated"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "OwnershipTransferred"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "Paused"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "PauserAdded"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "PauserRemoved"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "ProvidersUpdated"): EventFragment;
+  getEvent(nameOrSignatureOrTopic: "RechargeTypedHashUpdated"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "ResourceAdaptorUpdated"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "Spend"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "TokenUpdated"): EventFragment;
@@ -208,6 +302,8 @@ interface FundWalletInterface extends ethers.utils.Interface {
   getEvent(nameOrSignatureOrTopic: "Withdrawal"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "Withdrawn"): EventFragment;
 }
+
+export type BillTypedHashUpdatedEvent = TypedEvent<[string] & { hash: string }>;
 
 export type BillingEvent = TypedEvent<
   [string, BigNumber, string, string, BigNumber] & {
@@ -233,6 +329,15 @@ export type NativeWithdrawalEvent = TypedEvent<
   [string, BigNumber] & { to: string; value: BigNumber }
 >;
 
+export type NonceUpdatedEvent = TypedEvent<
+  [string, string, BigNumber, number] & {
+    provider: string;
+    account: string;
+    nonce: BigNumber;
+    purpose: number;
+  }
+>;
+
 export type OwnershipTransferredEvent = TypedEvent<
   [string, string] & { previousOwner: string; newOwner: string }
 >;
@@ -247,17 +352,20 @@ export type ProvidersUpdatedEvent = TypedEvent<
   [string] & { providers: string }
 >;
 
+export type RechargeTypedHashUpdatedEvent = TypedEvent<
+  [string] & { hash: string }
+>;
+
 export type ResourceAdaptorUpdatedEvent = TypedEvent<
   [string] & { adaptor: string }
 >;
 
 export type SpendEvent = TypedEvent<
-  [string, BigNumber, string, BigNumber, BigNumber] & {
+  [string, BigNumber, string, BigNumber] & {
     provider: string;
     nonce: BigNumber;
     account: string;
     fee: BigNumber;
-    balance: BigNumber;
   }
 >;
 
@@ -344,15 +452,15 @@ export class FundWallet extends BaseContract {
       overrides?: CallOverrides
     ): Promise<[BigNumber]>;
 
-    charge(
+    billHash(
       provider: string,
       nonce: BigNumberish,
-      owner: string,
       account: BytesLike,
-      amount: BigNumberish,
-      signature: BytesLike,
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<ContractTransaction>;
+      bill: BytesLike,
+      overrides?: CallOverrides
+    ): Promise<[string]>;
+
+    billTypedHash(overrides?: CallOverrides): Promise<[string]>;
 
     decodeBill(
       message: BytesLike,
@@ -404,7 +512,7 @@ export class FundWallet extends BaseContract {
       overrides?: CallOverrides
     ): Promise<[string]>;
 
-    hashBill(
+    hashTypedDataV4ForBill(
       provider: string,
       nonce: BigNumberish,
       account: BytesLike,
@@ -412,15 +520,36 @@ export class FundWallet extends BaseContract {
       overrides?: CallOverrides
     ): Promise<[string]>;
 
+    hashTypedDataV4ForRecharge(
+      provider: string,
+      nonce: BigNumberish,
+      owner: string,
+      account: BytesLike,
+      amount: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<[string]>;
+
     initialize(
       owner: string,
       pauser: string,
+      adaptor: string,
       _providers: string,
       _token: string,
+      name: string,
+      version: string,
+      rechargeTypes: string,
+      billTypes: string,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<ContractTransaction>;
 
     isPauser(account: string, overrides?: CallOverrides): Promise<[boolean]>;
+
+    nonces(
+      arg0: string,
+      arg1: BytesLike,
+      arg2: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<[number]>;
 
     owner(overrides?: CallOverrides): Promise<[string]>;
 
@@ -429,6 +558,19 @@ export class FundWallet extends BaseContract {
       account: BytesLike,
       overrides?: CallOverrides
     ): Promise<[string]>;
+
+    ownerWithdrawERC20(
+      token: string,
+      to: string,
+      value: BigNumberish,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<ContractTransaction>;
+
+    ownerWithdrawNative(
+      to: string,
+      value: BigNumberish,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<ContractTransaction>;
 
     pause(
       overrides?: Overrides & { from?: string | Promise<string> }
@@ -440,6 +582,27 @@ export class FundWallet extends BaseContract {
 
     providers(overrides?: CallOverrides): Promise<[string]>;
 
+    recharge(
+      provider: string,
+      nonce: BigNumberish,
+      owner: string,
+      account: BytesLike,
+      amount: BigNumberish,
+      signature: BytesLike,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<ContractTransaction>;
+
+    rechargeHash(
+      provider: string,
+      nonce: BigNumberish,
+      owner: string,
+      account: BytesLike,
+      amount: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<[string]>;
+
+    rechargeTypedHash(overrides?: CallOverrides): Promise<[string]>;
+
     removePauser(
       account: string,
       overrides?: Overrides & { from?: string | Promise<string> }
@@ -450,6 +613,16 @@ export class FundWallet extends BaseContract {
     ): Promise<ContractTransaction>;
 
     renouncePauser(
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<ContractTransaction>;
+
+    setBillTypedHash(
+      types: string,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<ContractTransaction>;
+
+    setRechargeTypedHash(
+      types: string,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<ContractTransaction>;
 
@@ -486,26 +659,13 @@ export class FundWallet extends BaseContract {
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<ContractTransaction>;
 
-    "withdraw(address,uint64,bytes32,address,bytes,bytes)"(
+    withdraw(
       provider: string,
       nonce: BigNumberish,
       account: BytesLike,
       to: string,
       bill: BytesLike,
       signature: BytesLike,
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<ContractTransaction>;
-
-    "withdraw(address,address,uint256)"(
-      token: string,
-      to: string,
-      value: BigNumberish,
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<ContractTransaction>;
-
-    withdrawNative(
-      to: string,
-      value: BigNumberish,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<ContractTransaction>;
   };
@@ -523,15 +683,15 @@ export class FundWallet extends BaseContract {
     overrides?: CallOverrides
   ): Promise<BigNumber>;
 
-  charge(
+  billHash(
     provider: string,
     nonce: BigNumberish,
-    owner: string,
     account: BytesLike,
-    amount: BigNumberish,
-    signature: BytesLike,
-    overrides?: Overrides & { from?: string | Promise<string> }
-  ): Promise<ContractTransaction>;
+    bill: BytesLike,
+    overrides?: CallOverrides
+  ): Promise<string>;
+
+  billTypedHash(overrides?: CallOverrides): Promise<string>;
 
   decodeBill(
     message: BytesLike,
@@ -575,7 +735,7 @@ export class FundWallet extends BaseContract {
     overrides?: CallOverrides
   ): Promise<string>;
 
-  hashBill(
+  hashTypedDataV4ForBill(
     provider: string,
     nonce: BigNumberish,
     account: BytesLike,
@@ -583,15 +743,36 @@ export class FundWallet extends BaseContract {
     overrides?: CallOverrides
   ): Promise<string>;
 
+  hashTypedDataV4ForRecharge(
+    provider: string,
+    nonce: BigNumberish,
+    owner: string,
+    account: BytesLike,
+    amount: BigNumberish,
+    overrides?: CallOverrides
+  ): Promise<string>;
+
   initialize(
     owner: string,
     pauser: string,
+    adaptor: string,
     _providers: string,
     _token: string,
+    name: string,
+    version: string,
+    rechargeTypes: string,
+    billTypes: string,
     overrides?: Overrides & { from?: string | Promise<string> }
   ): Promise<ContractTransaction>;
 
   isPauser(account: string, overrides?: CallOverrides): Promise<boolean>;
+
+  nonces(
+    arg0: string,
+    arg1: BytesLike,
+    arg2: BigNumberish,
+    overrides?: CallOverrides
+  ): Promise<number>;
 
   owner(overrides?: CallOverrides): Promise<string>;
 
@@ -600,6 +781,19 @@ export class FundWallet extends BaseContract {
     account: BytesLike,
     overrides?: CallOverrides
   ): Promise<string>;
+
+  ownerWithdrawERC20(
+    token: string,
+    to: string,
+    value: BigNumberish,
+    overrides?: Overrides & { from?: string | Promise<string> }
+  ): Promise<ContractTransaction>;
+
+  ownerWithdrawNative(
+    to: string,
+    value: BigNumberish,
+    overrides?: Overrides & { from?: string | Promise<string> }
+  ): Promise<ContractTransaction>;
 
   pause(
     overrides?: Overrides & { from?: string | Promise<string> }
@@ -611,6 +805,27 @@ export class FundWallet extends BaseContract {
 
   providers(overrides?: CallOverrides): Promise<string>;
 
+  recharge(
+    provider: string,
+    nonce: BigNumberish,
+    owner: string,
+    account: BytesLike,
+    amount: BigNumberish,
+    signature: BytesLike,
+    overrides?: Overrides & { from?: string | Promise<string> }
+  ): Promise<ContractTransaction>;
+
+  rechargeHash(
+    provider: string,
+    nonce: BigNumberish,
+    owner: string,
+    account: BytesLike,
+    amount: BigNumberish,
+    overrides?: CallOverrides
+  ): Promise<string>;
+
+  rechargeTypedHash(overrides?: CallOverrides): Promise<string>;
+
   removePauser(
     account: string,
     overrides?: Overrides & { from?: string | Promise<string> }
@@ -621,6 +836,16 @@ export class FundWallet extends BaseContract {
   ): Promise<ContractTransaction>;
 
   renouncePauser(
+    overrides?: Overrides & { from?: string | Promise<string> }
+  ): Promise<ContractTransaction>;
+
+  setBillTypedHash(
+    types: string,
+    overrides?: Overrides & { from?: string | Promise<string> }
+  ): Promise<ContractTransaction>;
+
+  setRechargeTypedHash(
+    types: string,
     overrides?: Overrides & { from?: string | Promise<string> }
   ): Promise<ContractTransaction>;
 
@@ -657,26 +882,13 @@ export class FundWallet extends BaseContract {
     overrides?: Overrides & { from?: string | Promise<string> }
   ): Promise<ContractTransaction>;
 
-  "withdraw(address,uint64,bytes32,address,bytes,bytes)"(
+  withdraw(
     provider: string,
     nonce: BigNumberish,
     account: BytesLike,
     to: string,
     bill: BytesLike,
     signature: BytesLike,
-    overrides?: Overrides & { from?: string | Promise<string> }
-  ): Promise<ContractTransaction>;
-
-  "withdraw(address,address,uint256)"(
-    token: string,
-    to: string,
-    value: BigNumberish,
-    overrides?: Overrides & { from?: string | Promise<string> }
-  ): Promise<ContractTransaction>;
-
-  withdrawNative(
-    to: string,
-    value: BigNumberish,
     overrides?: Overrides & { from?: string | Promise<string> }
   ): Promise<ContractTransaction>;
 
@@ -691,15 +903,15 @@ export class FundWallet extends BaseContract {
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
-    charge(
+    billHash(
       provider: string,
       nonce: BigNumberish,
-      owner: string,
       account: BytesLike,
-      amount: BigNumberish,
-      signature: BytesLike,
+      bill: BytesLike,
       overrides?: CallOverrides
-    ): Promise<void>;
+    ): Promise<string>;
+
+    billTypedHash(overrides?: CallOverrides): Promise<string>;
 
     decodeBill(
       message: BytesLike,
@@ -743,7 +955,7 @@ export class FundWallet extends BaseContract {
       overrides?: CallOverrides
     ): Promise<string>;
 
-    hashBill(
+    hashTypedDataV4ForBill(
       provider: string,
       nonce: BigNumberish,
       account: BytesLike,
@@ -751,15 +963,36 @@ export class FundWallet extends BaseContract {
       overrides?: CallOverrides
     ): Promise<string>;
 
+    hashTypedDataV4ForRecharge(
+      provider: string,
+      nonce: BigNumberish,
+      owner: string,
+      account: BytesLike,
+      amount: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<string>;
+
     initialize(
       owner: string,
       pauser: string,
+      adaptor: string,
       _providers: string,
       _token: string,
+      name: string,
+      version: string,
+      rechargeTypes: string,
+      billTypes: string,
       overrides?: CallOverrides
     ): Promise<void>;
 
     isPauser(account: string, overrides?: CallOverrides): Promise<boolean>;
+
+    nonces(
+      arg0: string,
+      arg1: BytesLike,
+      arg2: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<number>;
 
     owner(overrides?: CallOverrides): Promise<string>;
 
@@ -769,6 +1002,19 @@ export class FundWallet extends BaseContract {
       overrides?: CallOverrides
     ): Promise<string>;
 
+    ownerWithdrawERC20(
+      token: string,
+      to: string,
+      value: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<void>;
+
+    ownerWithdrawNative(
+      to: string,
+      value: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<void>;
+
     pause(overrides?: CallOverrides): Promise<void>;
 
     paused(overrides?: CallOverrides): Promise<boolean>;
@@ -777,11 +1023,39 @@ export class FundWallet extends BaseContract {
 
     providers(overrides?: CallOverrides): Promise<string>;
 
+    recharge(
+      provider: string,
+      nonce: BigNumberish,
+      owner: string,
+      account: BytesLike,
+      amount: BigNumberish,
+      signature: BytesLike,
+      overrides?: CallOverrides
+    ): Promise<void>;
+
+    rechargeHash(
+      provider: string,
+      nonce: BigNumberish,
+      owner: string,
+      account: BytesLike,
+      amount: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<string>;
+
+    rechargeTypedHash(overrides?: CallOverrides): Promise<string>;
+
     removePauser(account: string, overrides?: CallOverrides): Promise<void>;
 
     renounceOwnership(overrides?: CallOverrides): Promise<void>;
 
     renouncePauser(overrides?: CallOverrides): Promise<void>;
+
+    setBillTypedHash(types: string, overrides?: CallOverrides): Promise<void>;
+
+    setRechargeTypedHash(
+      types: string,
+      overrides?: CallOverrides
+    ): Promise<void>;
 
     setToken(_token: string, overrides?: CallOverrides): Promise<void>;
 
@@ -811,7 +1085,7 @@ export class FundWallet extends BaseContract {
 
     unpause(overrides?: CallOverrides): Promise<void>;
 
-    "withdraw(address,uint64,bytes32,address,bytes,bytes)"(
+    withdraw(
       provider: string,
       nonce: BigNumberish,
       account: BytesLike,
@@ -820,22 +1094,17 @@ export class FundWallet extends BaseContract {
       signature: BytesLike,
       overrides?: CallOverrides
     ): Promise<BigNumber>;
-
-    "withdraw(address,address,uint256)"(
-      token: string,
-      to: string,
-      value: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<void>;
-
-    withdrawNative(
-      to: string,
-      value: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<void>;
   };
 
   filters: {
+    "BillTypedHashUpdated(bytes32)"(
+      hash?: null
+    ): TypedEventFilter<[string], { hash: string }>;
+
+    BillTypedHashUpdated(
+      hash?: null
+    ): TypedEventFilter<[string], { hash: string }>;
+
     "Billing(address,uint64,bytes32,bytes,uint256)"(
       provider?: null,
       nonce?: null,
@@ -914,6 +1183,26 @@ export class FundWallet extends BaseContract {
       value?: null
     ): TypedEventFilter<[string, BigNumber], { to: string; value: BigNumber }>;
 
+    "NonceUpdated(address,bytes32,uint64,uint8)"(
+      provider?: null,
+      account?: null,
+      nonce?: null,
+      purpose?: null
+    ): TypedEventFilter<
+      [string, string, BigNumber, number],
+      { provider: string; account: string; nonce: BigNumber; purpose: number }
+    >;
+
+    NonceUpdated(
+      provider?: null,
+      account?: null,
+      nonce?: null,
+      purpose?: null
+    ): TypedEventFilter<
+      [string, string, BigNumber, number],
+      { provider: string; account: string; nonce: BigNumber; purpose: number }
+    >;
+
     "OwnershipTransferred(address,address)"(
       previousOwner?: string | null,
       newOwner?: string | null
@@ -960,6 +1249,14 @@ export class FundWallet extends BaseContract {
       providers?: null
     ): TypedEventFilter<[string], { providers: string }>;
 
+    "RechargeTypedHashUpdated(bytes32)"(
+      hash?: null
+    ): TypedEventFilter<[string], { hash: string }>;
+
+    RechargeTypedHashUpdated(
+      hash?: null
+    ): TypedEventFilter<[string], { hash: string }>;
+
     "ResourceAdaptorUpdated(address)"(
       adaptor?: null
     ): TypedEventFilter<[string], { adaptor: string }>;
@@ -968,38 +1265,24 @@ export class FundWallet extends BaseContract {
       adaptor?: null
     ): TypedEventFilter<[string], { adaptor: string }>;
 
-    "Spend(address,uint64,bytes32,uint256,uint256)"(
+    "Spend(address,uint64,bytes32,uint256)"(
       provider?: null,
       nonce?: null,
       account?: null,
-      fee?: null,
-      balance?: null
+      fee?: null
     ): TypedEventFilter<
-      [string, BigNumber, string, BigNumber, BigNumber],
-      {
-        provider: string;
-        nonce: BigNumber;
-        account: string;
-        fee: BigNumber;
-        balance: BigNumber;
-      }
+      [string, BigNumber, string, BigNumber],
+      { provider: string; nonce: BigNumber; account: string; fee: BigNumber }
     >;
 
     Spend(
       provider?: null,
       nonce?: null,
       account?: null,
-      fee?: null,
-      balance?: null
+      fee?: null
     ): TypedEventFilter<
-      [string, BigNumber, string, BigNumber, BigNumber],
-      {
-        provider: string;
-        nonce: BigNumber;
-        account: string;
-        fee: BigNumber;
-        balance: BigNumber;
-      }
+      [string, BigNumber, string, BigNumber],
+      { provider: string; nonce: BigNumber; account: string; fee: BigNumber }
     >;
 
     "TokenUpdated(address)"(
@@ -1099,15 +1382,15 @@ export class FundWallet extends BaseContract {
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
-    charge(
+    billHash(
       provider: string,
       nonce: BigNumberish,
-      owner: string,
       account: BytesLike,
-      amount: BigNumberish,
-      signature: BytesLike,
-      overrides?: Overrides & { from?: string | Promise<string> }
+      bill: BytesLike,
+      overrides?: CallOverrides
     ): Promise<BigNumber>;
+
+    billTypedHash(overrides?: CallOverrides): Promise<BigNumber>;
 
     decodeBill(
       message: BytesLike,
@@ -1125,7 +1408,7 @@ export class FundWallet extends BaseContract {
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
-    hashBill(
+    hashTypedDataV4ForBill(
       provider: string,
       nonce: BigNumberish,
       account: BytesLike,
@@ -1133,15 +1416,36 @@ export class FundWallet extends BaseContract {
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
+    hashTypedDataV4ForRecharge(
+      provider: string,
+      nonce: BigNumberish,
+      owner: string,
+      account: BytesLike,
+      amount: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
+
     initialize(
       owner: string,
       pauser: string,
+      adaptor: string,
       _providers: string,
       _token: string,
+      name: string,
+      version: string,
+      rechargeTypes: string,
+      billTypes: string,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<BigNumber>;
 
     isPauser(account: string, overrides?: CallOverrides): Promise<BigNumber>;
+
+    nonces(
+      arg0: string,
+      arg1: BytesLike,
+      arg2: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
 
     owner(overrides?: CallOverrides): Promise<BigNumber>;
 
@@ -1149,6 +1453,19 @@ export class FundWallet extends BaseContract {
       provider: string,
       account: BytesLike,
       overrides?: CallOverrides
+    ): Promise<BigNumber>;
+
+    ownerWithdrawERC20(
+      token: string,
+      to: string,
+      value: BigNumberish,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<BigNumber>;
+
+    ownerWithdrawNative(
+      to: string,
+      value: BigNumberish,
+      overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<BigNumber>;
 
     pause(
@@ -1161,6 +1478,27 @@ export class FundWallet extends BaseContract {
 
     providers(overrides?: CallOverrides): Promise<BigNumber>;
 
+    recharge(
+      provider: string,
+      nonce: BigNumberish,
+      owner: string,
+      account: BytesLike,
+      amount: BigNumberish,
+      signature: BytesLike,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<BigNumber>;
+
+    rechargeHash(
+      provider: string,
+      nonce: BigNumberish,
+      owner: string,
+      account: BytesLike,
+      amount: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
+
+    rechargeTypedHash(overrides?: CallOverrides): Promise<BigNumber>;
+
     removePauser(
       account: string,
       overrides?: Overrides & { from?: string | Promise<string> }
@@ -1171,6 +1509,16 @@ export class FundWallet extends BaseContract {
     ): Promise<BigNumber>;
 
     renouncePauser(
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<BigNumber>;
+
+    setBillTypedHash(
+      types: string,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<BigNumber>;
+
+    setRechargeTypedHash(
+      types: string,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<BigNumber>;
 
@@ -1207,26 +1555,13 @@ export class FundWallet extends BaseContract {
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<BigNumber>;
 
-    "withdraw(address,uint64,bytes32,address,bytes,bytes)"(
+    withdraw(
       provider: string,
       nonce: BigNumberish,
       account: BytesLike,
       to: string,
       bill: BytesLike,
       signature: BytesLike,
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<BigNumber>;
-
-    "withdraw(address,address,uint256)"(
-      token: string,
-      to: string,
-      value: BigNumberish,
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<BigNumber>;
-
-    withdrawNative(
-      to: string,
-      value: BigNumberish,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<BigNumber>;
   };
@@ -1245,15 +1580,15 @@ export class FundWallet extends BaseContract {
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
-    charge(
+    billHash(
       provider: string,
       nonce: BigNumberish,
-      owner: string,
       account: BytesLike,
-      amount: BigNumberish,
-      signature: BytesLike,
-      overrides?: Overrides & { from?: string | Promise<string> }
+      bill: BytesLike,
+      overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
+
+    billTypedHash(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
     decodeBill(
       message: BytesLike,
@@ -1271,7 +1606,7 @@ export class FundWallet extends BaseContract {
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
-    hashBill(
+    hashTypedDataV4ForBill(
       provider: string,
       nonce: BigNumberish,
       account: BytesLike,
@@ -1279,16 +1614,37 @@ export class FundWallet extends BaseContract {
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
+    hashTypedDataV4ForRecharge(
+      provider: string,
+      nonce: BigNumberish,
+      owner: string,
+      account: BytesLike,
+      amount: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
+
     initialize(
       owner: string,
       pauser: string,
+      adaptor: string,
       _providers: string,
       _token: string,
+      name: string,
+      version: string,
+      rechargeTypes: string,
+      billTypes: string,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<PopulatedTransaction>;
 
     isPauser(
       account: string,
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
+
+    nonces(
+      arg0: string,
+      arg1: BytesLike,
+      arg2: BigNumberish,
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
@@ -1298,6 +1654,19 @@ export class FundWallet extends BaseContract {
       provider: string,
       account: BytesLike,
       overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
+
+    ownerWithdrawERC20(
+      token: string,
+      to: string,
+      value: BigNumberish,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<PopulatedTransaction>;
+
+    ownerWithdrawNative(
+      to: string,
+      value: BigNumberish,
+      overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<PopulatedTransaction>;
 
     pause(
@@ -1313,6 +1682,27 @@ export class FundWallet extends BaseContract {
 
     providers(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
+    recharge(
+      provider: string,
+      nonce: BigNumberish,
+      owner: string,
+      account: BytesLike,
+      amount: BigNumberish,
+      signature: BytesLike,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<PopulatedTransaction>;
+
+    rechargeHash(
+      provider: string,
+      nonce: BigNumberish,
+      owner: string,
+      account: BytesLike,
+      amount: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
+
+    rechargeTypedHash(overrides?: CallOverrides): Promise<PopulatedTransaction>;
+
     removePauser(
       account: string,
       overrides?: Overrides & { from?: string | Promise<string> }
@@ -1323,6 +1713,16 @@ export class FundWallet extends BaseContract {
     ): Promise<PopulatedTransaction>;
 
     renouncePauser(
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<PopulatedTransaction>;
+
+    setBillTypedHash(
+      types: string,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<PopulatedTransaction>;
+
+    setRechargeTypedHash(
+      types: string,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<PopulatedTransaction>;
 
@@ -1359,26 +1759,13 @@ export class FundWallet extends BaseContract {
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<PopulatedTransaction>;
 
-    "withdraw(address,uint64,bytes32,address,bytes,bytes)"(
+    withdraw(
       provider: string,
       nonce: BigNumberish,
       account: BytesLike,
       to: string,
       bill: BytesLike,
       signature: BytesLike,
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<PopulatedTransaction>;
-
-    "withdraw(address,address,uint256)"(
-      token: string,
-      to: string,
-      value: BigNumberish,
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<PopulatedTransaction>;
-
-    withdrawNative(
-      to: string,
-      value: BigNumberish,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<PopulatedTransaction>;
   };

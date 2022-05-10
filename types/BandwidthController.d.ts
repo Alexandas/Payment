@@ -345,7 +345,7 @@ export class BandwidthController extends BaseContract {
       account: BytesLike,
       value: BigNumberish,
       overrides?: CallOverrides
-    ): Promise<BigNumber>;
+    ): Promise<void>;
 
     getAmountOf(
       value: BigNumberish,

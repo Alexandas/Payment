@@ -23,6 +23,8 @@ interface IBilling is IProvidersWrapper {
 		BillPayload[] payloads;
 	}
 
+	event BillTypedHashUpdated(bytes32 hash);
+
 	event TokenUpdated(IERC20Upgradeable token);
 
 	event ResourceAdaptorUpdated(IResourceAdaptor adaptor);

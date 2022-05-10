@@ -17,7 +17,7 @@ interface IIPFSStorageController is IAdaptorWrapper {
 		bytes32 account,
 		uint256 expandedStorageFee,
 		uint256 expandedExpirationFee
-	) external returns (uint256);
+	) external;
 
 	function isExpired(bytes32 account) external view returns (bool);
 

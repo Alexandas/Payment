@@ -12,6 +12,8 @@ abstract contract NormalResourceController is INormalResourceController, DstChai
 
 	mapping(bytes32 => uint256) internal balances;
 
+	constructor() initializer {}
+
 	function __Init_Normal_Resource_Controller(
 		address owner,
 		address dstChainPayment,
@@ -24,11 +26,10 @@ abstract contract NormalResourceController is INormalResourceController, DstChai
 		__Init_Resource_Type(resourceType);
 	}
 
-	function expand(bytes32 account, uint256 value) external override onlyDstChainPayment returns(uint256) {
+	function expand(bytes32 account, uint256 value) external override onlyDstChainPayment {
 		uint256 amount = getAmountOf(value);
 		balances[account] = balances[account].add(amount);
 		emit Expanded(account, value);
-		return value;
 	}
 
 	function balanceOf(bytes32 account) public view override returns(uint256) {

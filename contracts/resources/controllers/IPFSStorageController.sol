@@ -11,16 +11,7 @@ contract IPFSStorageController is IIPFSStorageController, DstChainPaymentWrapper
 
 	mapping(bytes32 => IPFSStorage) internal ipfsStorage;
 
-	constructor(
-		address owner,
-		address dstChainPayment,
-		IResourceAdaptor adaptor
-	) initializer {
-		_transferOwnership(owner);
-		__Init_Dst_Chain_Payment(dstChainPayment);
-		__Init_Resource_Adaptor(adaptor);
-		__Init_Resource_Type(ResourceData.ResourceType.IPFSStorage);
-	}
+	constructor() initializer {}
 
 	function initialize(
 		address owner,
@@ -37,7 +28,7 @@ contract IPFSStorageController is IIPFSStorageController, DstChainPaymentWrapper
 		bytes32 account,
 		uint256 expandedStorageFee,
 		uint256 expandedExpirationFee
-	) external override onlyDstChainPayment returns (uint256) {
+	) external override onlyDstChainPayment {
 		(uint256 expandedStorage, uint256 expandedExpiration) = expansions(account, expandedStorageFee, expandedExpirationFee);
 		if (isExpired(account)) {
 			ipfsStorage[account].startTime = block.timestamp;
@@ -49,7 +40,6 @@ contract IPFSStorageController is IIPFSStorageController, DstChainPaymentWrapper
 		}
 
 		emit Expanded(account, expandedStorageFee, expandedExpirationFee);
-		return expandedStorageFee.add(expandedExpirationFee);
 	}
 
 	function isExpired(bytes32 account) public view override returns (bool) {

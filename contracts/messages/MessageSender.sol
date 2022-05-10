@@ -47,17 +47,7 @@ contract MessageSender is IMessageSender, OwnableUpgradeable {
 		_;
 	}
 
-	constructor(
-		address owner,
-		address _messageBus,
-		address _receiver,
-		uint64 _dstChainId
-	) initializer {
-		_transferOwnership(owner);
-		_setMessageBus(_messageBus);
-		_setReceiver(_receiver);
-		_setDstChainId(_dstChainId);
-	}
+	constructor() initializer {}
 
 	function initialize(
 		address owner,

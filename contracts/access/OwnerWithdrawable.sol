@@ -13,12 +13,12 @@ abstract contract OwnerWithdrawable is OwnableUpgradeable  {
 
 	event NativeWithdrawal(address to, uint256 value);
 
-	function withdraw(IERC20Upgradeable token, address to, uint256 value) external onlyOwner {
+	function ownerWithdrawERC20(IERC20Upgradeable token, address to, uint256 value) external onlyOwner {
 		token.safeTransfer(to, value);
 		emit Withdrawal(token, to, value);
 	}
 
-	function withdrawNative(address payable to, uint256 value) external onlyOwner {
+	function ownerWithdrawNative(address payable to, uint256 value) external onlyOwner {
 		bool success = to.send(value);
 		require(success, 'Payment: withdraw native token failed');
 		emit NativeWithdrawal(to, value);

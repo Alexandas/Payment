@@ -18,8 +18,6 @@ interface IDstChainPayment {
 
 	event Paid(address payer, IERC20Upgradeable token, PaymentPayload payload);
 
-	event ProvidetWithdraw(address provider, IERC20Upgradeable token, address to, uint256 value);
-
 	function payFromSourceChain(
 		IERC20Upgradeable token,
 		uint256 amount,

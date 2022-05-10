@@ -54,15 +54,7 @@ contract MessageReceiver is OwnerWithdrawable {
 		_;
 	}
 
-	constructor(
-		address owner,
-		address _messageBus,
-		address _executor
-	) initializer {
-		_transferOwnership(owner);
-		_setMessageBus(_messageBus);
-		_setExecutor(_executor);
-	}
+	constructor() initializer {}
 
 	function initialize(
 		address owner,

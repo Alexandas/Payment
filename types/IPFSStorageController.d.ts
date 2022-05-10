@@ -491,7 +491,7 @@ export class IPFSStorageController extends BaseContract {
       expandedStorageFee: BigNumberish,
       expandedExpirationFee: BigNumberish,
       overrides?: CallOverrides
-    ): Promise<BigNumber>;
+    ): Promise<void>;
 
     expandedFee(
       account: BytesLike,

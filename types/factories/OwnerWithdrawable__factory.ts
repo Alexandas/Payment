@@ -87,26 +87,6 @@ const _abi = [
     type: "function",
   },
   {
-    inputs: [],
-    name: "renounceOwnership",
-    outputs: [],
-    stateMutability: "nonpayable",
-    type: "function",
-  },
-  {
-    inputs: [
-      {
-        internalType: "address",
-        name: "newOwner",
-        type: "address",
-      },
-    ],
-    name: "transferOwnership",
-    outputs: [],
-    stateMutability: "nonpayable",
-    type: "function",
-  },
-  {
     inputs: [
       {
         internalType: "contract IERC20Upgradeable",
@@ -124,7 +104,7 @@ const _abi = [
         type: "uint256",
       },
     ],
-    name: "withdraw",
+    name: "ownerWithdrawERC20",
     outputs: [],
     stateMutability: "nonpayable",
     type: "function",
@@ -142,7 +122,27 @@ const _abi = [
         type: "uint256",
       },
     ],
-    name: "withdrawNative",
+    name: "ownerWithdrawNative",
+    outputs: [],
+    stateMutability: "nonpayable",
+    type: "function",
+  },
+  {
+    inputs: [],
+    name: "renounceOwnership",
+    outputs: [],
+    stateMutability: "nonpayable",
+    type: "function",
+  },
+  {
+    inputs: [
+      {
+        internalType: "address",
+        name: "newOwner",
+        type: "address",
+      },
+    ],
+    name: "transferOwnership",
     outputs: [],
     stateMutability: "nonpayable",
     type: "function",

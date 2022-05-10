@@ -24,9 +24,11 @@ interface BillingInterface extends ethers.utils.Interface {
     "adaptor()": FunctionFragment;
     "addPauser(address)": FunctionFragment;
     "balanceOf(address,bytes32)": FunctionFragment;
+    "billHash(address,uint64,bytes32,bytes)": FunctionFragment;
+    "billTypedHash()": FunctionFragment;
     "decodeBill(bytes)": FunctionFragment;
     "encodeBill((uint256,tuple[]))": FunctionFragment;
-    "hashBill(address,uint64,bytes32,bytes)": FunctionFragment;
+    "hashTypedDataV4ForBill(address,uint64,bytes32,bytes)": FunctionFragment;
     "isPauser(address)": FunctionFragment;
     "owner()": FunctionFragment;
     "pause()": FunctionFragment;
@@ -48,6 +50,14 @@ interface BillingInterface extends ethers.utils.Interface {
     values: [string, BytesLike]
   ): string;
   encodeFunctionData(
+    functionFragment: "billHash",
+    values: [string, BigNumberish, BytesLike, BytesLike]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "billTypedHash",
+    values?: undefined
+  ): string;
+  encodeFunctionData(
     functionFragment: "decodeBill",
     values: [BytesLike]
   ): string;
@@ -64,7 +74,7 @@ interface BillingInterface extends ethers.utils.Interface {
     ]
   ): string;
   encodeFunctionData(
-    functionFragment: "hashBill",
+    functionFragment: "hashTypedDataV4ForBill",
     values: [string, BigNumberish, BytesLike, BytesLike]
   ): string;
   encodeFunctionData(functionFragment: "isPauser", values: [string]): string;
@@ -95,9 +105,17 @@ interface BillingInterface extends ethers.utils.Interface {
   decodeFunctionResult(functionFragment: "adaptor", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "addPauser", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "balanceOf", data: BytesLike): Result;
+  decodeFunctionResult(functionFragment: "billHash", data: BytesLike): Result;
+  decodeFunctionResult(
+    functionFragment: "billTypedHash",
+    data: BytesLike
+  ): Result;
   decodeFunctionResult(functionFragment: "decodeBill", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "encodeBill", data: BytesLike): Result;
-  decodeFunctionResult(functionFragment: "hashBill", data: BytesLike): Result;
+  decodeFunctionResult(
+    functionFragment: "hashTypedDataV4ForBill",
+    data: BytesLike
+  ): Result;
   decodeFunctionResult(functionFragment: "isPauser", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "owner", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "pause", data: BytesLike): Result;
@@ -124,6 +142,7 @@ interface BillingInterface extends ethers.utils.Interface {
   decodeFunctionResult(functionFragment: "unpause", data: BytesLike): Result;
 
   events: {
+    "BillTypedHashUpdated(bytes32)": EventFragment;
     "Billing(address,uint64,bytes32,bytes,uint256)": EventFragment;
     "OwnershipTransferred(address,address)": EventFragment;
     "Paused(address)": EventFragment;
@@ -135,6 +154,7 @@ interface BillingInterface extends ethers.utils.Interface {
     "Unpaused(address)": EventFragment;
   };
 
+  getEvent(nameOrSignatureOrTopic: "BillTypedHashUpdated"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "Billing"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "OwnershipTransferred"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "Paused"): EventFragment;
@@ -145,6 +165,8 @@ interface BillingInterface extends ethers.utils.Interface {
   getEvent(nameOrSignatureOrTopic: "TokenUpdated"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "Unpaused"): EventFragment;
 }
+
+export type BillTypedHashUpdatedEvent = TypedEvent<[string] & { hash: string }>;
 
 export type BillingEvent = TypedEvent<
   [string, BigNumber, string, string, BigNumber] & {
@@ -235,6 +257,16 @@ export class Billing extends BaseContract {
       overrides?: CallOverrides
     ): Promise<[BigNumber]>;
 
+    billHash(
+      provider: string,
+      nonce: BigNumberish,
+      account: BytesLike,
+      bill: BytesLike,
+      overrides?: CallOverrides
+    ): Promise<[string]>;
+
+    billTypedHash(overrides?: CallOverrides): Promise<[string]>;
+
     decodeBill(
       message: BytesLike,
       overrides?: CallOverrides
@@ -285,7 +317,7 @@ export class Billing extends BaseContract {
       overrides?: CallOverrides
     ): Promise<[string]>;
 
-    hashBill(
+    hashTypedDataV4ForBill(
       provider: string,
       nonce: BigNumberish,
       account: BytesLike,
@@ -345,6 +377,16 @@ export class Billing extends BaseContract {
     overrides?: CallOverrides
   ): Promise<BigNumber>;
 
+  billHash(
+    provider: string,
+    nonce: BigNumberish,
+    account: BytesLike,
+    bill: BytesLike,
+    overrides?: CallOverrides
+  ): Promise<string>;
+
+  billTypedHash(overrides?: CallOverrides): Promise<string>;
+
   decodeBill(
     message: BytesLike,
     overrides?: CallOverrides
@@ -387,7 +429,7 @@ export class Billing extends BaseContract {
     overrides?: CallOverrides
   ): Promise<string>;
 
-  hashBill(
+  hashTypedDataV4ForBill(
     provider: string,
     nonce: BigNumberish,
     account: BytesLike,
@@ -444,6 +486,16 @@ export class Billing extends BaseContract {
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
+    billHash(
+      provider: string,
+      nonce: BigNumberish,
+      account: BytesLike,
+      bill: BytesLike,
+      overrides?: CallOverrides
+    ): Promise<string>;
+
+    billTypedHash(overrides?: CallOverrides): Promise<string>;
+
     decodeBill(
       message: BytesLike,
       overrides?: CallOverrides
@@ -486,7 +538,7 @@ export class Billing extends BaseContract {
       overrides?: CallOverrides
     ): Promise<string>;
 
-    hashBill(
+    hashTypedDataV4ForBill(
       provider: string,
       nonce: BigNumberish,
       account: BytesLike,
@@ -523,6 +575,14 @@ export class Billing extends BaseContract {
   };
 
   filters: {
+    "BillTypedHashUpdated(bytes32)"(
+      hash?: null
+    ): TypedEventFilter<[string], { hash: string }>;
+
+    BillTypedHashUpdated(
+      hash?: null
+    ): TypedEventFilter<[string], { hash: string }>;
+
     "Billing(address,uint64,bytes32,bytes,uint256)"(
       provider?: null,
       nonce?: null,
@@ -638,6 +698,16 @@ export class Billing extends BaseContract {
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
+    billHash(
+      provider: string,
+      nonce: BigNumberish,
+      account: BytesLike,
+      bill: BytesLike,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
+
+    billTypedHash(overrides?: CallOverrides): Promise<BigNumber>;
+
     decodeBill(
       message: BytesLike,
       overrides?: CallOverrides
@@ -654,7 +724,7 @@ export class Billing extends BaseContract {
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
-    hashBill(
+    hashTypedDataV4ForBill(
       provider: string,
       nonce: BigNumberish,
       account: BytesLike,
@@ -715,6 +785,16 @@ export class Billing extends BaseContract {
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
+    billHash(
+      provider: string,
+      nonce: BigNumberish,
+      account: BytesLike,
+      bill: BytesLike,
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
+
+    billTypedHash(overrides?: CallOverrides): Promise<PopulatedTransaction>;
+
     decodeBill(
       message: BytesLike,
       overrides?: CallOverrides
@@ -731,7 +811,7 @@ export class Billing extends BaseContract {
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
-    hashBill(
+    hashTypedDataV4ForBill(
       provider: string,
       nonce: BigNumberish,
       account: BytesLike,
