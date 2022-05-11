@@ -9,6 +9,8 @@ import '../interfaces/IDstChainPayment.sol';
 import '../providers/ProvidersWrapper.sol';
 import '../messages/MessageReceiverWrapper.sol';
 import '../access/OwnerWithdrawable.sol';
+import '../access/Pauser.sol';
+
 import './ResourPayloadTool.sol';
 
 contract DstChainPayment is
@@ -18,7 +20,8 @@ contract DstChainPayment is
 	ReentrancyGuardUpgradeable,
 	ProvidersWrapper,
 	ControllersWrapper,
-	OwnerWithdrawable
+	OwnerWithdrawable,
+	Pauser
 {
 	using SafeMathUpgradeable for uint256;
 	using SafeERC20Upgradeable for IERC20Upgradeable;
@@ -65,7 +68,7 @@ contract DstChainPayment is
 		value = _processPayloads(payload.account, payload.payloads, true);
 		value = matchTokenDecimals(value);
 		_pay(payload.provider, value);
-	
+
 		emit Paid(msg.sender, token, payload);
 	}
 
@@ -75,7 +78,11 @@ contract DstChainPayment is
 		providerBalances[provider] = providerBalances[provider].add(amount);
 	}
 
-	function _processPayloads(bytes32 account, ResourceData.Payload[] memory payloads, bool withValue) internal returns (uint256 value) {
+	function _processPayloads(
+		bytes32 account,
+		ResourceData.Payload[] memory payloads,
+		bool withValue
+	) internal returns (uint256 value) {
 		require(payloads.length > 0, 'DstChainPayment: invalid payloads');
 		for (uint256 i = 0; i < payloads.length; i++) {
 			ResourceData.Payload memory payload = payloads[i];

@@ -26,5 +26,4 @@ abstract contract DstChainPaymentWrapper is OwnableUpgradeable {
 		dstChainPayment = _dstChainPayment;
 		emit DstChainPaymentUpdated(_dstChainPayment);
 	}
-
 }

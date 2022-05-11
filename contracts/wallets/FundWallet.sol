@@ -9,8 +9,9 @@ import '@openzeppelin/contracts-upgradeable/token/ERC20/utils/SafeERC20Upgradeab
 import './Billing.sol';
 import '../interfaces/IFundWallet.sol';
 import '../access/OwnerWithdrawable.sol';
+import '../access/Pauser.sol';
 
-contract FundWallet is IFundWallet, Billing, OwnerWithdrawable, ReentrancyGuardUpgradeable {
+contract FundWallet is IFundWallet, Billing, OwnerWithdrawable, Pauser, ReentrancyGuardUpgradeable {
 	using SafeMathUpgradeable for uint256;
 	using SafeERC20Upgradeable for IERC20Upgradeable;
 

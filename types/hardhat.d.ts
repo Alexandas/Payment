@@ -137,6 +137,10 @@ declare module "hardhat/types/runtime" {
       signerOrOptions?: ethers.Signer | FactoryOptions
     ): Promise<Contracts.IProvidersWrapper__factory>;
     getContractFactory(
+      name: "ContentTracer",
+      signerOrOptions?: ethers.Signer | FactoryOptions
+    ): Promise<Contracts.ContentTracer__factory>;
+    getContractFactory(
       name: "MessageReceiver",
       signerOrOptions?: ethers.Signer | FactoryOptions
     ): Promise<Contracts.MessageReceiver__factory>;
@@ -420,6 +424,11 @@ declare module "hardhat/types/runtime" {
       address: string,
       signer?: ethers.Signer
     ): Promise<Contracts.IProvidersWrapper>;
+    getContractAt(
+      name: "ContentTracer",
+      address: string,
+      signer?: ethers.Signer
+    ): Promise<Contracts.ContentTracer>;
     getContractAt(
       name: "MessageReceiver",
       address: string,

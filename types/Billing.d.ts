@@ -11,7 +11,6 @@ import {
   PopulatedTransaction,
   BaseContract,
   ContractTransaction,
-  Overrides,
   CallOverrides,
 } from "ethers";
 import { BytesLike } from "@ethersproject/bytes";
@@ -22,29 +21,17 @@ import type { TypedEventFilter, TypedEvent, TypedListener } from "./common";
 interface BillingInterface extends ethers.utils.Interface {
   functions: {
     "adaptor()": FunctionFragment;
-    "addPauser(address)": FunctionFragment;
     "balanceOf(address,bytes32)": FunctionFragment;
     "billHash(address,uint64,bytes32,bytes)": FunctionFragment;
     "billTypedHash()": FunctionFragment;
     "decodeBill(bytes)": FunctionFragment;
     "encodeBill((uint256,tuple[]))": FunctionFragment;
     "hashTypedDataV4ForBill(address,uint64,bytes32,bytes)": FunctionFragment;
-    "isPauser(address)": FunctionFragment;
-    "owner()": FunctionFragment;
-    "pause()": FunctionFragment;
-    "paused()": FunctionFragment;
-    "pausers(address)": FunctionFragment;
     "providers()": FunctionFragment;
-    "removePauser(address)": FunctionFragment;
-    "renounceOwnership()": FunctionFragment;
-    "renouncePauser()": FunctionFragment;
     "token()": FunctionFragment;
-    "transferOwnership(address)": FunctionFragment;
-    "unpause()": FunctionFragment;
   };
 
   encodeFunctionData(functionFragment: "adaptor", values?: undefined): string;
-  encodeFunctionData(functionFragment: "addPauser", values: [string]): string;
   encodeFunctionData(
     functionFragment: "balanceOf",
     values: [string, BytesLike]
@@ -77,33 +64,10 @@ interface BillingInterface extends ethers.utils.Interface {
     functionFragment: "hashTypedDataV4ForBill",
     values: [string, BigNumberish, BytesLike, BytesLike]
   ): string;
-  encodeFunctionData(functionFragment: "isPauser", values: [string]): string;
-  encodeFunctionData(functionFragment: "owner", values?: undefined): string;
-  encodeFunctionData(functionFragment: "pause", values?: undefined): string;
-  encodeFunctionData(functionFragment: "paused", values?: undefined): string;
-  encodeFunctionData(functionFragment: "pausers", values: [string]): string;
   encodeFunctionData(functionFragment: "providers", values?: undefined): string;
-  encodeFunctionData(
-    functionFragment: "removePauser",
-    values: [string]
-  ): string;
-  encodeFunctionData(
-    functionFragment: "renounceOwnership",
-    values?: undefined
-  ): string;
-  encodeFunctionData(
-    functionFragment: "renouncePauser",
-    values?: undefined
-  ): string;
   encodeFunctionData(functionFragment: "token", values?: undefined): string;
-  encodeFunctionData(
-    functionFragment: "transferOwnership",
-    values: [string]
-  ): string;
-  encodeFunctionData(functionFragment: "unpause", values?: undefined): string;
 
   decodeFunctionResult(functionFragment: "adaptor", data: BytesLike): Result;
-  decodeFunctionResult(functionFragment: "addPauser", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "balanceOf", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "billHash", data: BytesLike): Result;
   decodeFunctionResult(
@@ -116,54 +80,22 @@ interface BillingInterface extends ethers.utils.Interface {
     functionFragment: "hashTypedDataV4ForBill",
     data: BytesLike
   ): Result;
-  decodeFunctionResult(functionFragment: "isPauser", data: BytesLike): Result;
-  decodeFunctionResult(functionFragment: "owner", data: BytesLike): Result;
-  decodeFunctionResult(functionFragment: "pause", data: BytesLike): Result;
-  decodeFunctionResult(functionFragment: "paused", data: BytesLike): Result;
-  decodeFunctionResult(functionFragment: "pausers", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "providers", data: BytesLike): Result;
-  decodeFunctionResult(
-    functionFragment: "removePauser",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(
-    functionFragment: "renounceOwnership",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(
-    functionFragment: "renouncePauser",
-    data: BytesLike
-  ): Result;
   decodeFunctionResult(functionFragment: "token", data: BytesLike): Result;
-  decodeFunctionResult(
-    functionFragment: "transferOwnership",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(functionFragment: "unpause", data: BytesLike): Result;
 
   events: {
     "BillTypedHashUpdated(bytes32)": EventFragment;
     "Billing(address,uint64,bytes32,bytes,uint256)": EventFragment;
-    "OwnershipTransferred(address,address)": EventFragment;
-    "Paused(address)": EventFragment;
-    "PauserAdded(address)": EventFragment;
-    "PauserRemoved(address)": EventFragment;
     "ProvidersUpdated(address)": EventFragment;
     "ResourceAdaptorUpdated(address)": EventFragment;
     "TokenUpdated(address)": EventFragment;
-    "Unpaused(address)": EventFragment;
   };
 
   getEvent(nameOrSignatureOrTopic: "BillTypedHashUpdated"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "Billing"): EventFragment;
-  getEvent(nameOrSignatureOrTopic: "OwnershipTransferred"): EventFragment;
-  getEvent(nameOrSignatureOrTopic: "Paused"): EventFragment;
-  getEvent(nameOrSignatureOrTopic: "PauserAdded"): EventFragment;
-  getEvent(nameOrSignatureOrTopic: "PauserRemoved"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "ProvidersUpdated"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "ResourceAdaptorUpdated"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "TokenUpdated"): EventFragment;
-  getEvent(nameOrSignatureOrTopic: "Unpaused"): EventFragment;
 }
 
 export type BillTypedHashUpdatedEvent = TypedEvent<[string] & { hash: string }>;
@@ -178,16 +110,6 @@ export type BillingEvent = TypedEvent<
   }
 >;
 
-export type OwnershipTransferredEvent = TypedEvent<
-  [string, string] & { previousOwner: string; newOwner: string }
->;
-
-export type PausedEvent = TypedEvent<[string] & { account: string }>;
-
-export type PauserAddedEvent = TypedEvent<[string] & { account: string }>;
-
-export type PauserRemovedEvent = TypedEvent<[string] & { account: string }>;
-
 export type ProvidersUpdatedEvent = TypedEvent<
   [string] & { providers: string }
 >;
@@ -197,8 +119,6 @@ export type ResourceAdaptorUpdatedEvent = TypedEvent<
 >;
 
 export type TokenUpdatedEvent = TypedEvent<[string] & { token: string }>;
-
-export type UnpausedEvent = TypedEvent<[string] & { account: string }>;
 
 export class Billing extends BaseContract {
   connect(signerOrProvider: Signer | Provider | string): this;
@@ -245,11 +165,6 @@ export class Billing extends BaseContract {
 
   functions: {
     adaptor(overrides?: CallOverrides): Promise<[string]>;
-
-    addPauser(
-      account: string,
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<ContractTransaction>;
 
     balanceOf(
       provider: string,
@@ -325,51 +240,12 @@ export class Billing extends BaseContract {
       overrides?: CallOverrides
     ): Promise<[string]>;
 
-    isPauser(account: string, overrides?: CallOverrides): Promise<[boolean]>;
-
-    owner(overrides?: CallOverrides): Promise<[string]>;
-
-    pause(
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<ContractTransaction>;
-
-    paused(overrides?: CallOverrides): Promise<[boolean]>;
-
-    pausers(arg0: string, overrides?: CallOverrides): Promise<[boolean]>;
-
     providers(overrides?: CallOverrides): Promise<[string]>;
 
-    removePauser(
-      account: string,
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<ContractTransaction>;
-
-    renounceOwnership(
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<ContractTransaction>;
-
-    renouncePauser(
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<ContractTransaction>;
-
     token(overrides?: CallOverrides): Promise<[string]>;
-
-    transferOwnership(
-      newOwner: string,
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<ContractTransaction>;
-
-    unpause(
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<ContractTransaction>;
   };
 
   adaptor(overrides?: CallOverrides): Promise<string>;
-
-  addPauser(
-    account: string,
-    overrides?: Overrides & { from?: string | Promise<string> }
-  ): Promise<ContractTransaction>;
 
   balanceOf(
     provider: string,
@@ -437,48 +313,12 @@ export class Billing extends BaseContract {
     overrides?: CallOverrides
   ): Promise<string>;
 
-  isPauser(account: string, overrides?: CallOverrides): Promise<boolean>;
-
-  owner(overrides?: CallOverrides): Promise<string>;
-
-  pause(
-    overrides?: Overrides & { from?: string | Promise<string> }
-  ): Promise<ContractTransaction>;
-
-  paused(overrides?: CallOverrides): Promise<boolean>;
-
-  pausers(arg0: string, overrides?: CallOverrides): Promise<boolean>;
-
   providers(overrides?: CallOverrides): Promise<string>;
-
-  removePauser(
-    account: string,
-    overrides?: Overrides & { from?: string | Promise<string> }
-  ): Promise<ContractTransaction>;
-
-  renounceOwnership(
-    overrides?: Overrides & { from?: string | Promise<string> }
-  ): Promise<ContractTransaction>;
-
-  renouncePauser(
-    overrides?: Overrides & { from?: string | Promise<string> }
-  ): Promise<ContractTransaction>;
 
   token(overrides?: CallOverrides): Promise<string>;
 
-  transferOwnership(
-    newOwner: string,
-    overrides?: Overrides & { from?: string | Promise<string> }
-  ): Promise<ContractTransaction>;
-
-  unpause(
-    overrides?: Overrides & { from?: string | Promise<string> }
-  ): Promise<ContractTransaction>;
-
   callStatic: {
     adaptor(overrides?: CallOverrides): Promise<string>;
-
-    addPauser(account: string, overrides?: CallOverrides): Promise<void>;
 
     balanceOf(
       provider: string,
@@ -546,32 +386,9 @@ export class Billing extends BaseContract {
       overrides?: CallOverrides
     ): Promise<string>;
 
-    isPauser(account: string, overrides?: CallOverrides): Promise<boolean>;
-
-    owner(overrides?: CallOverrides): Promise<string>;
-
-    pause(overrides?: CallOverrides): Promise<void>;
-
-    paused(overrides?: CallOverrides): Promise<boolean>;
-
-    pausers(arg0: string, overrides?: CallOverrides): Promise<boolean>;
-
     providers(overrides?: CallOverrides): Promise<string>;
 
-    removePauser(account: string, overrides?: CallOverrides): Promise<void>;
-
-    renounceOwnership(overrides?: CallOverrides): Promise<void>;
-
-    renouncePauser(overrides?: CallOverrides): Promise<void>;
-
     token(overrides?: CallOverrides): Promise<string>;
-
-    transferOwnership(
-      newOwner: string,
-      overrides?: CallOverrides
-    ): Promise<void>;
-
-    unpause(overrides?: CallOverrides): Promise<void>;
   };
 
   filters: {
@@ -617,44 +434,6 @@ export class Billing extends BaseContract {
       }
     >;
 
-    "OwnershipTransferred(address,address)"(
-      previousOwner?: string | null,
-      newOwner?: string | null
-    ): TypedEventFilter<
-      [string, string],
-      { previousOwner: string; newOwner: string }
-    >;
-
-    OwnershipTransferred(
-      previousOwner?: string | null,
-      newOwner?: string | null
-    ): TypedEventFilter<
-      [string, string],
-      { previousOwner: string; newOwner: string }
-    >;
-
-    "Paused(address)"(
-      account?: null
-    ): TypedEventFilter<[string], { account: string }>;
-
-    Paused(account?: null): TypedEventFilter<[string], { account: string }>;
-
-    "PauserAdded(address)"(
-      account?: null
-    ): TypedEventFilter<[string], { account: string }>;
-
-    PauserAdded(
-      account?: null
-    ): TypedEventFilter<[string], { account: string }>;
-
-    "PauserRemoved(address)"(
-      account?: null
-    ): TypedEventFilter<[string], { account: string }>;
-
-    PauserRemoved(
-      account?: null
-    ): TypedEventFilter<[string], { account: string }>;
-
     "ProvidersUpdated(address)"(
       providers?: null
     ): TypedEventFilter<[string], { providers: string }>;
@@ -676,21 +455,10 @@ export class Billing extends BaseContract {
     ): TypedEventFilter<[string], { token: string }>;
 
     TokenUpdated(token?: null): TypedEventFilter<[string], { token: string }>;
-
-    "Unpaused(address)"(
-      account?: null
-    ): TypedEventFilter<[string], { account: string }>;
-
-    Unpaused(account?: null): TypedEventFilter<[string], { account: string }>;
   };
 
   estimateGas: {
     adaptor(overrides?: CallOverrides): Promise<BigNumber>;
-
-    addPauser(
-      account: string,
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<BigNumber>;
 
     balanceOf(
       provider: string,
@@ -732,52 +500,13 @@ export class Billing extends BaseContract {
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
-    isPauser(account: string, overrides?: CallOverrides): Promise<BigNumber>;
-
-    owner(overrides?: CallOverrides): Promise<BigNumber>;
-
-    pause(
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<BigNumber>;
-
-    paused(overrides?: CallOverrides): Promise<BigNumber>;
-
-    pausers(arg0: string, overrides?: CallOverrides): Promise<BigNumber>;
-
     providers(overrides?: CallOverrides): Promise<BigNumber>;
 
-    removePauser(
-      account: string,
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<BigNumber>;
-
-    renounceOwnership(
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<BigNumber>;
-
-    renouncePauser(
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<BigNumber>;
-
     token(overrides?: CallOverrides): Promise<BigNumber>;
-
-    transferOwnership(
-      newOwner: string,
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<BigNumber>;
-
-    unpause(
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<BigNumber>;
   };
 
   populateTransaction: {
     adaptor(overrides?: CallOverrides): Promise<PopulatedTransaction>;
-
-    addPauser(
-      account: string,
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<PopulatedTransaction>;
 
     balanceOf(
       provider: string,
@@ -819,48 +548,8 @@ export class Billing extends BaseContract {
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
-    isPauser(
-      account: string,
-      overrides?: CallOverrides
-    ): Promise<PopulatedTransaction>;
-
-    owner(overrides?: CallOverrides): Promise<PopulatedTransaction>;
-
-    pause(
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<PopulatedTransaction>;
-
-    paused(overrides?: CallOverrides): Promise<PopulatedTransaction>;
-
-    pausers(
-      arg0: string,
-      overrides?: CallOverrides
-    ): Promise<PopulatedTransaction>;
-
     providers(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
-    removePauser(
-      account: string,
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<PopulatedTransaction>;
-
-    renounceOwnership(
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<PopulatedTransaction>;
-
-    renouncePauser(
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<PopulatedTransaction>;
-
     token(overrides?: CallOverrides): Promise<PopulatedTransaction>;
-
-    transferOwnership(
-      newOwner: string,
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<PopulatedTransaction>;
-
-    unpause(
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<PopulatedTransaction>;
   };
 }

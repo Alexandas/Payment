@@ -1,10 +1,10 @@
 // SPDX-License-Identifier: UNLICENSE
 
 pragma solidity >=0.8.0;
-import '../access/Pauser.sol';
+import '@openzeppelin/contracts-upgradeable/proxy/utils/Initializable.sol';
 import '../interfaces/IProvidersWrapper.sol';
 
-abstract contract ProvidersWrapper is IProvidersWrapper, Pauser {
+abstract contract ProvidersWrapper is IProvidersWrapper, Initializable {
 	IProviders public override providers;
 
 	function __Init_Providers(IProviders _providers) internal onlyInitializing {
