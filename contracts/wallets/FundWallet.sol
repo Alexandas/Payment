@@ -104,7 +104,7 @@ contract FundWallet is IFundWallet, Billing, OwnerWithdrawable, Pauser, Reentran
 		bytes memory signature
 	) external {
 		require(owner != address(0), 'FundWallet: zero address');
-		bytes32 hash = hashTypedDataV4ForSetWalletOwnerHash(provider, account, owner);
+		bytes32 hash = hashTypedDataV4ForWalletOwnerHash(provider, account, owner);
 		require(providers.isValidSignature(provider, hash, signature), 'FundWallet: invalid signature');
 		require(wallets[provider][account].owner == address(0), 'FundWallet: wallet owner exists');
 		wallets[provider][account].owner = owner;
@@ -219,19 +219,6 @@ contract FundWallet is IFundWallet, Billing, OwnerWithdrawable, Pauser, Reentran
 		_setWalletOwnerTypedHash(keccak256(bytes(types)));
 	}
 
-	/// @dev return set wallet owner typed hash
-	/// @param provider provider address
-	/// @param owner wallet owner
-	/// @param account user account
-	/// @return set wallet owner typed hash
-	function setWalletOwnerHash(
-		address provider,
-		bytes32 account,
-		address owner
-	) public view returns (bytes32) {
-		return keccak256(abi.encode(walletOwnerTypedHash, provider, account, owner));
-	}
-
 	/// @dev update recharge typed hash
 	/// @param types recharge types
 	function setRechargeTypedHash(string memory types) external onlyOwner {
@@ -250,17 +237,31 @@ contract FundWallet is IFundWallet, Billing, OwnerWithdrawable, Pauser, Reentran
 		_setToken(_token);
 	}
 
-	/// @dev return set wallet owner hash typed data v4
+
+	/// @dev return set wallet owner typed hash
 	/// @param provider provider address
-	/// @param account user account
 	/// @param owner wallet owner
-	/// @return set wallet owner hash typed data v4
-	function hashTypedDataV4ForSetWalletOwnerHash(
+	/// @param account user account
+	/// @return wallet owner typed hash
+	function walletOwnerHash(
 		address provider,
 		bytes32 account,
 		address owner
 	) public view returns (bytes32) {
-		return _hashTypedDataV4(setWalletOwnerHash(provider, account, owner));
+		return keccak256(abi.encode(walletOwnerTypedHash, provider, account, owner));
+	}
+
+	/// @dev return set wallet owner hash typed data v4
+	/// @param provider provider address
+	/// @param account user account
+	/// @param owner wallet owner
+	/// @return wallet owner hash typed data v4
+	function hashTypedDataV4ForWalletOwnerHash(
+		address provider,
+		bytes32 account,
+		address owner
+	) public view returns (bytes32) {
+		return _hashTypedDataV4(walletOwnerHash(provider, account, owner));
 	}
 
 	/// @dev return recharge typed hash
@@ -283,7 +284,7 @@ contract FundWallet is IFundWallet, Billing, OwnerWithdrawable, Pauser, Reentran
 	/// @param nonce nonce
 	/// @param account user account
 	/// @param amount token amount
-	/// @return recharge recharge hash typed v4
+	/// @return recharge hash typed v4
 	function hashTypedDataV4ForRecharge(
 		address provider,
 		uint64 nonce,
