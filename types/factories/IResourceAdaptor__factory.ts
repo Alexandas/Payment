@@ -11,6 +11,31 @@ import type {
 
 const _abi = [
   {
+    anonymous: false,
+    inputs: [
+      {
+        components: [
+          {
+            internalType: "enum ResourceData.ResourceType",
+            name: "resourceType",
+            type: "uint8",
+          },
+          {
+            internalType: "uint256",
+            name: "price",
+            type: "uint256",
+          },
+        ],
+        indexed: false,
+        internalType: "struct IResourceAdaptor.PriceAdaptor[]",
+        name: "adaptors",
+        type: "tuple[]",
+      },
+    ],
+    name: "PriceAdaptorsUpdated",
+    type: "event",
+  },
+  {
     inputs: [
       {
         internalType: "enum ResourceData.ResourceType",

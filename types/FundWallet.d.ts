@@ -463,7 +463,7 @@ export class FundWallet extends BaseContract {
     billTypedHash(overrides?: CallOverrides): Promise<[string]>;
 
     decodeBill(
-      message: BytesLike,
+      data: BytesLike,
       overrides?: CallOverrides
     ): Promise<
       [
@@ -502,7 +502,7 @@ export class FundWallet extends BaseContract {
     >;
 
     encodeBill(
-      bills: {
+      bill: {
         totalValue: BigNumberish;
         payloads: {
           indexBlock: BigNumberish;
@@ -694,7 +694,7 @@ export class FundWallet extends BaseContract {
   billTypedHash(overrides?: CallOverrides): Promise<string>;
 
   decodeBill(
-    message: BytesLike,
+    data: BytesLike,
     overrides?: CallOverrides
   ): Promise<
     [
@@ -725,7 +725,7 @@ export class FundWallet extends BaseContract {
   >;
 
   encodeBill(
-    bills: {
+    bill: {
       totalValue: BigNumberish;
       payloads: {
         indexBlock: BigNumberish;
@@ -914,7 +914,7 @@ export class FundWallet extends BaseContract {
     billTypedHash(overrides?: CallOverrides): Promise<string>;
 
     decodeBill(
-      message: BytesLike,
+      data: BytesLike,
       overrides?: CallOverrides
     ): Promise<
       [
@@ -945,7 +945,7 @@ export class FundWallet extends BaseContract {
     >;
 
     encodeBill(
-      bills: {
+      bill: {
         totalValue: BigNumberish;
         payloads: {
           indexBlock: BigNumberish;
@@ -1392,13 +1392,10 @@ export class FundWallet extends BaseContract {
 
     billTypedHash(overrides?: CallOverrides): Promise<BigNumber>;
 
-    decodeBill(
-      message: BytesLike,
-      overrides?: CallOverrides
-    ): Promise<BigNumber>;
+    decodeBill(data: BytesLike, overrides?: CallOverrides): Promise<BigNumber>;
 
     encodeBill(
-      bills: {
+      bill: {
         totalValue: BigNumberish;
         payloads: {
           indexBlock: BigNumberish;
@@ -1591,12 +1588,12 @@ export class FundWallet extends BaseContract {
     billTypedHash(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
     decodeBill(
-      message: BytesLike,
+      data: BytesLike,
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
     encodeBill(
-      bills: {
+      bill: {
         totalValue: BigNumberish;
         payloads: {
           indexBlock: BigNumberish;

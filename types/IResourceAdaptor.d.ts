@@ -66,8 +66,21 @@ interface IResourceAdaptorInterface extends ethers.utils.Interface {
   decodeFunctionResult(functionFragment: "priceAt", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "priceOf", data: BytesLike): Result;
 
-  events: {};
+  events: {
+    "PriceAdaptorsUpdated(tuple[])": EventFragment;
+  };
+
+  getEvent(nameOrSignatureOrTopic: "PriceAdaptorsUpdated"): EventFragment;
 }
+
+export type PriceAdaptorsUpdatedEvent = TypedEvent<
+  [([number, BigNumber] & { resourceType: number; price: BigNumber })[]] & {
+    adaptors: ([number, BigNumber] & {
+      resourceType: number;
+      price: BigNumber;
+    })[];
+  }
+>;
 
 export class IResourceAdaptor extends BaseContract {
   connect(signerOrProvider: Signer | Provider | string): this;
@@ -227,7 +240,31 @@ export class IResourceAdaptor extends BaseContract {
     ): Promise<BigNumber>;
   };
 
-  filters: {};
+  filters: {
+    "PriceAdaptorsUpdated(tuple[])"(
+      adaptors?: null
+    ): TypedEventFilter<
+      [([number, BigNumber] & { resourceType: number; price: BigNumber })[]],
+      {
+        adaptors: ([number, BigNumber] & {
+          resourceType: number;
+          price: BigNumber;
+        })[];
+      }
+    >;
+
+    PriceAdaptorsUpdated(
+      adaptors?: null
+    ): TypedEventFilter<
+      [([number, BigNumber] & { resourceType: number; price: BigNumber })[]],
+      {
+        adaptors: ([number, BigNumber] & {
+          resourceType: number;
+          price: BigNumber;
+        })[];
+      }
+    >;
+  };
 
   estimateGas: {
     getAmountAt(

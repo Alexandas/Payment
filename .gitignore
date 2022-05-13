@@ -2,7 +2,7 @@ cache/
 artifacts/
 exports/
 deploy/
-docs/
+# docs/
 hbs/
 
 coverage*

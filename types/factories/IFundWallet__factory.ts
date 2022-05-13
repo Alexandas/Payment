@@ -284,6 +284,19 @@ const _abi = [
     type: "function",
   },
   {
+    inputs: [],
+    name: "billTypedHash",
+    outputs: [
+      {
+        internalType: "bytes32",
+        name: "",
+        type: "bytes32",
+      },
+    ],
+    stateMutability: "view",
+    type: "function",
+  },
+  {
     inputs: [
       {
         internalType: "address",
@@ -356,6 +369,19 @@ const _abi = [
     name: "recharge",
     outputs: [],
     stateMutability: "nonpayable",
+    type: "function",
+  },
+  {
+    inputs: [],
+    name: "rechargeTypedHash",
+    outputs: [
+      {
+        internalType: "bytes32",
+        name: "",
+        type: "bytes32",
+      },
+    ],
+    stateMutability: "view",
     type: "function",
   },
   {
@@ -462,7 +488,7 @@ const _abi = [
       },
       {
         internalType: "bytes",
-        name: "billMessage",
+        name: "bill",
         type: "bytes",
       },
       {

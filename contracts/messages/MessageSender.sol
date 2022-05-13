@@ -10,6 +10,8 @@ import 'sgn-v2-contracts/contracts/message/libraries/MessageSenderLib.sol';
 
 import '../interfaces/IMessageSender.sol';
 
+/// @author Alexandas
+/// @dev Celer SGN source chain sender contract
 contract MessageSender is IMessageSender, OwnableUpgradeable {
 	using SafeERC20Upgradeable for IERC20Upgradeable;
 
@@ -19,23 +21,17 @@ contract MessageSender is IMessageSender, OwnableUpgradeable {
 		Retry
 	}
 
+	/// @dev src chain payment address
 	address public srcChainPayment;
 
+	/// @dev src chain messageBus address
 	address public messageBus;
 
+	/// @dev dst chain receiver address
 	address public override receiver;
 
+	/// @dev dst chainId
 	uint64 public override dstChainId;
-
-	event SrcChainPaymentUpdated(address payment);
-
-	event MessageBusUpdated(address messageBus);
-
-	event ReceiverUpdated(address receiver);
-
-	event DstChainIdUpdated(uint64 dstChainId);
-
-	event MessageWithTransferRefund(address token, uint256 amount, bytes message, address executor);
 
 	modifier onlyMessageBus() {
 		require(msg.sender == messageBus, 'MessageReceiver: caller is not message bus');
@@ -49,6 +45,11 @@ contract MessageSender is IMessageSender, OwnableUpgradeable {
 
 	constructor() initializer {}
 
+	/// @dev proxy initialize function
+	/// @param owner contract owner
+	/// @param _messageBus src chain messageBus
+	/// @param _receiver dst chain receiver
+	/// @param _dstChainId dst chain chainId
 	function initialize(
 		address owner,
 		address _messageBus,
@@ -61,6 +62,13 @@ contract MessageSender is IMessageSender, OwnableUpgradeable {
 		_setDstChainId(_dstChainId);
 	}
 
+	/// @dev sendMessageWithTransfer to dst chain
+	/// @param token src payment token address
+	/// @param amount token amount
+	/// @param nonce nonce
+	/// @param maxSlippage maxSlippage for sgn cBridge
+	/// @param message message to dst chain
+	/// @param bridgeSendType bridge send type for sgn cBridge
 	function sendMessageWithTransfer(
 		address token,
 		uint256 amount,
@@ -73,6 +81,11 @@ contract MessageSender is IMessageSender, OwnableUpgradeable {
 		MessageSenderLib.sendMessageWithTransfer(receiver, token, amount, dstChainId, nonce, maxSlippage, message, bridgeSendType, messageBus, msg.value);
 	}
 
+	/// @dev call when cBridge transfer failed
+	/// @param _token token address
+	/// @param _amount token amount
+	/// @param _message message
+	/// @param executor exector address
 	function executeMessageWithTransferRefund(
         address _token,
         uint256 _amount,
@@ -83,6 +96,8 @@ contract MessageSender is IMessageSender, OwnableUpgradeable {
         return ExecutionStatus.Success;
     }
 
+	/// @dev set src chain payment
+	/// @param _payment src chain payment address
 	function setSrcChainPayment(address _payment) external onlyOwner {
 		_setSrcChainPayment(_payment);
 	}
@@ -92,6 +107,8 @@ contract MessageSender is IMessageSender, OwnableUpgradeable {
 		emit SrcChainPaymentUpdated(_payment);
 	}
 
+	/// @dev update message bus
+	/// @param messageBus message bus address
 	function setMessageBus(address messageBus) external onlyOwner {
 		_setMessageBus(messageBus);
 	}
@@ -101,6 +118,8 @@ contract MessageSender is IMessageSender, OwnableUpgradeable {
 		emit MessageBusUpdated(messageBus);
 	}
 
+	/// @dev set dst chain chainId
+	/// @param dstChainId dst chainId
 	function setDstChainId(uint64 dstChainId) external onlyOwner {
 		_setDstChainId(dstChainId);
 	}
@@ -110,6 +129,8 @@ contract MessageSender is IMessageSender, OwnableUpgradeable {
 		emit DstChainIdUpdated(_dstChainId);
 	}
 
+	/// @dev set dst chain receiver
+	/// @param _receiver dst chain receiver
 	function setReceiver(address _receiver) external onlyOwner {
 		_setReceiver(_receiver);
 	}
@@ -119,17 +140,23 @@ contract MessageSender is IMessageSender, OwnableUpgradeable {
 		emit ReceiverUpdated(_receiver);
 	}
 
+	/// @dev calculate message fee
+	/// @param message message bytes
+	/// @return fee
 	function calcFee(bytes memory message) public view override returns (uint256) {
 		return IMessageBus(messageBus).calcFee(message);
 	}
 
+	/// @dev messageId for message bus
+	/// @param route message route info
+	/// @param dstChainId message route info
+	/// @param message message bytes
 	function messageId(
 		MsgDataTypes.RouteInfo calldata route,
 		uint64 dstChainId,
 		bytes calldata message
 	) external view override returns (bytes32) {
-		return
-			keccak256(abi.encodePacked(MsgDataTypes.MsgType.MessageOnly, route.sender, route.receiver, route.srcChainId, route.srcTxHash, dstChainId, message));
+		return keccak256(abi.encodePacked(MsgDataTypes.MsgType.MessageOnly, route.sender, route.receiver, route.srcChainId, route.srcTxHash, dstChainId, message));
 	}
 
 }

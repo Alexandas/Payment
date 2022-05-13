@@ -11,14 +11,19 @@ import '../interfaces/IFundWallet.sol';
 import '../access/OwnerWithdrawable.sol';
 import '../access/Pauser.sol';
 
+/// @author Alexandas
+/// @dev FundWallet contract
 contract FundWallet is IFundWallet, Billing, OwnerWithdrawable, Pauser, ReentrancyGuardUpgradeable {
 	using SafeMathUpgradeable for uint256;
 	using SafeERC20Upgradeable for IERC20Upgradeable;
 
+	/// @dev return recharge typed hash
 	bytes32 public rechargeTypedHash;
 
+	/// @dev provider nonces for account
 	mapping(address => mapping(bytes32 => mapping(uint64 => Purpose))) public nonces;
 
+	/// @dev account wallet
 	mapping(address => mapping(bytes32 => Wallet)) internal wallets;
 
 	modifier onlyWalletOwner(address provider, bytes32 account) {
@@ -33,6 +38,16 @@ contract FundWallet is IFundWallet, Billing, OwnerWithdrawable, Pauser, Reentran
 
 	constructor() initializer {}
 
+	/// @dev proxy initialize function
+	/// @param owner contract owner
+	/// @param pauser contract pauser
+	/// @param adaptor resource adaptor contract address
+	/// @param _providers providers contract address
+	/// @param _token token address
+	/// @param name EIP712 domain name
+	/// @param version EIP712 domain version
+	/// @param rechargeTypes recharge types
+	/// @param billTypes bill types
 	function initialize(
 		address owner,
 		address pauser,
@@ -54,14 +69,25 @@ contract FundWallet is IFundWallet, Billing, OwnerWithdrawable, Pauser, Reentran
 		__Init_Bill_Typed_Hash(billTypes);
 	}
 
+	/// @dev initialize recharge typed hash
+	/// @param types recharge types hash
 	function __Init_Recharge_Typed_Hash(string memory types) internal onlyInitializing {
 		_setRechargeTypedHash(keccak256(bytes(types)));
 	}
 
+	/// @dev initialize token address
+	/// @param _token token address
 	function __Init_Token(IERC20Upgradeable _token) internal onlyInitializing {
 		_setToken(_token);
 	}
 
+	/// @dev recharge for account
+	/// @param provider provider address
+	/// @param nonce nonce
+	/// @param owner wallet owner
+	/// @param account user account
+	/// @param amount token amount
+	/// @param signature provider signature
 	function recharge(
 		address provider,
 		uint64 nonce,
@@ -82,6 +108,13 @@ contract FundWallet is IFundWallet, Billing, OwnerWithdrawable, Pauser, Reentran
 		emit Charge(provider, nonce, owner, account, amount);
 	}
 
+	/// @dev spend bill for account
+	/// @param provider provider address
+	/// @param nonce nonce
+	/// @param account user account
+	/// @param bill bill bytes
+	/// @param signature provider signature
+	/// @param fee bill fee
 	function spend(
 		address provider,
 		uint64 nonce,
@@ -96,6 +129,14 @@ contract FundWallet is IFundWallet, Billing, OwnerWithdrawable, Pauser, Reentran
 		emit Spend(provider, nonce, account, fee);
 	}
 
+	/// @dev withdraw token for account
+	/// @param provider provider address
+	/// @param nonce nonce
+	/// @param account user account
+	/// @param to token receiver
+	/// @param bill bill bytes
+	/// @param signature provider signature
+	/// @return amount token amount
 	function withdraw(
 		address provider,
 		uint64 nonce,
@@ -114,6 +155,11 @@ contract FundWallet is IFundWallet, Billing, OwnerWithdrawable, Pauser, Reentran
 		emit Withdrawn(p, nonce, account, to, amount);
 	}
 
+	/// @dev transfer wallet owner for account
+	/// @param provider provider address
+	/// @param account user account
+	/// @param newOwner new wallet owner for account
+	/// @param signature provider signature
 	function transferWalletOwner(
 		address provider,
 		bytes32 account,
@@ -127,26 +173,47 @@ contract FundWallet is IFundWallet, Billing, OwnerWithdrawable, Pauser, Reentran
 		emit WalletOwnerTransferred(provider, account, newOwner);
 	}
 
+	/// @dev return owner of account
+	/// @param provider provider address
+	/// @param account user account
+	/// @return owner wallet owner for account
 	function ownerOf(address provider, bytes32 account) public view override returns (address) {
 		return wallets[provider][account].owner;
 	}
 
+	/// @dev return balance of account
+	/// @param provider provider address
+	/// @param account user account
+	/// @return balance of account account
 	function balanceOf(address provider, bytes32 account) public view override returns (uint256) {
 		return wallets[provider][account].amount;
 	}
 
+	/// @dev update recharge typed hash
+	/// @param types recharge types
 	function setRechargeTypedHash(string memory types) external onlyOwner {
 		_setRechargeTypedHash(keccak256(bytes(types)));
 	}
 
+	/// @dev update bill typed hash
+	/// @param types bill types
 	function setBillTypedHash(string memory types) external onlyOwner {
 		_setBillTypedHash(keccak256(bytes(types)));
 	}
 
+	/// @dev update token
+	/// @param _token token address
 	function setToken(IERC20Upgradeable _token) external onlyOwner {
 		_setToken(_token);
 	}
 
+	/// @dev return recharge typed hash
+	/// @param provider provider address
+	/// @param nonce nonce
+	/// @param owner wallet owner
+	/// @param account user account
+	/// @param amount token amount
+	/// @return recharge typed hash
 	function rechargeHash(
 		address provider,
 		uint64 nonce,
@@ -157,6 +224,13 @@ contract FundWallet is IFundWallet, Billing, OwnerWithdrawable, Pauser, Reentran
 		return keccak256(abi.encode(rechargeTypedHash, provider, nonce, owner, account, amount));
 	}
 
+	/// @dev return recharge hash typed v4
+	/// @param provider provider address
+	/// @param nonce nonce
+	/// @param owner wallet owner
+	/// @param account user account
+	/// @param amount token amount
+	/// @return recharge recharge hash typed v4
 	function hashTypedDataV4ForRecharge(
 		address provider,
 		uint64 nonce,

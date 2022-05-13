@@ -111,18 +111,18 @@ interface ResourceAdaptorInterface extends ethers.utils.Interface {
 
   events: {
     "OwnershipTransferred(address,address)": EventFragment;
-    "SetPriceAdaptors(tuple[])": EventFragment;
+    "PriceAdaptorsUpdated(tuple[])": EventFragment;
   };
 
   getEvent(nameOrSignatureOrTopic: "OwnershipTransferred"): EventFragment;
-  getEvent(nameOrSignatureOrTopic: "SetPriceAdaptors"): EventFragment;
+  getEvent(nameOrSignatureOrTopic: "PriceAdaptorsUpdated"): EventFragment;
 }
 
 export type OwnershipTransferredEvent = TypedEvent<
   [string, string] & { previousOwner: string; newOwner: string }
 >;
 
-export type SetPriceAdaptorsEvent = TypedEvent<
+export type PriceAdaptorsUpdatedEvent = TypedEvent<
   [([number, BigNumber] & { resourceType: number; price: BigNumber })[]] & {
     adaptors: ([number, BigNumber] & {
       resourceType: number;
@@ -376,7 +376,7 @@ export class ResourceAdaptor extends BaseContract {
       { previousOwner: string; newOwner: string }
     >;
 
-    "SetPriceAdaptors(tuple[])"(
+    "PriceAdaptorsUpdated(tuple[])"(
       adaptors?: null
     ): TypedEventFilter<
       [([number, BigNumber] & { resourceType: number; price: BigNumber })[]],
@@ -388,7 +388,7 @@ export class ResourceAdaptor extends BaseContract {
       }
     >;
 
-    SetPriceAdaptors(
+    PriceAdaptorsUpdated(
       adaptors?: null
     ): TypedEventFilter<
       [([number, BigNumber] & { resourceType: number; price: BigNumber })[]],

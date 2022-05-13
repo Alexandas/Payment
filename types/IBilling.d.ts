@@ -21,15 +21,24 @@ import type { TypedEventFilter, TypedEvent, TypedListener } from "./common";
 interface IBillingInterface extends ethers.utils.Interface {
   functions: {
     "adaptor()": FunctionFragment;
+    "billTypedHash()": FunctionFragment;
     "providers()": FunctionFragment;
     "token()": FunctionFragment;
   };
 
   encodeFunctionData(functionFragment: "adaptor", values?: undefined): string;
+  encodeFunctionData(
+    functionFragment: "billTypedHash",
+    values?: undefined
+  ): string;
   encodeFunctionData(functionFragment: "providers", values?: undefined): string;
   encodeFunctionData(functionFragment: "token", values?: undefined): string;
 
   decodeFunctionResult(functionFragment: "adaptor", data: BytesLike): Result;
+  decodeFunctionResult(
+    functionFragment: "billTypedHash",
+    data: BytesLike
+  ): Result;
   decodeFunctionResult(functionFragment: "providers", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "token", data: BytesLike): Result;
 
@@ -116,6 +125,8 @@ export class IBilling extends BaseContract {
   functions: {
     adaptor(overrides?: CallOverrides): Promise<[string]>;
 
+    billTypedHash(overrides?: CallOverrides): Promise<[string]>;
+
     providers(overrides?: CallOverrides): Promise<[string]>;
 
     token(overrides?: CallOverrides): Promise<[string]>;
@@ -123,12 +134,16 @@ export class IBilling extends BaseContract {
 
   adaptor(overrides?: CallOverrides): Promise<string>;
 
+  billTypedHash(overrides?: CallOverrides): Promise<string>;
+
   providers(overrides?: CallOverrides): Promise<string>;
 
   token(overrides?: CallOverrides): Promise<string>;
 
   callStatic: {
     adaptor(overrides?: CallOverrides): Promise<string>;
+
+    billTypedHash(overrides?: CallOverrides): Promise<string>;
 
     providers(overrides?: CallOverrides): Promise<string>;
 
@@ -204,6 +219,8 @@ export class IBilling extends BaseContract {
   estimateGas: {
     adaptor(overrides?: CallOverrides): Promise<BigNumber>;
 
+    billTypedHash(overrides?: CallOverrides): Promise<BigNumber>;
+
     providers(overrides?: CallOverrides): Promise<BigNumber>;
 
     token(overrides?: CallOverrides): Promise<BigNumber>;
@@ -211,6 +228,8 @@ export class IBilling extends BaseContract {
 
   populateTransaction: {
     adaptor(overrides?: CallOverrides): Promise<PopulatedTransaction>;
+
+    billTypedHash(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
     providers(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 

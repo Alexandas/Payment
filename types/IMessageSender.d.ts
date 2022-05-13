@@ -68,8 +68,43 @@ interface IMessageSenderInterface extends ethers.utils.Interface {
     data: BytesLike
   ): Result;
 
-  events: {};
+  events: {
+    "DstChainIdUpdated(uint64)": EventFragment;
+    "MessageBusUpdated(address)": EventFragment;
+    "MessageWithTransferRefund(address,uint256,bytes,address)": EventFragment;
+    "ReceiverUpdated(address)": EventFragment;
+    "SrcChainPaymentUpdated(address)": EventFragment;
+  };
+
+  getEvent(nameOrSignatureOrTopic: "DstChainIdUpdated"): EventFragment;
+  getEvent(nameOrSignatureOrTopic: "MessageBusUpdated"): EventFragment;
+  getEvent(nameOrSignatureOrTopic: "MessageWithTransferRefund"): EventFragment;
+  getEvent(nameOrSignatureOrTopic: "ReceiverUpdated"): EventFragment;
+  getEvent(nameOrSignatureOrTopic: "SrcChainPaymentUpdated"): EventFragment;
 }
+
+export type DstChainIdUpdatedEvent = TypedEvent<
+  [BigNumber] & { dstChainId: BigNumber }
+>;
+
+export type MessageBusUpdatedEvent = TypedEvent<
+  [string] & { messageBus: string }
+>;
+
+export type MessageWithTransferRefundEvent = TypedEvent<
+  [string, BigNumber, string, string] & {
+    token: string;
+    amount: BigNumber;
+    message: string;
+    executor: string;
+  }
+>;
+
+export type ReceiverUpdatedEvent = TypedEvent<[string] & { receiver: string }>;
+
+export type SrcChainPaymentUpdatedEvent = TypedEvent<
+  [string] & { payment: string }
+>;
 
 export class IMessageSender extends BaseContract {
   connect(signerOrProvider: Signer | Provider | string): this;
@@ -205,7 +240,59 @@ export class IMessageSender extends BaseContract {
     ): Promise<string>;
   };
 
-  filters: {};
+  filters: {
+    "DstChainIdUpdated(uint64)"(
+      dstChainId?: null
+    ): TypedEventFilter<[BigNumber], { dstChainId: BigNumber }>;
+
+    DstChainIdUpdated(
+      dstChainId?: null
+    ): TypedEventFilter<[BigNumber], { dstChainId: BigNumber }>;
+
+    "MessageBusUpdated(address)"(
+      messageBus?: null
+    ): TypedEventFilter<[string], { messageBus: string }>;
+
+    MessageBusUpdated(
+      messageBus?: null
+    ): TypedEventFilter<[string], { messageBus: string }>;
+
+    "MessageWithTransferRefund(address,uint256,bytes,address)"(
+      token?: null,
+      amount?: null,
+      message?: null,
+      executor?: null
+    ): TypedEventFilter<
+      [string, BigNumber, string, string],
+      { token: string; amount: BigNumber; message: string; executor: string }
+    >;
+
+    MessageWithTransferRefund(
+      token?: null,
+      amount?: null,
+      message?: null,
+      executor?: null
+    ): TypedEventFilter<
+      [string, BigNumber, string, string],
+      { token: string; amount: BigNumber; message: string; executor: string }
+    >;
+
+    "ReceiverUpdated(address)"(
+      receiver?: null
+    ): TypedEventFilter<[string], { receiver: string }>;
+
+    ReceiverUpdated(
+      receiver?: null
+    ): TypedEventFilter<[string], { receiver: string }>;
+
+    "SrcChainPaymentUpdated(address)"(
+      payment?: null
+    ): TypedEventFilter<[string], { payment: string }>;
+
+    SrcChainPaymentUpdated(
+      payment?: null
+    ): TypedEventFilter<[string], { payment: string }>;
+  };
 
   estimateGas: {
     calcFee(message: BytesLike, overrides?: CallOverrides): Promise<BigNumber>;

@@ -22,7 +22,6 @@ import type { TypedEventFilter, TypedEvent, TypedListener } from "./common";
 
 interface SrcChainPaymentInterface extends ethers.utils.Interface {
   functions: {
-    "Init_Payment(address,address,address,address)": FunctionFragment;
     "addPauser(address)": FunctionFragment;
     "calcFee(address,uint64,bytes32,tuple[])": FunctionFragment;
     "encodeMessage(address,uint64,bytes32,tuple[])": FunctionFragment;
@@ -47,10 +46,6 @@ interface SrcChainPaymentInterface extends ethers.utils.Interface {
     "unpause()": FunctionFragment;
   };
 
-  encodeFunctionData(
-    functionFragment: "Init_Payment",
-    values: [string, string, string, string]
-  ): string;
   encodeFunctionData(functionFragment: "addPauser", values: [string]): string;
   encodeFunctionData(
     functionFragment: "calcFee",
@@ -129,10 +124,6 @@ interface SrcChainPaymentInterface extends ethers.utils.Interface {
   ): string;
   encodeFunctionData(functionFragment: "unpause", values?: undefined): string;
 
-  decodeFunctionResult(
-    functionFragment: "Init_Payment",
-    data: BytesLike
-  ): Result;
   decodeFunctionResult(functionFragment: "addPauser", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "calcFee", data: BytesLike): Result;
   decodeFunctionResult(
@@ -297,14 +288,6 @@ export class SrcChainPayment extends BaseContract {
   interface: SrcChainPaymentInterface;
 
   functions: {
-    Init_Payment(
-      owner: string,
-      pauser: string,
-      _messageSender: string,
-      token: string,
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<ContractTransaction>;
-
     addPauser(
       account: string,
       overrides?: Overrides & { from?: string | Promise<string> }
@@ -409,14 +392,6 @@ export class SrcChainPayment extends BaseContract {
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<ContractTransaction>;
   };
-
-  Init_Payment(
-    owner: string,
-    pauser: string,
-    _messageSender: string,
-    token: string,
-    overrides?: Overrides & { from?: string | Promise<string> }
-  ): Promise<ContractTransaction>;
 
   addPauser(
     account: string,
@@ -523,14 +498,6 @@ export class SrcChainPayment extends BaseContract {
   ): Promise<ContractTransaction>;
 
   callStatic: {
-    Init_Payment(
-      owner: string,
-      pauser: string,
-      _messageSender: string,
-      token: string,
-      overrides?: CallOverrides
-    ): Promise<void>;
-
     addPauser(account: string, overrides?: CallOverrides): Promise<void>;
 
     calcFee(
@@ -766,14 +733,6 @@ export class SrcChainPayment extends BaseContract {
   };
 
   estimateGas: {
-    Init_Payment(
-      owner: string,
-      pauser: string,
-      _messageSender: string,
-      token: string,
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<BigNumber>;
-
     addPauser(
       account: string,
       overrides?: Overrides & { from?: string | Promise<string> }
@@ -880,14 +839,6 @@ export class SrcChainPayment extends BaseContract {
   };
 
   populateTransaction: {
-    Init_Payment(
-      owner: string,
-      pauser: string,
-      _messageSender: string,
-      token: string,
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<PopulatedTransaction>;
-
     addPauser(
       account: string,
       overrides?: Overrides & { from?: string | Promise<string> }

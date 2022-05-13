@@ -6,9 +6,12 @@ import '@openzeppelin/contracts-upgradeable/utils/cryptography/SignatureCheckerU
 import '@openzeppelin/contracts-upgradeable/access/OwnableUpgradeable.sol';
 import '../interfaces/IProviders.sol';
 
+/// @author Alexandas
+/// @dev providers contract
 contract Providers is IProviders, OwnableUpgradeable {
+	/// @dev all providers
 	mapping(address => bool) internal providers;
-
+	/// @dev provider wallet
 	mapping(address => address) public override wallets;
 
 	modifier onlyProvider() {
@@ -18,6 +21,10 @@ contract Providers is IProviders, OwnableUpgradeable {
 
 	constructor() initializer {}
 
+	/// @dev proxy initialize function
+	/// @param owner contract owner
+	/// @param _providers providers
+	/// @param _wallets wallets for providers
 	function initialize(
 		address owner,
 		address[] memory _providers,
@@ -27,6 +34,9 @@ contract Providers is IProviders, OwnableUpgradeable {
 		__Init_Providers_And_Wallets(_providers, _wallets);
 	}
 
+	/// @dev initialize providers with wallets
+	/// @param _providers providers
+	/// @param _wallets wallets for providers
 	function __Init_Providers_And_Wallets(address[] memory _providers, address[] memory _wallets) internal onlyInitializing {
 		require(_providers.length == _wallets.length, 'Providers: inconsistent length');
 		for (uint256 i = 0; i < _providers.length; i++) {
@@ -34,6 +44,8 @@ contract Providers is IProviders, OwnableUpgradeable {
 		}
 	}
 
+	/// @dev update wallet for provider
+	/// @param wallet wallet for provider
 	function setWallet(address wallet) external onlyProvider {
 		_setWallet(msg.sender, wallet);
 	}
@@ -43,14 +55,22 @@ contract Providers is IProviders, OwnableUpgradeable {
 		emit ProviderUpdated(provider, newWallet);
 	}
 
+	/// @dev return whether address is a provider
+	/// @param provider address
+	/// @return whether address is a provider
 	function isProvider(address provider) public view override returns (bool) {
 		return providers[provider];
 	}
 
+	/// @dev add a provider with wallet
+	/// @param provider address
+	/// @param wallet wallet for provider
 	function addProvider(address provider, address wallet) external onlyOwner {
 		_addProvider(provider, wallet);
 	}
 
+	/// @dev remove a provider
+	/// @param provider address
 	function removeProvider(address provider) external onlyOwner {
 		_removeProvider(provider);
 	}
@@ -70,6 +90,11 @@ contract Providers is IProviders, OwnableUpgradeable {
 		emit RemoveProvider(provider);
 	}
 
+	/// @dev return whether a valid signature
+	/// @param provider address
+	/// @param hash message hash
+	/// @param signature provider signature for message hash
+	/// @return whether signature is valid
 	function isValidSignature(
 		address provider,
 		bytes32 hash,

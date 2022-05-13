@@ -184,7 +184,7 @@ const _abi = [
     inputs: [
       {
         internalType: "bytes",
-        name: "message",
+        name: "data",
         type: "bytes",
       },
     ],
@@ -275,7 +275,7 @@ const _abi = [
           },
         ],
         internalType: "struct IBilling.Bill",
-        name: "bills",
+        name: "bill",
         type: "tuple",
       },
     ],

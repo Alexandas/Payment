@@ -41,6 +41,7 @@
 		"prettier": "^2.3.1",
 		"prettier-plugin-solidity": "^1.0.0-beta.13",
 		"sgn-v2-contracts": "^0.2.0",
+		"solc": "npm:solc@^0.8.9",
 		"solhint": "^3.3.6",
 		"solhint-plugin-prettier": "^0.0.5",
 		"solidity-coverage": "^0.7.15",
@@ -54,7 +55,7 @@
 		"console": "hardhat console",
 		"coverage": "cross-env HARDHAT_DEPLOY_FIXTURE=true hardhat coverage",
 		"gas": "cross-env REPORT_GAS=true hardhat test",
-		"doc": "solidity-docgen --solc-module solc-0.8 -t hbs",
+		"doc": "solidity-docgen --solc-module solc-0.8.9 -t hbs",
 		"dev": "hardhat node",
 		"test": "hardhat test",
 		"mumbai:deploy": "hardhat --network mumbai deploy",
@@ -84,7 +85,7 @@
 		"lint:fix": "eslint --fix \"**/*.{js,ts}\" && prettier --write contracts/**/*.sol && solhint contracts/**/*.sol"
 	},
 	"dependencies": {
-		"solc-0.8": "npm:solc@^0.8.0",
+		"solc-0.8.9": "npm:solc@0.8.9",
 		"solidity-docgen": "^0.5.16"
 	}
 }

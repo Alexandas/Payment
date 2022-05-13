@@ -11,6 +11,89 @@ import type {
 
 const _abi = [
   {
+    anonymous: false,
+    inputs: [
+      {
+        indexed: false,
+        internalType: "uint64",
+        name: "dstChainId",
+        type: "uint64",
+      },
+    ],
+    name: "DstChainIdUpdated",
+    type: "event",
+  },
+  {
+    anonymous: false,
+    inputs: [
+      {
+        indexed: false,
+        internalType: "address",
+        name: "messageBus",
+        type: "address",
+      },
+    ],
+    name: "MessageBusUpdated",
+    type: "event",
+  },
+  {
+    anonymous: false,
+    inputs: [
+      {
+        indexed: false,
+        internalType: "address",
+        name: "token",
+        type: "address",
+      },
+      {
+        indexed: false,
+        internalType: "uint256",
+        name: "amount",
+        type: "uint256",
+      },
+      {
+        indexed: false,
+        internalType: "bytes",
+        name: "message",
+        type: "bytes",
+      },
+      {
+        indexed: false,
+        internalType: "address",
+        name: "executor",
+        type: "address",
+      },
+    ],
+    name: "MessageWithTransferRefund",
+    type: "event",
+  },
+  {
+    anonymous: false,
+    inputs: [
+      {
+        indexed: false,
+        internalType: "address",
+        name: "receiver",
+        type: "address",
+      },
+    ],
+    name: "ReceiverUpdated",
+    type: "event",
+  },
+  {
+    anonymous: false,
+    inputs: [
+      {
+        indexed: false,
+        internalType: "address",
+        name: "payment",
+        type: "address",
+      },
+    ],
+    name: "SrcChainPaymentUpdated",
+    type: "event",
+  },
+  {
     inputs: [
       {
         internalType: "bytes",

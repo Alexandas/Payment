@@ -111,6 +111,19 @@ const _abi = [
   },
   {
     inputs: [],
+    name: "billTypedHash",
+    outputs: [
+      {
+        internalType: "bytes32",
+        name: "",
+        type: "bytes32",
+      },
+    ],
+    stateMutability: "view",
+    type: "function",
+  },
+  {
+    inputs: [],
     name: "providers",
     outputs: [
       {

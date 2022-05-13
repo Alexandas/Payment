@@ -12,18 +12,31 @@ import '../access/OwnerWithdrawable.sol';
 import '../access/Pauser.sol';
 import './ResourPayloadTool.sol';
 
+/// @author Alexandas
+/// @dev source chain payment contract
 contract SrcChainPayment is OwnerWithdrawable, Pauser, ResourPayloadTool, ReentrancyGuardUpgradeable {
 	using SafeMathUpgradeable for uint256;
 	using SafeERC20Upgradeable for IERC20Upgradeable;
 
+	/// @dev message sender on src chain
 	IMessageSender public messageSender;
-
+	/// @dev token address
 	IERC20Upgradeable public token;
 
+	/// @dev emit when token updated
+	/// @param token token address
 	event TokenUpdated(IERC20Upgradeable token);
 
+	/// @dev emit when message sender updated
+	/// @param messageSender messageSender address
 	event MessageSenderUpdated(IMessageSender messageSender);
 
+	/// @dev emit when user paid on src chain
+	/// @param provider provider address
+	/// @param nonce nonce
+	/// @param account sender
+	/// @param payloads payment payloads
+	/// @param maxSlippage maxSlippage in cBridge
 	event Paid(
 		address provider,
 		uint64 nonce,
@@ -34,6 +47,11 @@ contract SrcChainPayment is OwnerWithdrawable, Pauser, ResourPayloadTool, Reentr
 
 	constructor() initializer {}
 
+	/// @dev proxy initialize function
+	/// @param owner contract owner
+	/// @param pauser contract pauser
+	/// @param _messageSender messageSender address
+	/// @param token token address
 	function initialize(
 		address owner,
 		address pauser,
@@ -46,26 +64,25 @@ contract SrcChainPayment is OwnerWithdrawable, Pauser, ResourPayloadTool, Reentr
 		__Init_Token(token);
 	}
 
-	function Init_Payment(
-		address owner,
-		address pauser,
-		IMessageSender _messageSender,
-		IERC20Upgradeable token
-	) external initializer {
-		_transferOwnership(owner);
-		__Init_Pauser(pauser);
-		__Init_Message_Sender(_messageSender);
-		__Init_Token(token);
-	}
-
+	/// @dev initialize message sender
+	/// @param _messageSender messageSender address
 	function __Init_Message_Sender(IMessageSender _messageSender) internal onlyInitializing {
 		_setMessageSender(_messageSender);
 	}
 
+	/// @dev initialize token
+	/// @param token token address
 	function __Init_Token(IERC20Upgradeable token) internal onlyInitializing {
 		_setToken(token);
 	}
 
+	/// @dev pay from source chain
+	/// @param provider provider address
+	/// @param nonce nonce
+	/// @param account sender
+	/// @param payloads payment payloads
+	/// @param maxSlippage maxSlippage in cBridge
+	/// @return transferId token transfer id in cBridge
 	function pay(
 		address provider,
 		uint64 nonce,
@@ -90,6 +107,8 @@ contract SrcChainPayment is OwnerWithdrawable, Pauser, ResourPayloadTool, Reentr
 		emit Paid(provider, nonce, account, payloads, maxSlippage);
 	}
 
+	/// @dev update message sender
+	/// @param _messageSender message sender address
 	function setMessageSender(IMessageSender _messageSender) external onlyOwner {
 		_setMessageSender(_messageSender);
 	}
@@ -99,6 +118,8 @@ contract SrcChainPayment is OwnerWithdrawable, Pauser, ResourPayloadTool, Reentr
 		emit MessageSenderUpdated(_messageSender);
 	}
 
+	/// @dev update token
+	/// @param _token token address
 	function setToken(IERC20Upgradeable _token) external onlyOwner {
 		_setToken(_token);
 	}
@@ -108,14 +129,29 @@ contract SrcChainPayment is OwnerWithdrawable, Pauser, ResourPayloadTool, Reentr
 		emit TokenUpdated(token);
 	}
 
+	/// @dev match value to token decimals
+	/// @param amount token amount with resource decimals(18)
+	/// @return value token value
 	function matchTokenDecimals(uint256 amount) internal view returns (uint256 value) {
 		return amount.div(10**12);
 	}
 
+	/// @dev calculate message fee
+	/// @param provider provider address
+	/// @param nonce nonce 
+	/// @param account user account
+	/// @param payloads payment payloads
+	/// @return value message fee
 	function calcFee(address provider, uint64 nonce, bytes32 account, ResourceData.Payload[] memory payloads) public view returns(uint256 value) {
 		return messageSender.calcFee(encodeMessage(provider, nonce, account, payloads));
 	}
 
+	/// @dev encode payment message
+	/// @param provider provider address
+	/// @param nonce nonce 
+	/// @param account user account
+	/// @param payloads payment payloads
+	/// @return message message bytes
 	function encodeMessage(address provider, uint64 nonce, bytes32 account, ResourceData.Payload[] memory payloads) public pure returns (bytes memory) {
 		return abi.encode(provider, nonce, account, payloads);
 	}

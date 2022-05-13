@@ -13,6 +13,8 @@ import '../access/OwnerWithdrawable.sol';
 import '../libraries/ResourceData.sol';
 import '../interfaces/IDstChainPayment.sol';
 
+/// @author Alexandas
+/// @dev dst chain message receiver
 contract MessageReceiver is OwnerWithdrawable {
 	using SafeMathUpgradeable for uint256;
 	using SafeERC20Upgradeable for IERC20Upgradeable;
@@ -24,22 +26,53 @@ contract MessageReceiver is OwnerWithdrawable {
 		Retry
 	}
 
+	/// @dev dst chain payment contract address
 	IDstChainPayment public dstChainPayment;
 
+	/// @dev message bus in dst chain
 	address public messageBus;
 
+	/// @dev message executor
 	address public executor;
 
+	/// @dev emit when dst chain payment updated
+	/// @param _dstChainPayment dst chain payment contract address
 	event DstChainPaymentUpdated(IDstChainPayment _dstChainPayment);
 
+	/// @dev emit when message bus updated
+	/// @param messageBus dst chain messageBus in sgn
 	event MessageBusUpdated(address messageBus);
 
+	/// @dev emit when executor changed
+	/// @param executor executor address
 	event ExecutorUpdated(address executor);
 
+	/// @dev emit when message with transfer executed
+	/// @param sender message sender address
+	/// @param token token address
+	/// @param amount token amount
+	/// @param srcChainId src chain chainId
+	/// @param message src chain message
+	/// @param executor executor address
 	event MessageWithTransferExecuted(address sender, IERC20Upgradeable token, uint256 amount, uint64 srcChainId, bytes message, address executor);
 
+	/// @dev emit message with transfer failed
+	/// @param sender message sender address
+	/// @param token token address
+	/// @param amount token amount
+	/// @param srcChainId src chain chainId
+	/// @param message src chain message
+	/// @param executor executor address
+	/// @param error error message
 	event MessageWithTransferFailed(address sender, IERC20Upgradeable token, uint256 amount, uint64 srcChainId, bytes message, address executor, bytes error);
 
+	/// @dev emit when message with transfer fallback
+	/// @param _sender message sender address
+	/// @param _token token address
+	/// @param _amount token amount
+	/// @param _srcChainId src chain chainId
+	/// @param _message src chain message
+	/// @param executor executor address
 	event MessageWithTransferFallback(
 		address _sender,
         address _token,
@@ -56,6 +89,10 @@ contract MessageReceiver is OwnerWithdrawable {
 
 	constructor() initializer {}
 
+	/// @dev proxy intialize function
+	/// @param owner contract owner
+	/// @param _messageBus dst chain message bus
+	/// @param _executor executor address
 	function initialize(
 		address owner,
 		address _messageBus,
@@ -66,6 +103,13 @@ contract MessageReceiver is OwnerWithdrawable {
 		_setExecutor(_executor);
 	}
 
+	/// @dev execute message with transfer
+	/// @param sender message sender address
+	/// @param token token address
+	/// @param amount token amount
+	/// @param srcChainId src chain chainId
+	/// @param message src chain message
+	/// @param _executor executor address
 	function executeMessageWithTransfer(
         address sender,
         IERC20Upgradeable token,
@@ -85,6 +129,13 @@ contract MessageReceiver is OwnerWithdrawable {
 		return ExecutionStatus.Success;
     }
 
+	/// @dev execute message with transfer fallback
+	/// @param _sender message sender address
+	/// @param _token token address
+	/// @param _amount token amount
+	/// @param _srcChainId src chain chainId
+	/// @param _message src chain message
+	/// @param executor executor address
 	function executeMessageWithTransferFallback(
         address _sender,
         address _token,
@@ -97,6 +148,11 @@ contract MessageReceiver is OwnerWithdrawable {
 		return ExecutionStatus.Success;
 	}
 
+	/// @dev Explain to a developer any extra details
+	/// @param route route info
+	/// @param dstChainId dst chain chainId
+	/// @param message message bytes
+	/// @return message id
 	function messageId(
 		MsgDataTypes.RouteInfo calldata route,
 		uint64 dstChainId,
@@ -106,6 +162,8 @@ contract MessageReceiver is OwnerWithdrawable {
 			keccak256(abi.encodePacked(MsgDataTypes.MsgType.MessageOnly, route.sender, route.receiver, route.srcChainId, route.srcTxHash, dstChainId, message));
 	}
 
+	/// @dev set dst chain payment address
+	/// @param _dstChainPayment dst chain payment address
 	function setDstChainPayment(IDstChainPayment _dstChainPayment) external onlyOwner {
 		_setDstChainPayment(_dstChainPayment);
 	}
@@ -115,6 +173,8 @@ contract MessageReceiver is OwnerWithdrawable {
 		emit DstChainPaymentUpdated(_dstChainPayment);
 	}
 
+	/// @dev set message bus
+	/// @param messageBus message bus address
 	function setMessageBus(address messageBus) external onlyOwner {
 		_setMessageBus(messageBus);
 	}
@@ -124,6 +184,8 @@ contract MessageReceiver is OwnerWithdrawable {
 		emit MessageBusUpdated(messageBus);
 	}
 
+	/// @dev set executor address 
+	/// @param _executor executor address 
 	function setExecutor(address _executor) external onlyOwner {
 		_setExecutor(_executor);
 	}

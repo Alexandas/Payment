@@ -7,21 +7,40 @@ import '@openzeppelin/contracts-upgradeable/utils/math/SafeMathUpgradeable.sol';
 import '../providers/ProvidersWrapper.sol';
 import '../resources/interfaces/IIPFSStorageController.sol';
 
+/// @author Alexandas
+/// @dev IPFS content tracer
 contract ContentTracer is ProvidersWrapper, OwnableUpgradeable {
 	using SafeMathUpgradeable for uint256;
 
+	/// @dev ipfs storage controller
 	IIPFSStorageController public controller;
 
+	/// @dev default ipfs content expiration
 	uint256 public defaultExpiration;
 
+	/// @dev ipfs content content size
 	mapping(address => mapping(bytes32 => mapping(string => uint256))) public contentSizes;
 
+	/// @dev emit when ipfs storage controller updated
+	/// @param controller ipfs storage controller
 	event ControllerUpdated(IIPFSStorageController controller);
 
+	/// @dev emit when default expiration updated
+	/// @param expiration default ipfs content expiration
 	event DefaultExpirationUpdated(uint256 expiration);
 
+	/// @dev emit when ipfs content inserted
+	/// @param provider provider address
+	/// @param account user account
+	/// @param content ipfs content
+	/// @param size ipfs content size
+	/// @param expiration ipfs content expiration
 	event Insert(address provider, bytes32 account, string content, uint256 size, uint256 expiration);
 
+	/// @dev emit when ipfs content removed
+	/// @param provider provider address
+	/// @param account user account
+	/// @param content ipfs content
 	event Remove(address provider, bytes32 account, string content);
 
 	modifier onlyProvider() {
@@ -34,6 +53,11 @@ contract ContentTracer is ProvidersWrapper, OwnableUpgradeable {
 		_;
 	}
 
+	/// @dev proxy initialize function
+	/// @param owner contract owner
+	/// @param providers providers contract address
+	/// @param controller ipfs storage controller
+	/// @param defaultExpiration ipfs content default expiration
 	function initialize(address owner, IProviders providers, IIPFSStorageController controller, uint256 defaultExpiration) external initializer {
 		_transferOwnership(owner);
 		__Init_Providers(providers);
@@ -41,6 +65,8 @@ contract ContentTracer is ProvidersWrapper, OwnableUpgradeable {
 		_setDefaultExpiration(defaultExpiration);
 	}
 
+	/// @dev update ipfs storage controller
+	/// @param _controller ipfs storage controller
 	function setController(IIPFSStorageController _controller) external onlyOwner {
 		_setController(_controller);
 	}
@@ -50,6 +76,8 @@ contract ContentTracer is ProvidersWrapper, OwnableUpgradeable {
 		emit ControllerUpdated(_controller);
 	}
 
+	/// @dev update ipfs content default expiration
+	/// @param expiration ipfs content default expiration
 	function setDefaultExpiration(uint256 expiration) external onlyOwner {
 		_setDefaultExpiration(expiration);
 	}
@@ -59,6 +87,10 @@ contract ContentTracer is ProvidersWrapper, OwnableUpgradeable {
 		emit DefaultExpirationUpdated(expiration);
 	}
 
+	/// @dev insert multiple ipfs content for accounts
+	/// @param accounts array of user account
+	/// @param contents array of ipfs contents
+	/// @param sizes array of ipfs content size
 	function insertMult(
 		bytes32[] memory accounts,
 		string[] memory contents,
@@ -72,6 +104,10 @@ contract ContentTracer is ProvidersWrapper, OwnableUpgradeable {
 		}
 	}
 
+	/// @dev insert ipfs content
+	/// @param account user account
+	/// @param content ipfs content
+	/// @param size ipfs account size
 	function insert(
 		bytes32 account,
 		string memory content,
@@ -93,6 +129,9 @@ contract ContentTracer is ProvidersWrapper, OwnableUpgradeable {
 		emit Insert(provider, account, content, size, expiration);
 	}
 
+	/// @dev remove ipfs content
+	/// @param accounts array of user account
+	/// @param contents array of ipfs contents
 	function removeMult(
 		bytes32[] memory accounts,
 		string[] memory contents
@@ -103,6 +142,9 @@ contract ContentTracer is ProvidersWrapper, OwnableUpgradeable {
 		}
 	}
 
+	/// @dev remove ipfs content
+	/// @param account user account
+	/// @param content ipfs content
 	function remove(bytes32 account, string memory content) public onlyProvider {
 		_remove(msg.sender, account, content);
 	}
@@ -118,10 +160,20 @@ contract ContentTracer is ProvidersWrapper, OwnableUpgradeable {
 		emit Remove(provider, account, content);
 	}
 
+	/// @dev return whether ipfs content exists in provider
+	/// @param provider provider address
+	/// @param account user account
+	/// @param content ipfs content
+	/// @return ipfs ipfs content exists
 	function exists(address provider, bytes32 account, string memory content) public view returns (bool) {
 		return contentSizes[provider][account][content] != 0;
 	}
 
+	/// @dev return ipfs content size
+	/// @param provider provider address
+	/// @param account user account
+	/// @param content ipfs content
+	/// @return ipfs ipfs content size
 	function size(address provider, bytes32 account, string memory content) public view returns (uint256) {
 		require(providers.isProvider(provider), 'ContentTracer: nonexistent provider');
 		require(exists(provider, account, content), 'ContentTracer: nonexistent content');

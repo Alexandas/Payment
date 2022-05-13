@@ -6,9 +6,15 @@ import '@openzeppelin/contracts-upgradeable/utils/math/SafeMathUpgradeable.sol';
 
 import '../libraries/ResourceData.sol';
 
+/// @author Alexandas
+/// @dev resource payload tool contract
 abstract contract ResourPayloadTool {
 	using SafeMathUpgradeable for uint256;
 
+	/// @dev convert source chain payment payload into dst chain payment payload
+	/// @param dstAmount token amount
+	/// @param payloads source chain payment payload
+	/// @return newPayloads dst chain payment payload
 	function _convertSourceChainPayloads(uint256 dstAmount, ResourceData.Payload[] memory payloads) internal pure returns (ResourceData.Payload[] memory newPayloads) {
 		require(payloads.length > 0, 'ResourPayloadTool: invalid payload length');
 		uint256 total = totalValue(payloads);
@@ -22,6 +28,9 @@ abstract contract ResourPayloadTool {
 		return payloads;
 	}
 
+	/// @dev payment payload total value
+	/// @param payloads payment payloads
+	/// @return value total value
 	function totalValue(ResourceData.Payload[] memory payloads) public pure returns (uint256 value) {
 		require(payloads.length > 0, 'ResourPayloadTool: invalid payloads length');
 		for (uint256 i = 0; i < payloads.length; i++) {
