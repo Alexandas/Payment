@@ -17,8 +17,11 @@ contract FundWallet is IFundWallet, Billing, OwnerWithdrawable, Pauser, Reentran
 	using SafeMathUpgradeable for uint256;
 	using SafeERC20Upgradeable for IERC20Upgradeable;
 
-	/// @dev return recharge typed hash
-	bytes32 public rechargeTypedHash;
+	/// @dev keccak256("WalletOwner(address provider,bytes32 account,address owner)")
+	bytes32 public override walletOwnerTypedHash;
+
+	/// @dev keccak256("Recharge(address provider,uint64 nonce,bytes32 account,uint256 amount)")
+	bytes32 public override rechargeTypedHash;
 
 	/// @dev provider nonces for account
 	mapping(address => mapping(bytes32 => mapping(uint64 => Purpose))) public nonces;
@@ -56,6 +59,7 @@ contract FundWallet is IFundWallet, Billing, OwnerWithdrawable, Pauser, Reentran
 		IERC20Upgradeable _token,
 		string memory name,
 		string memory version,
+		string memory walletOwnerTypes,
 		string memory rechargeTypes,
 		string memory billTypes
 	) external initializer {
@@ -65,12 +69,19 @@ contract FundWallet is IFundWallet, Billing, OwnerWithdrawable, Pauser, Reentran
 		__Init_Resource_Adaptor(adaptor);
 		__Init_Token(_token);
 		__EIP712_init(name, version);
+		__Init_Wallet_Owner_Typed_Hash(walletOwnerTypes);
 		__Init_Recharge_Typed_Hash(rechargeTypes);
 		__Init_Bill_Typed_Hash(billTypes);
 	}
 
+	/// @dev initialize wallet owner typed hash
+	/// @param types wallet owner types
+	function __Init_Wallet_Owner_Typed_Hash(string memory types) internal onlyInitializing {
+		_setWalletOwnerTypedHash(keccak256(bytes(types)));
+	}
+
 	/// @dev initialize recharge typed hash
-	/// @param types recharge types hash
+	/// @param types recharge types
 	function __Init_Recharge_Typed_Hash(string memory types) internal onlyInitializing {
 		_setRechargeTypedHash(keccak256(bytes(types)));
 	}
@@ -81,31 +92,46 @@ contract FundWallet is IFundWallet, Billing, OwnerWithdrawable, Pauser, Reentran
 		_setToken(_token);
 	}
 
+	/// @dev set wallet owner for account
+	/// @param provider provider address
+	/// @param account user account
+	/// @param owner wallet owner
+	/// @param signature provider signature
+	function setWalletOwner(
+		address provider,
+		bytes32 account,
+		address owner,
+		bytes memory signature
+	) external {
+		require(owner != address(0), 'FundWallet: zero address');
+		bytes32 hash = hashTypedDataV4ForSetWalletOwnerHash(provider, account, owner);
+		require(providers.isValidSignature(provider, hash, signature), 'FundWallet: invalid signature');
+		require(wallets[provider][account].owner == address(0), 'FundWallet: wallet owner exists');
+		wallets[provider][account].owner = owner;
+
+		emit WalletOwnerTransferred(provider, account, owner);
+	}
+
 	/// @dev recharge for account
 	/// @param provider provider address
 	/// @param nonce nonce
-	/// @param owner wallet owner
 	/// @param account user account
 	/// @param amount token amount
 	/// @param signature provider signature
 	function recharge(
 		address provider,
 		uint64 nonce,
-		address owner,
 		bytes32 account,
 		uint256 amount,
 		bytes memory signature
 	) external override nonNonce(provider, account, nonce) whenNotPaused nonReentrant {
 		require(amount > 0, 'FundWallet: zero amount');
-		bytes32 hash = hashTypedDataV4ForRecharge(provider, nonce, owner, account, amount);
+		bytes32 hash = hashTypedDataV4ForRecharge(provider, nonce, account, amount);
 		require(providers.isValidSignature(provider, hash, signature), 'FundWallet: invalid signature');
-		if (wallets[provider][account].owner == address(0)) {
-			wallets[provider][account].owner = owner;
-		}
 		wallets[provider][account].amount = wallets[provider][account].amount.add(amount);
 		token.safeTransferFrom(msg.sender, address(this), amount);
 		_updateNonce(provider, account, nonce, Purpose.Recharge);
-		emit Charge(provider, nonce, owner, account, amount);
+		emit Recharged(provider, nonce, account, amount);
 	}
 
 	/// @dev spend bill for account
@@ -126,7 +152,7 @@ contract FundWallet is IFundWallet, Billing, OwnerWithdrawable, Pauser, Reentran
 		wallets[provider][account].amount = wallets[provider][account].amount.sub(fee);
 		_updateNonce(provider, account, nonce, Purpose.Spend);
 
-		emit Spend(provider, nonce, account, fee);
+		emit Spent(provider, nonce, account, fee);
 	}
 
 	/// @dev withdraw token for account
@@ -159,15 +185,13 @@ contract FundWallet is IFundWallet, Billing, OwnerWithdrawable, Pauser, Reentran
 	/// @param provider provider address
 	/// @param account user account
 	/// @param newOwner new wallet owner for account
-	/// @param signature provider signature
 	function transferWalletOwner(
 		address provider,
 		bytes32 account,
-		address newOwner,
-		bytes memory signature
+		address newOwner
 	) external override whenNotPaused onlyWalletOwner(provider, account) {
-		bytes32 hash = keccak256(abi.encodePacked(provider, newOwner, account));
-		require(providers.isValidSignature(provider, hash, signature), 'FundWallet: invalid signature');
+		require(wallets[provider][account].owner != address(0), 'FundWallet: nonexistent wallet owner');
+		require(newOwner != address(0), 'FundWallet: zero address');
 		wallets[provider][account].owner = newOwner;
 
 		emit WalletOwnerTransferred(provider, account, newOwner);
@@ -191,6 +215,25 @@ contract FundWallet is IFundWallet, Billing, OwnerWithdrawable, Pauser, Reentran
 
 	/// @dev update recharge typed hash
 	/// @param types recharge types
+	function setWalletOwnerTypedHash(string memory types) external onlyOwner {
+		_setWalletOwnerTypedHash(keccak256(bytes(types)));
+	}
+
+	/// @dev return set wallet owner typed hash
+	/// @param provider provider address
+	/// @param owner wallet owner
+	/// @param account user account
+	/// @return set wallet owner typed hash
+	function setWalletOwnerHash(
+		address provider,
+		bytes32 account,
+		address owner
+	) public view returns (bytes32) {
+		return keccak256(abi.encode(walletOwnerTypedHash, provider, account, owner));
+	}
+
+	/// @dev update recharge typed hash
+	/// @param types recharge types
 	function setRechargeTypedHash(string memory types) external onlyOwner {
 		_setRechargeTypedHash(keccak256(bytes(types)));
 	}
@@ -207,38 +250,52 @@ contract FundWallet is IFundWallet, Billing, OwnerWithdrawable, Pauser, Reentran
 		_setToken(_token);
 	}
 
+	/// @dev return set wallet owner hash typed data v4
+	/// @param provider provider address
+	/// @param account user account
+	/// @param owner wallet owner
+	/// @return set wallet owner hash typed data v4
+	function hashTypedDataV4ForSetWalletOwnerHash(
+		address provider,
+		bytes32 account,
+		address owner
+	) public view returns (bytes32) {
+		return _hashTypedDataV4(setWalletOwnerHash(provider, account, owner));
+	}
+
 	/// @dev return recharge typed hash
 	/// @param provider provider address
 	/// @param nonce nonce
-	/// @param owner wallet owner
 	/// @param account user account
 	/// @param amount token amount
 	/// @return recharge typed hash
 	function rechargeHash(
 		address provider,
 		uint64 nonce,
-		address owner,
 		bytes32 account,
 		uint256 amount
 	) public view returns (bytes32) {
-		return keccak256(abi.encode(rechargeTypedHash, provider, nonce, owner, account, amount));
+		return keccak256(abi.encode(rechargeTypedHash, provider, nonce, account, amount));
 	}
 
 	/// @dev return recharge hash typed v4
 	/// @param provider provider address
 	/// @param nonce nonce
-	/// @param owner wallet owner
 	/// @param account user account
 	/// @param amount token amount
 	/// @return recharge recharge hash typed v4
 	function hashTypedDataV4ForRecharge(
 		address provider,
 		uint64 nonce,
-		address owner,
 		bytes32 account,
 		uint256 amount
 	) public view returns (bytes32) {
-		return _hashTypedDataV4(rechargeHash(provider, nonce, owner, account, amount));
+		return _hashTypedDataV4(rechargeHash(provider, nonce, account, amount));
+	}
+
+	function _setWalletOwnerTypedHash(bytes32 hash) internal {
+		walletOwnerTypedHash = hash;
+		emit WalletOwnerTypedHashUpdated(hash);
 	}
 
 	function _setRechargeTypedHash(bytes32 hash) internal {
@@ -248,7 +305,6 @@ contract FundWallet is IFundWallet, Billing, OwnerWithdrawable, Pauser, Reentran
 
 	function _updateNonce(address provider, bytes32 account, uint64 nonce, Purpose purpose) internal {
 		nonces[provider][account][nonce] = purpose;
-
 		emit NonceUpdated(provider, account, nonce, purpose);
 	}
 }

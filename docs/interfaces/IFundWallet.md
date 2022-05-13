@@ -6,6 +6,17 @@
 
 
 ## Functions
+### walletOwnerTypedHash
+
+> return wallet owner typed hash
+
+#### Declaration
+```
+function walletOwnerTypedHash() external returns (bytes32)
+```
+
+
+
 ### rechargeTypedHash
 
 > return recharge typed hash
@@ -44,7 +55,7 @@ function ownerOf(address provider,bytes32 account) external returns (address)
 
 #### Declaration
 ```
-function transferWalletOwner(address provider,bytes32 account,address newOwner,bytes signature) external
+function transferWalletOwner(address provider,bytes32 account,address newOwner) external
 ```
 
 #### Args:
@@ -53,7 +64,6 @@ function transferWalletOwner(address provider,bytes32 account,address newOwner,b
 |`provider` | address | provider address
 |`account` | bytes32 | user account
 |`newOwner` | address | new wallet owner for account
-|`signature` | bytes | provider signature
 
 ### recharge
 
@@ -62,7 +72,7 @@ function transferWalletOwner(address provider,bytes32 account,address newOwner,b
 
 #### Declaration
 ```
-function recharge(address provider,uint64 nonce,address owner,bytes32 account,uint256 amount,bytes signature) external
+function recharge(address provider,uint64 nonce,bytes32 account,uint256 amount,bytes signature) external
 ```
 
 #### Args:
@@ -70,7 +80,6 @@ function recharge(address provider,uint64 nonce,address owner,bytes32 account,ui
 | --- | --- | --- |
 |`provider` | address | provider address
 |`nonce` | uint64 | nonce
-|`owner` | address | wallet owner
 |`account` | bytes32 | user account
 |`amount` | uint256 | token amount
 |`signature` | bytes | provider signature
@@ -122,6 +131,15 @@ function spend(address provider,uint64 nonce,bytes32 account,bytes bill,bytes si
 
 ## Events
 
+### WalletOwnerTypedHashUpdated
+
+> emit when set wallet owner typed hash updated
+
+  
+#### Params:
+| Param | Type | Indexed | Description |
+| --- | --- | :---: | --- |
+|`hash` | bytes32 |  | set wallet owner typed hash
 ### RechargeTypedHashUpdated
 
 > emit when recharge type hash updated
@@ -154,9 +172,9 @@ function spend(address provider,uint64 nonce,bytes32 account,bytes bill,bytes si
 |`provider` | address |  | provider address
 |`account` | bytes32 |  | user account
 |`newOwner` | address |  | new wallet owner for `account`
-### Charge
+### Recharged
 
-> emit when wallet owner changed
+> emit when account recharged
 
   
 #### Params:
@@ -164,10 +182,9 @@ function spend(address provider,uint64 nonce,bytes32 account,bytes bill,bytes si
 | --- | --- | :---: | --- |
 |`provider` | address |  | provider address
 |`nonce` | uint64 |  | nonce
-|`owner` | address |  | wallet owner
 |`account` | bytes32 |  | user account
 |`amount` | uint256 |  | token amount
-### Spend
+### Spent
 
 > emit when bill finalized
 

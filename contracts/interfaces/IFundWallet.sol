@@ -20,6 +20,10 @@ interface IFundWallet is IBilling {
 		uint256 amount;
 	}
 
+	/// @dev emit when set wallet owner typed hash updated
+	/// @param hash set wallet owner typed hash
+	event WalletOwnerTypedHashUpdated(bytes32 hash);
+
 	/// @dev emit when recharge type hash updated
 	/// @param hash recharge type hash
 	event RechargeTypedHashUpdated(bytes32 hash);
@@ -37,20 +41,19 @@ interface IFundWallet is IBilling {
 	/// @param newOwner new wallet owner for `account`
 	event WalletOwnerTransferred(address provider, bytes32 account, address newOwner);
 
-	/// @dev emit when wallet owner changed
+	/// @dev emit when account recharged
 	/// @param provider provider address
 	/// @param nonce nonce
-	/// @param owner wallet owner
 	/// @param account user account
 	/// @param amount token amount
-	event Charge(address provider, uint64 nonce, address owner, bytes32 account, uint256 amount);
+	event Recharged(address provider, uint64 nonce, bytes32 account, uint256 amount);
 
 	/// @dev emit when bill finalized
 	/// @param provider provider address
 	/// @param nonce nonce
 	/// @param account user account
 	/// @param fee bill fee
-	event Spend(address provider, uint64 nonce, bytes32 account, uint256 fee);
+	event Spent(address provider, uint64 nonce, bytes32 account, uint256 fee);
 
 	/// @dev emit when user withdrawn
 	/// @param provider provider address
@@ -59,6 +62,9 @@ interface IFundWallet is IBilling {
 	/// @param to token receiver
 	/// @param amount token amount
 	event Withdrawn(address provider, uint64 nonce, bytes32 account, address to, uint256 amount);
+
+	/// @dev return wallet owner typed hash
+	function walletOwnerTypedHash() external view returns (bytes32);
 
 	/// @dev return recharge typed hash
 	function rechargeTypedHash() external view returns (bytes32);
@@ -73,20 +79,17 @@ interface IFundWallet is IBilling {
 	/// @param provider provider address
 	/// @param account user account
 	/// @param newOwner new wallet owner for account
-	/// @param signature provider signature
-	function transferWalletOwner(address provider, bytes32 account, address newOwner, bytes memory signature) external;
+	function transferWalletOwner(address provider, bytes32 account, address newOwner) external;
 
 	/// @dev recharge for account
 	/// @param provider provider address
 	/// @param nonce nonce
-	/// @param owner wallet owner
 	/// @param account user account
 	/// @param amount token amount
 	/// @param signature provider signature
 	function recharge(
 		address provider,
 		uint64 nonce,
-		address owner,
 		bytes32 account,
 		uint256 amount,
 		bytes memory signature
