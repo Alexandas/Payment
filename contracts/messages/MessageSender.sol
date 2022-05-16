@@ -2,17 +2,17 @@
 
 pragma solidity >=0.8.0;
 
-import '@openzeppelin/contracts-upgradeable/access/OwnableUpgradeable.sol';
 import '@openzeppelin/contracts-upgradeable/interfaces/IERC20Upgradeable.sol';
 import '@openzeppelin/contracts-upgradeable/token/ERC20/utils/SafeERC20Upgradeable.sol';
 import 'sgn-v2-contracts/contracts/message/interfaces/IMessageBus.sol';
 import 'sgn-v2-contracts/contracts/message/libraries/MessageSenderLib.sol';
 
 import '../interfaces/IMessageSender.sol';
+import '../access/OwnerWithdrawable.sol';
 
 /// @author Alexandas
 /// @dev Celer SGN source chain sender contract
-contract MessageSender is IMessageSender, OwnableUpgradeable {
+contract MessageSender is IMessageSender, OwnerWithdrawable {
 	using SafeERC20Upgradeable for IERC20Upgradeable;
 
 	enum ExecutionStatus {

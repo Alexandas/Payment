@@ -5,10 +5,10 @@ pragma solidity >=0.8.0;
 /// @author Alexandas
 /// @dev providers interface
 interface IProviders {
-	/// @dev emit when provider updated
+
+	/// @dev emit when provider is added
 	/// @param provider provider address
-	/// @param wallet provider wallet address
-	event ProviderUpdated(address provider, address wallet);
+	event AddProvider(address provider);
 
 	/// @dev emit when provider removed
 	/// @param provider provider address
@@ -17,10 +17,6 @@ interface IProviders {
 	/// @dev return whether address is a provider
 	/// @param provider address
 	function isProvider(address provider) external view returns (bool);
-
-	/// @dev return provider wallet
-	/// @param provider address
-	function wallets(address provider) external view returns (address);
 
 	/// @dev return whether a valid signature
 	/// @param provider address

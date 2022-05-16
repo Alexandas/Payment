@@ -11,8 +11,6 @@ import '../interfaces/IProviders.sol';
 contract Providers is IProviders, OwnableUpgradeable {
 	/// @dev all providers
 	mapping(address => bool) internal providers;
-	/// @dev provider wallet
-	mapping(address => address) public override wallets;
 
 	modifier onlyProvider() {
 		require(isProvider(msg.sender), 'Providers: caller is not a provider');
@@ -24,35 +22,21 @@ contract Providers is IProviders, OwnableUpgradeable {
 	/// @dev proxy initialize function
 	/// @param owner contract owner
 	/// @param _providers providers
-	/// @param _wallets wallets for providers
 	function initialize(
 		address owner,
-		address[] memory _providers,
-		address[] memory _wallets
+		address[] memory _providers
 	) external initializer {
 		_transferOwnership(owner);
-		__Init_Providers_And_Wallets(_providers, _wallets);
+		__Init_Providers(_providers);
 	}
 
 	/// @dev initialize providers with wallets
 	/// @param _providers providers
-	/// @param _wallets wallets for providers
-	function __Init_Providers_And_Wallets(address[] memory _providers, address[] memory _wallets) internal onlyInitializing {
-		require(_providers.length == _wallets.length, 'Providers: inconsistent length');
+	function __Init_Providers(address[] memory _providers) internal onlyInitializing {
+		require(_providers.length > 0, 'Providers: invalid length of providers');
 		for (uint256 i = 0; i < _providers.length; i++) {
-			_addProvider(_providers[i], _wallets[i]);
+			_addProvider(_providers[i]);
 		}
-	}
-
-	/// @dev update wallet for provider
-	/// @param wallet wallet for provider
-	function setWallet(address wallet) external onlyProvider {
-		_setWallet(msg.sender, wallet);
-	}
-
-	function _setWallet(address provider, address newWallet) internal {
-		wallets[provider] = newWallet;
-		emit ProviderUpdated(provider, newWallet);
 	}
 
 	/// @dev return whether address is a provider
@@ -64,9 +48,8 @@ contract Providers is IProviders, OwnableUpgradeable {
 
 	/// @dev add a provider with wallet
 	/// @param provider address
-	/// @param wallet wallet for provider
-	function addProvider(address provider, address wallet) external onlyOwner {
-		_addProvider(provider, wallet);
+	function addProvider(address provider) external onlyOwner {
+		_addProvider(provider);
 	}
 
 	/// @dev remove a provider
@@ -75,12 +58,11 @@ contract Providers is IProviders, OwnableUpgradeable {
 		_removeProvider(provider);
 	}
 
-	function _addProvider(address provider, address wallet) internal {
+	function _addProvider(address provider) internal {
 		require(!isProvider(provider), 'Providers: provider existed');
 		providers[provider] = true;
-		wallets[provider] = wallet;
 
-		emit ProviderUpdated(provider, wallet);
+		emit AddProvider(provider);
 	}
 
 	function _removeProvider(address provider) internal {

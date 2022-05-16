@@ -3,7 +3,6 @@
 pragma solidity >=0.8.0;
 
 import '@openzeppelin/contracts-upgradeable/utils/math/SafeMathUpgradeable.sol';
-
 import '../libraries/ResourceData.sol';
 
 /// @author Alexandas

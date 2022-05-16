@@ -3,14 +3,12 @@
 pragma solidity >=0.8.0;
 
 import '@openzeppelin/contracts-upgradeable/security/ReentrancyGuardUpgradeable.sol';
-
 import '../resources/ControllersWrapper.sol';
 import '../interfaces/IDstChainPayment.sol';
 import '../providers/ProvidersWrapper.sol';
 import '../messages/MessageReceiverWrapper.sol';
 import '../access/OwnerWithdrawable.sol';
 import '../access/Pauser.sol';
-
 import './ResourPayloadTool.sol';
 
 /// @author Alexandas
@@ -30,9 +28,6 @@ contract DstChainPayment is
 
 	/// @dev token address
 	IERC20Upgradeable public token;
-
-	/// @dev provider balances
-	mapping(address => uint256) public providerBalances;
 
 	constructor() initializer {}
 
@@ -95,7 +90,6 @@ contract DstChainPayment is
 	function _pay(address provider, uint256 amount) internal returns (uint256 value) {
 		require(providers.isProvider(provider), 'DstChainPayment: nonexistent provider');
 		token.safeTransferFrom(msg.sender, address(this), amount);
-		providerBalances[provider] = providerBalances[provider].add(amount);
 	}
 
 	function _processPayloads(

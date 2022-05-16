@@ -143,8 +143,8 @@ abstract contract Billing is IBilling, ProvidersWrapper, EIP712Upgradeable {
 			uint256 balance = balanceOf(provider, account);
 			amount = matchTokenDecimals(_validateBill(bill));
 			require(balance >= amount, 'Billing: insufficient balance');
-			token.safeTransfer(providers.wallets(provider), amount);
 		}
+
 		emit Billing(provider, nonce, account, bill, amount);
 	}
 
