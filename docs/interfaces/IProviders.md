@@ -21,21 +21,6 @@ function isProvider(address provider) external returns (bool)
 | --- | --- | --- |
 |`provider` | address | address
 
-### wallets
-
-> return provider wallet
-
-
-#### Declaration
-```
-function wallets(address provider) external returns (address)
-```
-
-#### Args:
-| Arg | Type | Description |
-| --- | --- | --- |
-|`provider` | address | address
-
 ### isValidSignature
 
 > return whether a valid signature
@@ -60,16 +45,15 @@ function isValidSignature(address provider,bytes32 hash,bytes signature) externa
 
 ## Events
 
-### ProviderUpdated
+### AddProvider
 
-> emit when provider updated
+> emit when provider is added
 
   
 #### Params:
 | Param | Type | Indexed | Description |
 | --- | --- | :---: | --- |
 |`provider` | address |  | provider address
-|`wallet` | address |  | provider wallet address
 ### RemoveProvider
 
 > emit when provider removed

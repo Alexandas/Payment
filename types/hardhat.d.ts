@@ -161,6 +161,10 @@ declare module "hardhat/types/runtime" {
       signerOrOptions?: ethers.Signer | FactoryOptions
     ): Promise<Contracts.DstChainPaymentWrapper__factory>;
     getContractFactory(
+      name: "ResourcePayTokenWrapper",
+      signerOrOptions?: ethers.Signer | FactoryOptions
+    ): Promise<Contracts.ResourcePayTokenWrapper__factory>;
+    getContractFactory(
       name: "ResourPayloadTool",
       signerOrOptions?: ethers.Signer | FactoryOptions
     ): Promise<Contracts.ResourPayloadTool__factory>;
@@ -454,6 +458,11 @@ declare module "hardhat/types/runtime" {
       address: string,
       signer?: ethers.Signer
     ): Promise<Contracts.DstChainPaymentWrapper>;
+    getContractAt(
+      name: "ResourcePayTokenWrapper",
+      address: string,
+      signer?: ethers.Signer
+    ): Promise<Contracts.ResourcePayTokenWrapper>;
     getContractAt(
       name: "ResourPayloadTool",
       address: string,

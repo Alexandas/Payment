@@ -10,12 +10,14 @@ import '../messages/MessageReceiverWrapper.sol';
 import '../access/OwnerWithdrawable.sol';
 import '../access/Pauser.sol';
 import './ResourPayloadTool.sol';
+import './ResourcePayTokenWrapper.sol';
 
 /// @author Alexandas
 /// @dev Celer SGN source chain sender contract
 contract DstChainPayment is
 	IDstChainPayment,
 	ResourPayloadTool,
+	ResourcePayTokenWrapper,
 	MessageReceiverWrapper,
 	ReentrancyGuardUpgradeable,
 	ProvidersWrapper,
@@ -25,9 +27,6 @@ contract DstChainPayment is
 {
 	using SafeMathUpgradeable for uint256;
 	using SafeERC20Upgradeable for IERC20Upgradeable;
-
-	/// @dev token address
-	IERC20Upgradeable public token;
 
 	constructor() initializer {}
 
@@ -51,12 +50,6 @@ contract DstChainPayment is
 		__Init_Token(token);
 	}
 
-	/// @dev initialize token
-	/// @param _token token address
-	function __Init_Token(IERC20Upgradeable _token) internal onlyInitializing {
-		_setToken(_token);
-	}
-
 	/// @dev pay from source chain only called by message receiver
 	/// @param _token token address
 	/// @param dstAmount token amount
@@ -69,7 +62,13 @@ contract DstChainPayment is
 	) external override onlyMessageReceiver whenNotPaused nonReentrant returns (uint256 value) {
 		require(token == _token, 'DstChainPayment: invalid token');
 		(address provider, uint64 nonce, bytes32 account, ResourceData.Payload[] memory payloads) = decodeSourceChainMessage(message);
-		PaymentPayload memory payload = PaymentPayload(provider, nonce, account, _convertSourceChainPayloads(matchResourceDecimals(dstAmount), payloads));
+		uint256 amount = matchTokenToResource(dstAmount);
+		PaymentPayload memory payload = PaymentPayload(
+			provider, 
+			nonce, 
+			account, 
+			_convertSourceChainPayloads(amount, payloads)
+		);
 		_processPayloads(payload.account, payload.payloads, false);
 		_pay(payload.provider, dstAmount);
 
@@ -81,7 +80,7 @@ contract DstChainPayment is
 	/// @return value payment value
 	function pay(PaymentPayload memory payload) public override whenNotPaused nonReentrant returns (uint256 value) {
 		value = _processPayloads(payload.account, payload.payloads, true);
-		value = matchTokenDecimals(value);
+		value = matchResourceToToken(value);
 		_pay(payload.provider, value);
 
 		emit Paid(msg.sender, token, payload);
@@ -123,27 +122,10 @@ contract DstChainPayment is
 		}
 	}
 
-	/// @dev match token(decimals 6) amount to resource(decimals 18) decimals
-	/// @param amount token amount with resource decimals
-	function matchResourceDecimals(uint256 amount) internal view returns (uint256 value) {
-		return amount.mul(10**12);
-	}
-
-	/// @dev match resource(decimals 18) decimals to token(decimals 18) decimals
-	/// @param amount token amount
-	function matchTokenDecimals(uint256 amount) internal view returns (uint256 value) {
-		return amount.div(10**12);
-	}
-
 	/// @dev set token address
 	/// @param _token token address
 	function setToken(IERC20Upgradeable _token) external onlyOwner {
 		_setToken(_token);
-	}
-
-	function _setToken(IERC20Upgradeable _token) internal {
-		token = _token;
-		emit TokenUpdated(_token);
 	}
 
 	/// @dev convert source chain payloads

@@ -38,6 +38,7 @@ export type { MessageReceiverWrapper } from "./MessageReceiverWrapper";
 export type { MessageSender } from "./MessageSender";
 export type { DstChainPayment } from "./DstChainPayment";
 export type { DstChainPaymentWrapper } from "./DstChainPaymentWrapper";
+export type { ResourcePayTokenWrapper } from "./ResourcePayTokenWrapper";
 export type { ResourPayloadTool } from "./ResourPayloadTool";
 export type { SrcChainPayment } from "./SrcChainPayment";
 export type { Providers } from "./Providers";
@@ -103,6 +104,7 @@ export { MessageReceiverWrapper__factory } from "./factories/MessageReceiverWrap
 export { MessageSender__factory } from "./factories/MessageSender__factory";
 export { DstChainPayment__factory } from "./factories/DstChainPayment__factory";
 export { DstChainPaymentWrapper__factory } from "./factories/DstChainPaymentWrapper__factory";
+export { ResourcePayTokenWrapper__factory } from "./factories/ResourcePayTokenWrapper__factory";
 export { ResourPayloadTool__factory } from "./factories/ResourPayloadTool__factory";
 export { SrcChainPayment__factory } from "./factories/SrcChainPayment__factory";
 export { Providers__factory } from "./factories/Providers__factory";

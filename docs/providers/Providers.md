@@ -8,7 +8,6 @@
 | Var | Type |
 | --- | --- |
 | providers | mapping(address => bool) |
-| wallets | mapping(address => address) |
 
 ## Functions
 ### initialize
@@ -18,7 +17,7 @@
 
 #### Declaration
 ```
-function initialize(address owner,address[] _providers,address[] _wallets) external initializer
+function initialize(address owner,address[] _providers) external initializer
 ```
 
 #### Args:
@@ -26,22 +25,6 @@ function initialize(address owner,address[] _providers,address[] _wallets) exter
 | --- | --- | --- |
 |`owner` | address | contract owner
 |`_providers` | address[] | providers
-|`_wallets` | address[] | wallets for providers
-
-### setWallet
-
-> update wallet for provider
-
-
-#### Declaration
-```
-function setWallet(address wallet) external onlyProvider
-```
-
-#### Args:
-| Arg | Type | Description |
-| --- | --- | --- |
-|`wallet` | address | wallet for provider
 
 ### addProvider
 
@@ -50,14 +33,13 @@ function setWallet(address wallet) external onlyProvider
 
 #### Declaration
 ```
-function addProvider(address provider,address wallet) external onlyOwner
+function addProvider(address provider) external onlyOwner
 ```
 
 #### Args:
 | Arg | Type | Description |
 | --- | --- | --- |
 |`provider` | address | address
-|`wallet` | address | wallet for provider
 
 ### removeProvider
 

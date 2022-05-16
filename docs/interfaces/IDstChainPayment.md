@@ -49,15 +49,6 @@ function pay(struct IDstChainPayment.PaymentPayload payload) external returns (u
 
 ## Events
 
-### TokenUpdated
-
-> emit when pay token updated
-
-  
-#### Params:
-| Param | Type | Indexed | Description |
-| --- | --- | :---: | --- |
-|`token` | contract IERC20Upgradeable |  | token address
 ### Paid
 
 > emit when a user paid

@@ -8,7 +8,6 @@
 | Var | Type |
 | --- | --- |
 | messageSender | contract IMessageSender |
-| token | contract IERC20Upgradeable |
 
 ## Functions
 ### initialize
@@ -85,15 +84,6 @@ function setToken(contract IERC20Upgradeable _token) external onlyOwner
 
 ## Events
 
-### TokenUpdated
-
-> emit when token updated
-
-  
-#### Params:
-| Param | Type | Indexed | Description |
-| --- | --- | :---: | --- |
-|`token` | contract IERC20Upgradeable |  | token address
 ### MessageSenderUpdated
 
 > emit when message sender updated

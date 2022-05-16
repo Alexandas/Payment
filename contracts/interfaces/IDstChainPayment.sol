@@ -16,10 +16,6 @@ interface IDstChainPayment {
 		ResourceData.Payload[] payloads;
 	}
 
-	/// @dev emit when pay token updated
-	/// @param token token address
-	event TokenUpdated(IERC20Upgradeable token);
-
 	/// @dev emit when a user paid
 	/// @param payer payer
 	/// @param token token address

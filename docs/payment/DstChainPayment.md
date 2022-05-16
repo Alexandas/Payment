@@ -4,11 +4,6 @@
 
 > Celer SGN source chain sender contract
 
-## Globals
-| Var | Type |
-| --- | --- |
-| token | contract IERC20Upgradeable |
-| providerBalances | mapping(address => uint256) |
 
 ## Functions
 ### initialize

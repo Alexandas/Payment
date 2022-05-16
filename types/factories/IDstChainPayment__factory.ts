@@ -70,19 +70,6 @@ const _abi = [
     type: "event",
   },
   {
-    anonymous: false,
-    inputs: [
-      {
-        indexed: false,
-        internalType: "contract IERC20Upgradeable",
-        name: "token",
-        type: "address",
-      },
-    ],
-    name: "TokenUpdated",
-    type: "event",
-  },
-  {
     inputs: [
       {
         components: [

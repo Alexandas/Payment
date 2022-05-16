@@ -27,6 +27,8 @@ interface SrcChainPaymentInterface extends ethers.utils.Interface {
     "encodeMessage(address,uint64,bytes32,tuple[])": FunctionFragment;
     "initialize(address,address,address,address)": FunctionFragment;
     "isPauser(address)": FunctionFragment;
+    "matchResourceToToken(uint256)": FunctionFragment;
+    "matchTokenToResource(uint256)": FunctionFragment;
     "messageSender()": FunctionFragment;
     "owner()": FunctionFragment;
     "ownerWithdrawERC20(address,address,uint256)": FunctionFragment;
@@ -38,9 +40,11 @@ interface SrcChainPaymentInterface extends ethers.utils.Interface {
     "removePauser(address)": FunctionFragment;
     "renounceOwnership()": FunctionFragment;
     "renouncePauser()": FunctionFragment;
+    "resourceDecimals()": FunctionFragment;
     "setMessageSender(address)": FunctionFragment;
     "setToken(address)": FunctionFragment;
     "token()": FunctionFragment;
+    "tokenDecimals()": FunctionFragment;
     "totalValue(tuple[])": FunctionFragment;
     "transferOwnership(address)": FunctionFragment;
     "unpause()": FunctionFragment;
@@ -70,6 +74,14 @@ interface SrcChainPaymentInterface extends ethers.utils.Interface {
     values: [string, string, string, string]
   ): string;
   encodeFunctionData(functionFragment: "isPauser", values: [string]): string;
+  encodeFunctionData(
+    functionFragment: "matchResourceToToken",
+    values: [BigNumberish]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "matchTokenToResource",
+    values: [BigNumberish]
+  ): string;
   encodeFunctionData(
     functionFragment: "messageSender",
     values?: undefined
@@ -109,11 +121,19 @@ interface SrcChainPaymentInterface extends ethers.utils.Interface {
     values?: undefined
   ): string;
   encodeFunctionData(
+    functionFragment: "resourceDecimals",
+    values?: undefined
+  ): string;
+  encodeFunctionData(
     functionFragment: "setMessageSender",
     values: [string]
   ): string;
   encodeFunctionData(functionFragment: "setToken", values: [string]): string;
   encodeFunctionData(functionFragment: "token", values?: undefined): string;
+  encodeFunctionData(
+    functionFragment: "tokenDecimals",
+    values?: undefined
+  ): string;
   encodeFunctionData(
     functionFragment: "totalValue",
     values: [{ resourceType: BigNumberish; values: BigNumberish[] }[]]
@@ -132,6 +152,14 @@ interface SrcChainPaymentInterface extends ethers.utils.Interface {
   ): Result;
   decodeFunctionResult(functionFragment: "initialize", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "isPauser", data: BytesLike): Result;
+  decodeFunctionResult(
+    functionFragment: "matchResourceToToken",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "matchTokenToResource",
+    data: BytesLike
+  ): Result;
   decodeFunctionResult(
     functionFragment: "messageSender",
     data: BytesLike
@@ -162,11 +190,19 @@ interface SrcChainPaymentInterface extends ethers.utils.Interface {
     data: BytesLike
   ): Result;
   decodeFunctionResult(
+    functionFragment: "resourceDecimals",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
     functionFragment: "setMessageSender",
     data: BytesLike
   ): Result;
   decodeFunctionResult(functionFragment: "setToken", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "token", data: BytesLike): Result;
+  decodeFunctionResult(
+    functionFragment: "tokenDecimals",
+    data: BytesLike
+  ): Result;
   decodeFunctionResult(functionFragment: "totalValue", data: BytesLike): Result;
   decodeFunctionResult(
     functionFragment: "transferOwnership",
@@ -319,6 +355,16 @@ export class SrcChainPayment extends BaseContract {
 
     isPauser(account: string, overrides?: CallOverrides): Promise<[boolean]>;
 
+    matchResourceToToken(
+      value: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<[BigNumber]>;
+
+    matchTokenToResource(
+      value: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<[BigNumber]>;
+
     messageSender(overrides?: CallOverrides): Promise<[string]>;
 
     owner(overrides?: CallOverrides): Promise<[string]>;
@@ -366,6 +412,8 @@ export class SrcChainPayment extends BaseContract {
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<ContractTransaction>;
 
+    resourceDecimals(overrides?: CallOverrides): Promise<[BigNumber]>;
+
     setMessageSender(
       _messageSender: string,
       overrides?: Overrides & { from?: string | Promise<string> }
@@ -377,6 +425,8 @@ export class SrcChainPayment extends BaseContract {
     ): Promise<ContractTransaction>;
 
     token(overrides?: CallOverrides): Promise<[string]>;
+
+    tokenDecimals(overrides?: CallOverrides): Promise<[BigNumber]>;
 
     totalValue(
       payloads: { resourceType: BigNumberish; values: BigNumberish[] }[],
@@ -423,6 +473,16 @@ export class SrcChainPayment extends BaseContract {
   ): Promise<ContractTransaction>;
 
   isPauser(account: string, overrides?: CallOverrides): Promise<boolean>;
+
+  matchResourceToToken(
+    value: BigNumberish,
+    overrides?: CallOverrides
+  ): Promise<BigNumber>;
+
+  matchTokenToResource(
+    value: BigNumberish,
+    overrides?: CallOverrides
+  ): Promise<BigNumber>;
 
   messageSender(overrides?: CallOverrides): Promise<string>;
 
@@ -471,6 +531,8 @@ export class SrcChainPayment extends BaseContract {
     overrides?: Overrides & { from?: string | Promise<string> }
   ): Promise<ContractTransaction>;
 
+  resourceDecimals(overrides?: CallOverrides): Promise<BigNumber>;
+
   setMessageSender(
     _messageSender: string,
     overrides?: Overrides & { from?: string | Promise<string> }
@@ -482,6 +544,8 @@ export class SrcChainPayment extends BaseContract {
   ): Promise<ContractTransaction>;
 
   token(overrides?: CallOverrides): Promise<string>;
+
+  tokenDecimals(overrides?: CallOverrides): Promise<BigNumber>;
 
   totalValue(
     payloads: { resourceType: BigNumberish; values: BigNumberish[] }[],
@@ -526,6 +590,16 @@ export class SrcChainPayment extends BaseContract {
 
     isPauser(account: string, overrides?: CallOverrides): Promise<boolean>;
 
+    matchResourceToToken(
+      value: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
+
+    matchTokenToResource(
+      value: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
+
     messageSender(overrides?: CallOverrides): Promise<string>;
 
     owner(overrides?: CallOverrides): Promise<string>;
@@ -564,6 +638,8 @@ export class SrcChainPayment extends BaseContract {
 
     renouncePauser(overrides?: CallOverrides): Promise<void>;
 
+    resourceDecimals(overrides?: CallOverrides): Promise<BigNumber>;
+
     setMessageSender(
       _messageSender: string,
       overrides?: CallOverrides
@@ -572,6 +648,8 @@ export class SrcChainPayment extends BaseContract {
     setToken(_token: string, overrides?: CallOverrides): Promise<void>;
 
     token(overrides?: CallOverrides): Promise<string>;
+
+    tokenDecimals(overrides?: CallOverrides): Promise<BigNumber>;
 
     totalValue(
       payloads: { resourceType: BigNumberish; values: BigNumberish[] }[],
@@ -764,6 +842,16 @@ export class SrcChainPayment extends BaseContract {
 
     isPauser(account: string, overrides?: CallOverrides): Promise<BigNumber>;
 
+    matchResourceToToken(
+      value: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
+
+    matchTokenToResource(
+      value: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
+
     messageSender(overrides?: CallOverrides): Promise<BigNumber>;
 
     owner(overrides?: CallOverrides): Promise<BigNumber>;
@@ -811,6 +899,8 @@ export class SrcChainPayment extends BaseContract {
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<BigNumber>;
 
+    resourceDecimals(overrides?: CallOverrides): Promise<BigNumber>;
+
     setMessageSender(
       _messageSender: string,
       overrides?: Overrides & { from?: string | Promise<string> }
@@ -822,6 +912,8 @@ export class SrcChainPayment extends BaseContract {
     ): Promise<BigNumber>;
 
     token(overrides?: CallOverrides): Promise<BigNumber>;
+
+    tokenDecimals(overrides?: CallOverrides): Promise<BigNumber>;
 
     totalValue(
       payloads: { resourceType: BigNumberish; values: BigNumberish[] }[],
@@ -870,6 +962,16 @@ export class SrcChainPayment extends BaseContract {
 
     isPauser(
       account: string,
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
+
+    matchResourceToToken(
+      value: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
+
+    matchTokenToResource(
+      value: BigNumberish,
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
@@ -923,6 +1025,8 @@ export class SrcChainPayment extends BaseContract {
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<PopulatedTransaction>;
 
+    resourceDecimals(overrides?: CallOverrides): Promise<PopulatedTransaction>;
+
     setMessageSender(
       _messageSender: string,
       overrides?: Overrides & { from?: string | Promise<string> }
@@ -934,6 +1038,8 @@ export class SrcChainPayment extends BaseContract {
     ): Promise<PopulatedTransaction>;
 
     token(overrides?: CallOverrides): Promise<PopulatedTransaction>;
+
+    tokenDecimals(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
     totalValue(
       payloads: { resourceType: BigNumberish; values: BigNumberish[] }[],

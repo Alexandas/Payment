@@ -49,11 +49,9 @@ interface IDstChainPaymentInterface extends ethers.utils.Interface {
 
   events: {
     "Paid(address,address,tuple)": EventFragment;
-    "TokenUpdated(address)": EventFragment;
   };
 
   getEvent(nameOrSignatureOrTopic: "Paid"): EventFragment;
-  getEvent(nameOrSignatureOrTopic: "TokenUpdated"): EventFragment;
 }
 
 export type PaidEvent = TypedEvent<
@@ -93,8 +91,6 @@ export type PaidEvent = TypedEvent<
     };
   }
 >;
-
-export type TokenUpdatedEvent = TypedEvent<[string] & { token: string }>;
 
 export class IDstChainPayment extends BaseContract {
   connect(signerOrProvider: Signer | Provider | string): this;
@@ -292,12 +288,6 @@ export class IDstChainPayment extends BaseContract {
         };
       }
     >;
-
-    "TokenUpdated(address)"(
-      token?: null
-    ): TypedEventFilter<[string], { token: string }>;
-
-    TokenUpdated(token?: null): TypedEventFilter<[string], { token: string }>;
   };
 
   estimateGas: {

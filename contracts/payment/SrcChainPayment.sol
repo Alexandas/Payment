@@ -11,21 +11,16 @@ import '../interfaces/IMessageSender.sol';
 import '../access/OwnerWithdrawable.sol';
 import '../access/Pauser.sol';
 import './ResourPayloadTool.sol';
+import './ResourcePayTokenWrapper.sol';
 
 /// @author Alexandas
 /// @dev source chain payment contract
-contract SrcChainPayment is OwnerWithdrawable, Pauser, ResourPayloadTool, ReentrancyGuardUpgradeable {
+contract SrcChainPayment is OwnerWithdrawable, Pauser, ResourPayloadTool, ResourcePayTokenWrapper, ReentrancyGuardUpgradeable {
 	using SafeMathUpgradeable for uint256;
 	using SafeERC20Upgradeable for IERC20Upgradeable;
 
 	/// @dev message sender on src chain
 	IMessageSender public messageSender;
-	/// @dev token address
-	IERC20Upgradeable public token;
-
-	/// @dev emit when token updated
-	/// @param token token address
-	event TokenUpdated(IERC20Upgradeable token);
 
 	/// @dev emit when message sender updated
 	/// @param messageSender messageSender address
@@ -70,12 +65,6 @@ contract SrcChainPayment is OwnerWithdrawable, Pauser, ResourPayloadTool, Reentr
 		_setMessageSender(_messageSender);
 	}
 
-	/// @dev initialize token
-	/// @param token token address
-	function __Init_Token(IERC20Upgradeable token) internal onlyInitializing {
-		_setToken(token);
-	}
-
 	/// @dev pay from source chain
 	/// @param provider provider address
 	/// @param nonce nonce
@@ -91,7 +80,7 @@ contract SrcChainPayment is OwnerWithdrawable, Pauser, ResourPayloadTool, Reentr
 		uint32 maxSlippage
 	) external payable whenNotPaused nonReentrant returns (bytes32 transferId) {
 		uint256 value = totalValue(payloads);
-		value = matchTokenDecimals(value);
+		value = matchResourceToToken(value);
 		token.safeTransferFrom(msg.sender, address(this), value);
 		token.safeApprove(address(messageSender), value);
 		transferId = messageSender.sendMessageWithTransfer{ value: msg.value }(
@@ -122,18 +111,6 @@ contract SrcChainPayment is OwnerWithdrawable, Pauser, ResourPayloadTool, Reentr
 	/// @param _token token address
 	function setToken(IERC20Upgradeable _token) external onlyOwner {
 		_setToken(_token);
-	}
-
-	function _setToken(IERC20Upgradeable _token) internal {
-		token = _token;
-		emit TokenUpdated(token);
-	}
-
-	/// @dev match value to token decimals
-	/// @param amount token amount with resource decimals(18)
-	/// @return value token value
-	function matchTokenDecimals(uint256 amount) internal view returns (uint256 value) {
-		return amount.div(10**12);
 	}
 
 	/// @dev calculate message fee

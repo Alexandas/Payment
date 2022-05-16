@@ -30,6 +30,8 @@ interface DstChainPaymentInterface extends ethers.utils.Interface {
     "initialize(address,address,address,address,address)": FunctionFragment;
     "ipfsStorageController()": FunctionFragment;
     "isPauser(address)": FunctionFragment;
+    "matchResourceToToken(uint256)": FunctionFragment;
+    "matchTokenToResource(uint256)": FunctionFragment;
     "messageReceiver()": FunctionFragment;
     "owner()": FunctionFragment;
     "ownerWithdrawERC20(address,address,uint256)": FunctionFragment;
@@ -43,6 +45,7 @@ interface DstChainPaymentInterface extends ethers.utils.Interface {
     "removePauser(address)": FunctionFragment;
     "renounceOwnership()": FunctionFragment;
     "renouncePauser()": FunctionFragment;
+    "resourceDecimals()": FunctionFragment;
     "setARStorageController(address)": FunctionFragment;
     "setBandwidthController(address)": FunctionFragment;
     "setBuildingTimeController(address)": FunctionFragment;
@@ -50,6 +53,7 @@ interface DstChainPaymentInterface extends ethers.utils.Interface {
     "setMessageReceiver(address)": FunctionFragment;
     "setToken(address)": FunctionFragment;
     "token()": FunctionFragment;
+    "tokenDecimals()": FunctionFragment;
     "totalValue(tuple[])": FunctionFragment;
     "transferOwnership(address)": FunctionFragment;
     "unpause()": FunctionFragment;
@@ -88,6 +92,14 @@ interface DstChainPaymentInterface extends ethers.utils.Interface {
     values?: undefined
   ): string;
   encodeFunctionData(functionFragment: "isPauser", values: [string]): string;
+  encodeFunctionData(
+    functionFragment: "matchResourceToToken",
+    values: [BigNumberish]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "matchTokenToResource",
+    values: [BigNumberish]
+  ): string;
   encodeFunctionData(
     functionFragment: "messageReceiver",
     values?: undefined
@@ -133,6 +145,10 @@ interface DstChainPaymentInterface extends ethers.utils.Interface {
     values?: undefined
   ): string;
   encodeFunctionData(
+    functionFragment: "resourceDecimals",
+    values?: undefined
+  ): string;
+  encodeFunctionData(
     functionFragment: "setARStorageController",
     values: [string]
   ): string;
@@ -154,6 +170,10 @@ interface DstChainPaymentInterface extends ethers.utils.Interface {
   ): string;
   encodeFunctionData(functionFragment: "setToken", values: [string]): string;
   encodeFunctionData(functionFragment: "token", values?: undefined): string;
+  encodeFunctionData(
+    functionFragment: "tokenDecimals",
+    values?: undefined
+  ): string;
   encodeFunctionData(
     functionFragment: "totalValue",
     values: [{ resourceType: BigNumberish; values: BigNumberish[] }[]]
@@ -192,6 +212,14 @@ interface DstChainPaymentInterface extends ethers.utils.Interface {
   ): Result;
   decodeFunctionResult(functionFragment: "isPauser", data: BytesLike): Result;
   decodeFunctionResult(
+    functionFragment: "matchResourceToToken",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "matchTokenToResource",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
     functionFragment: "messageReceiver",
     data: BytesLike
   ): Result;
@@ -226,6 +254,10 @@ interface DstChainPaymentInterface extends ethers.utils.Interface {
     data: BytesLike
   ): Result;
   decodeFunctionResult(
+    functionFragment: "resourceDecimals",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
     functionFragment: "setARStorageController",
     data: BytesLike
   ): Result;
@@ -247,6 +279,10 @@ interface DstChainPaymentInterface extends ethers.utils.Interface {
   ): Result;
   decodeFunctionResult(functionFragment: "setToken", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "token", data: BytesLike): Result;
+  decodeFunctionResult(
+    functionFragment: "tokenDecimals",
+    data: BytesLike
+  ): Result;
   decodeFunctionResult(functionFragment: "totalValue", data: BytesLike): Result;
   decodeFunctionResult(
     functionFragment: "transferOwnership",
@@ -481,6 +517,16 @@ export class DstChainPayment extends BaseContract {
 
     isPauser(account: string, overrides?: CallOverrides): Promise<[boolean]>;
 
+    matchResourceToToken(
+      value: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<[BigNumber]>;
+
+    matchTokenToResource(
+      value: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<[BigNumber]>;
+
     messageReceiver(overrides?: CallOverrides): Promise<[string]>;
 
     owner(overrides?: CallOverrides): Promise<[string]>;
@@ -538,6 +584,8 @@ export class DstChainPayment extends BaseContract {
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<ContractTransaction>;
 
+    resourceDecimals(overrides?: CallOverrides): Promise<[BigNumber]>;
+
     setARStorageController(
       _arStorageController: string,
       overrides?: Overrides & { from?: string | Promise<string> }
@@ -569,6 +617,8 @@ export class DstChainPayment extends BaseContract {
     ): Promise<ContractTransaction>;
 
     token(overrides?: CallOverrides): Promise<[string]>;
+
+    tokenDecimals(overrides?: CallOverrides): Promise<[BigNumber]>;
 
     totalValue(
       payloads: { resourceType: BigNumberish; values: BigNumberish[] }[],
@@ -637,6 +687,16 @@ export class DstChainPayment extends BaseContract {
 
   isPauser(account: string, overrides?: CallOverrides): Promise<boolean>;
 
+  matchResourceToToken(
+    value: BigNumberish,
+    overrides?: CallOverrides
+  ): Promise<BigNumber>;
+
+  matchTokenToResource(
+    value: BigNumberish,
+    overrides?: CallOverrides
+  ): Promise<BigNumber>;
+
   messageReceiver(overrides?: CallOverrides): Promise<string>;
 
   owner(overrides?: CallOverrides): Promise<string>;
@@ -694,6 +754,8 @@ export class DstChainPayment extends BaseContract {
     overrides?: Overrides & { from?: string | Promise<string> }
   ): Promise<ContractTransaction>;
 
+  resourceDecimals(overrides?: CallOverrides): Promise<BigNumber>;
+
   setARStorageController(
     _arStorageController: string,
     overrides?: Overrides & { from?: string | Promise<string> }
@@ -725,6 +787,8 @@ export class DstChainPayment extends BaseContract {
   ): Promise<ContractTransaction>;
 
   token(overrides?: CallOverrides): Promise<string>;
+
+  tokenDecimals(overrides?: CallOverrides): Promise<BigNumber>;
 
   totalValue(
     payloads: { resourceType: BigNumberish; values: BigNumberish[] }[],
@@ -793,6 +857,16 @@ export class DstChainPayment extends BaseContract {
 
     isPauser(account: string, overrides?: CallOverrides): Promise<boolean>;
 
+    matchResourceToToken(
+      value: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
+
+    matchTokenToResource(
+      value: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
+
     messageReceiver(overrides?: CallOverrides): Promise<string>;
 
     owner(overrides?: CallOverrides): Promise<string>;
@@ -841,6 +915,8 @@ export class DstChainPayment extends BaseContract {
 
     renouncePauser(overrides?: CallOverrides): Promise<void>;
 
+    resourceDecimals(overrides?: CallOverrides): Promise<BigNumber>;
+
     setARStorageController(
       _arStorageController: string,
       overrides?: CallOverrides
@@ -869,6 +945,8 @@ export class DstChainPayment extends BaseContract {
     setToken(_token: string, overrides?: CallOverrides): Promise<void>;
 
     token(overrides?: CallOverrides): Promise<string>;
+
+    tokenDecimals(overrides?: CallOverrides): Promise<BigNumber>;
 
     totalValue(
       payloads: { resourceType: BigNumberish; values: BigNumberish[] }[],
@@ -1145,6 +1223,16 @@ export class DstChainPayment extends BaseContract {
 
     isPauser(account: string, overrides?: CallOverrides): Promise<BigNumber>;
 
+    matchResourceToToken(
+      value: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
+
+    matchTokenToResource(
+      value: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
+
     messageReceiver(overrides?: CallOverrides): Promise<BigNumber>;
 
     owner(overrides?: CallOverrides): Promise<BigNumber>;
@@ -1202,6 +1290,8 @@ export class DstChainPayment extends BaseContract {
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<BigNumber>;
 
+    resourceDecimals(overrides?: CallOverrides): Promise<BigNumber>;
+
     setARStorageController(
       _arStorageController: string,
       overrides?: Overrides & { from?: string | Promise<string> }
@@ -1233,6 +1323,8 @@ export class DstChainPayment extends BaseContract {
     ): Promise<BigNumber>;
 
     token(overrides?: CallOverrides): Promise<BigNumber>;
+
+    tokenDecimals(overrides?: CallOverrides): Promise<BigNumber>;
 
     totalValue(
       payloads: { resourceType: BigNumberish; values: BigNumberish[] }[],
@@ -1296,6 +1388,16 @@ export class DstChainPayment extends BaseContract {
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
+    matchResourceToToken(
+      value: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
+
+    matchTokenToResource(
+      value: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
+
     messageReceiver(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
     owner(overrides?: CallOverrides): Promise<PopulatedTransaction>;
@@ -1356,6 +1458,8 @@ export class DstChainPayment extends BaseContract {
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<PopulatedTransaction>;
 
+    resourceDecimals(overrides?: CallOverrides): Promise<PopulatedTransaction>;
+
     setARStorageController(
       _arStorageController: string,
       overrides?: Overrides & { from?: string | Promise<string> }
@@ -1387,6 +1491,8 @@ export class DstChainPayment extends BaseContract {
     ): Promise<PopulatedTransaction>;
 
     token(overrides?: CallOverrides): Promise<PopulatedTransaction>;
+
+    tokenDecimals(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
     totalValue(
       payloads: { resourceType: BigNumberish; values: BigNumberish[] }[],
