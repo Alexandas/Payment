@@ -23,7 +23,6 @@ interface IProvidersInterface extends ethers.utils.Interface {
   functions: {
     "isProvider(address)": FunctionFragment;
     "isValidSignature(address,bytes32,bytes)": FunctionFragment;
-    "wallets(address)": FunctionFragment;
   };
 
   encodeFunctionData(functionFragment: "isProvider", values: [string]): string;
@@ -31,27 +30,23 @@ interface IProvidersInterface extends ethers.utils.Interface {
     functionFragment: "isValidSignature",
     values: [string, BytesLike, BytesLike]
   ): string;
-  encodeFunctionData(functionFragment: "wallets", values: [string]): string;
 
   decodeFunctionResult(functionFragment: "isProvider", data: BytesLike): Result;
   decodeFunctionResult(
     functionFragment: "isValidSignature",
     data: BytesLike
   ): Result;
-  decodeFunctionResult(functionFragment: "wallets", data: BytesLike): Result;
 
   events: {
-    "ProviderUpdated(address,address)": EventFragment;
+    "AddProvider(address)": EventFragment;
     "RemoveProvider(address)": EventFragment;
   };
 
-  getEvent(nameOrSignatureOrTopic: "ProviderUpdated"): EventFragment;
+  getEvent(nameOrSignatureOrTopic: "AddProvider"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "RemoveProvider"): EventFragment;
 }
 
-export type ProviderUpdatedEvent = TypedEvent<
-  [string, string] & { provider: string; wallet: string }
->;
+export type AddProviderEvent = TypedEvent<[string] & { provider: string }>;
 
 export type RemoveProviderEvent = TypedEvent<[string] & { provider: string }>;
 
@@ -107,8 +102,6 @@ export class IProviders extends BaseContract {
       signature: BytesLike,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<ContractTransaction>;
-
-    wallets(provider: string, overrides?: CallOverrides): Promise<[string]>;
   };
 
   isProvider(provider: string, overrides?: CallOverrides): Promise<boolean>;
@@ -120,8 +113,6 @@ export class IProviders extends BaseContract {
     overrides?: Overrides & { from?: string | Promise<string> }
   ): Promise<ContractTransaction>;
 
-  wallets(provider: string, overrides?: CallOverrides): Promise<string>;
-
   callStatic: {
     isProvider(provider: string, overrides?: CallOverrides): Promise<boolean>;
 
@@ -131,20 +122,16 @@ export class IProviders extends BaseContract {
       signature: BytesLike,
       overrides?: CallOverrides
     ): Promise<boolean>;
-
-    wallets(provider: string, overrides?: CallOverrides): Promise<string>;
   };
 
   filters: {
-    "ProviderUpdated(address,address)"(
-      provider?: null,
-      wallet?: null
-    ): TypedEventFilter<[string, string], { provider: string; wallet: string }>;
+    "AddProvider(address)"(
+      provider?: null
+    ): TypedEventFilter<[string], { provider: string }>;
 
-    ProviderUpdated(
-      provider?: null,
-      wallet?: null
-    ): TypedEventFilter<[string, string], { provider: string; wallet: string }>;
+    AddProvider(
+      provider?: null
+    ): TypedEventFilter<[string], { provider: string }>;
 
     "RemoveProvider(address)"(
       provider?: null
@@ -164,8 +151,6 @@ export class IProviders extends BaseContract {
       signature: BytesLike,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<BigNumber>;
-
-    wallets(provider: string, overrides?: CallOverrides): Promise<BigNumber>;
   };
 
   populateTransaction: {
@@ -179,11 +164,6 @@ export class IProviders extends BaseContract {
       hash: BytesLike,
       signature: BytesLike,
       overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<PopulatedTransaction>;
-
-    wallets(
-      provider: string,
-      overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
   };
 }

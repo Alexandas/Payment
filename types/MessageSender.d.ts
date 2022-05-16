@@ -29,6 +29,8 @@ interface MessageSenderInterface extends ethers.utils.Interface {
     "messageBus()": FunctionFragment;
     "messageId((address,address,uint64,bytes32),uint64,bytes)": FunctionFragment;
     "owner()": FunctionFragment;
+    "ownerWithdrawERC20(address,address,uint256)": FunctionFragment;
+    "ownerWithdrawNative(address,uint256)": FunctionFragment;
     "receiver()": FunctionFragment;
     "renounceOwnership()": FunctionFragment;
     "sendMessageWithTransfer(address,uint256,uint64,uint32,bytes,uint8)": FunctionFragment;
@@ -71,6 +73,14 @@ interface MessageSenderInterface extends ethers.utils.Interface {
     ]
   ): string;
   encodeFunctionData(functionFragment: "owner", values?: undefined): string;
+  encodeFunctionData(
+    functionFragment: "ownerWithdrawERC20",
+    values: [string, string, BigNumberish]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "ownerWithdrawNative",
+    values: [string, BigNumberish]
+  ): string;
   encodeFunctionData(functionFragment: "receiver", values?: undefined): string;
   encodeFunctionData(
     functionFragment: "renounceOwnership",
@@ -119,6 +129,14 @@ interface MessageSenderInterface extends ethers.utils.Interface {
   decodeFunctionResult(functionFragment: "messageBus", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "messageId", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "owner", data: BytesLike): Result;
+  decodeFunctionResult(
+    functionFragment: "ownerWithdrawERC20",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "ownerWithdrawNative",
+    data: BytesLike
+  ): Result;
   decodeFunctionResult(functionFragment: "receiver", data: BytesLike): Result;
   decodeFunctionResult(
     functionFragment: "renounceOwnership",
@@ -157,17 +175,21 @@ interface MessageSenderInterface extends ethers.utils.Interface {
     "DstChainIdUpdated(uint64)": EventFragment;
     "MessageBusUpdated(address)": EventFragment;
     "MessageWithTransferRefund(address,uint256,bytes,address)": EventFragment;
+    "NativeWithdrawal(address,uint256)": EventFragment;
     "OwnershipTransferred(address,address)": EventFragment;
     "ReceiverUpdated(address)": EventFragment;
     "SrcChainPaymentUpdated(address)": EventFragment;
+    "Withdrawal(address,address,uint256)": EventFragment;
   };
 
   getEvent(nameOrSignatureOrTopic: "DstChainIdUpdated"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "MessageBusUpdated"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "MessageWithTransferRefund"): EventFragment;
+  getEvent(nameOrSignatureOrTopic: "NativeWithdrawal"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "OwnershipTransferred"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "ReceiverUpdated"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "SrcChainPaymentUpdated"): EventFragment;
+  getEvent(nameOrSignatureOrTopic: "Withdrawal"): EventFragment;
 }
 
 export type DstChainIdUpdatedEvent = TypedEvent<
@@ -187,6 +209,10 @@ export type MessageWithTransferRefundEvent = TypedEvent<
   }
 >;
 
+export type NativeWithdrawalEvent = TypedEvent<
+  [string, BigNumber] & { to: string; value: BigNumber }
+>;
+
 export type OwnershipTransferredEvent = TypedEvent<
   [string, string] & { previousOwner: string; newOwner: string }
 >;
@@ -195,6 +221,10 @@ export type ReceiverUpdatedEvent = TypedEvent<[string] & { receiver: string }>;
 
 export type SrcChainPaymentUpdatedEvent = TypedEvent<
   [string] & { payment: string }
+>;
+
+export type WithdrawalEvent = TypedEvent<
+  [string, string, BigNumber] & { token: string; to: string; value: BigNumber }
 >;
 
 export class MessageSender extends BaseContract {
@@ -280,6 +310,19 @@ export class MessageSender extends BaseContract {
 
     owner(overrides?: CallOverrides): Promise<[string]>;
 
+    ownerWithdrawERC20(
+      token: string,
+      to: string,
+      value: BigNumberish,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<ContractTransaction>;
+
+    ownerWithdrawNative(
+      to: string,
+      value: BigNumberish,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<ContractTransaction>;
+
     receiver(overrides?: CallOverrides): Promise<[string]>;
 
     renounceOwnership(
@@ -359,6 +402,19 @@ export class MessageSender extends BaseContract {
   ): Promise<string>;
 
   owner(overrides?: CallOverrides): Promise<string>;
+
+  ownerWithdrawERC20(
+    token: string,
+    to: string,
+    value: BigNumberish,
+    overrides?: Overrides & { from?: string | Promise<string> }
+  ): Promise<ContractTransaction>;
+
+  ownerWithdrawNative(
+    to: string,
+    value: BigNumberish,
+    overrides?: Overrides & { from?: string | Promise<string> }
+  ): Promise<ContractTransaction>;
 
   receiver(overrides?: CallOverrides): Promise<string>;
 
@@ -440,6 +496,19 @@ export class MessageSender extends BaseContract {
 
     owner(overrides?: CallOverrides): Promise<string>;
 
+    ownerWithdrawERC20(
+      token: string,
+      to: string,
+      value: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<void>;
+
+    ownerWithdrawNative(
+      to: string,
+      value: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<void>;
+
     receiver(overrides?: CallOverrides): Promise<string>;
 
     renounceOwnership(overrides?: CallOverrides): Promise<void>;
@@ -513,6 +582,16 @@ export class MessageSender extends BaseContract {
       { token: string; amount: BigNumber; message: string; executor: string }
     >;
 
+    "NativeWithdrawal(address,uint256)"(
+      to?: null,
+      value?: null
+    ): TypedEventFilter<[string, BigNumber], { to: string; value: BigNumber }>;
+
+    NativeWithdrawal(
+      to?: null,
+      value?: null
+    ): TypedEventFilter<[string, BigNumber], { to: string; value: BigNumber }>;
+
     "OwnershipTransferred(address,address)"(
       previousOwner?: string | null,
       newOwner?: string | null
@@ -544,6 +623,24 @@ export class MessageSender extends BaseContract {
     SrcChainPaymentUpdated(
       payment?: null
     ): TypedEventFilter<[string], { payment: string }>;
+
+    "Withdrawal(address,address,uint256)"(
+      token?: null,
+      to?: null,
+      value?: null
+    ): TypedEventFilter<
+      [string, string, BigNumber],
+      { token: string; to: string; value: BigNumber }
+    >;
+
+    Withdrawal(
+      token?: null,
+      to?: null,
+      value?: null
+    ): TypedEventFilter<
+      [string, string, BigNumber],
+      { token: string; to: string; value: BigNumber }
+    >;
   };
 
   estimateGas: {
@@ -582,6 +679,19 @@ export class MessageSender extends BaseContract {
     ): Promise<BigNumber>;
 
     owner(overrides?: CallOverrides): Promise<BigNumber>;
+
+    ownerWithdrawERC20(
+      token: string,
+      to: string,
+      value: BigNumberish,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<BigNumber>;
+
+    ownerWithdrawNative(
+      to: string,
+      value: BigNumberish,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<BigNumber>;
 
     receiver(overrides?: CallOverrides): Promise<BigNumber>;
 
@@ -666,6 +776,19 @@ export class MessageSender extends BaseContract {
     ): Promise<PopulatedTransaction>;
 
     owner(overrides?: CallOverrides): Promise<PopulatedTransaction>;
+
+    ownerWithdrawERC20(
+      token: string,
+      to: string,
+      value: BigNumberish,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<PopulatedTransaction>;
+
+    ownerWithdrawNative(
+      to: string,
+      value: BigNumberish,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<PopulatedTransaction>;
 
     receiver(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 

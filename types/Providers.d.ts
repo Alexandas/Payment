@@ -21,25 +21,20 @@ import type { TypedEventFilter, TypedEvent, TypedListener } from "./common";
 
 interface ProvidersInterface extends ethers.utils.Interface {
   functions: {
-    "addProvider(address,address)": FunctionFragment;
-    "initialize(address,address[],address[])": FunctionFragment;
+    "addProvider(address)": FunctionFragment;
+    "initialize(address,address[])": FunctionFragment;
     "isProvider(address)": FunctionFragment;
     "isValidSignature(address,bytes32,bytes)": FunctionFragment;
     "owner()": FunctionFragment;
     "removeProvider(address)": FunctionFragment;
     "renounceOwnership()": FunctionFragment;
-    "setWallet(address)": FunctionFragment;
     "transferOwnership(address)": FunctionFragment;
-    "wallets(address)": FunctionFragment;
   };
 
-  encodeFunctionData(
-    functionFragment: "addProvider",
-    values: [string, string]
-  ): string;
+  encodeFunctionData(functionFragment: "addProvider", values: [string]): string;
   encodeFunctionData(
     functionFragment: "initialize",
-    values: [string, string[], string[]]
+    values: [string, string[]]
   ): string;
   encodeFunctionData(functionFragment: "isProvider", values: [string]): string;
   encodeFunctionData(
@@ -55,12 +50,10 @@ interface ProvidersInterface extends ethers.utils.Interface {
     functionFragment: "renounceOwnership",
     values?: undefined
   ): string;
-  encodeFunctionData(functionFragment: "setWallet", values: [string]): string;
   encodeFunctionData(
     functionFragment: "transferOwnership",
     values: [string]
   ): string;
-  encodeFunctionData(functionFragment: "wallets", values: [string]): string;
 
   decodeFunctionResult(
     functionFragment: "addProvider",
@@ -81,30 +74,26 @@ interface ProvidersInterface extends ethers.utils.Interface {
     functionFragment: "renounceOwnership",
     data: BytesLike
   ): Result;
-  decodeFunctionResult(functionFragment: "setWallet", data: BytesLike): Result;
   decodeFunctionResult(
     functionFragment: "transferOwnership",
     data: BytesLike
   ): Result;
-  decodeFunctionResult(functionFragment: "wallets", data: BytesLike): Result;
 
   events: {
+    "AddProvider(address)": EventFragment;
     "OwnershipTransferred(address,address)": EventFragment;
-    "ProviderUpdated(address,address)": EventFragment;
     "RemoveProvider(address)": EventFragment;
   };
 
+  getEvent(nameOrSignatureOrTopic: "AddProvider"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "OwnershipTransferred"): EventFragment;
-  getEvent(nameOrSignatureOrTopic: "ProviderUpdated"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "RemoveProvider"): EventFragment;
 }
 
+export type AddProviderEvent = TypedEvent<[string] & { provider: string }>;
+
 export type OwnershipTransferredEvent = TypedEvent<
   [string, string] & { previousOwner: string; newOwner: string }
->;
-
-export type ProviderUpdatedEvent = TypedEvent<
-  [string, string] & { provider: string; wallet: string }
 >;
 
 export type RemoveProviderEvent = TypedEvent<[string] & { provider: string }>;
@@ -155,14 +144,12 @@ export class Providers extends BaseContract {
   functions: {
     addProvider(
       provider: string,
-      wallet: string,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<ContractTransaction>;
 
     initialize(
       owner: string,
       _providers: string[],
-      _wallets: string[],
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<ContractTransaction>;
 
@@ -186,29 +173,20 @@ export class Providers extends BaseContract {
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<ContractTransaction>;
 
-    setWallet(
-      wallet: string,
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<ContractTransaction>;
-
     transferOwnership(
       newOwner: string,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<ContractTransaction>;
-
-    wallets(arg0: string, overrides?: CallOverrides): Promise<[string]>;
   };
 
   addProvider(
     provider: string,
-    wallet: string,
     overrides?: Overrides & { from?: string | Promise<string> }
   ): Promise<ContractTransaction>;
 
   initialize(
     owner: string,
     _providers: string[],
-    _wallets: string[],
     overrides?: Overrides & { from?: string | Promise<string> }
   ): Promise<ContractTransaction>;
 
@@ -232,29 +210,17 @@ export class Providers extends BaseContract {
     overrides?: Overrides & { from?: string | Promise<string> }
   ): Promise<ContractTransaction>;
 
-  setWallet(
-    wallet: string,
-    overrides?: Overrides & { from?: string | Promise<string> }
-  ): Promise<ContractTransaction>;
-
   transferOwnership(
     newOwner: string,
     overrides?: Overrides & { from?: string | Promise<string> }
   ): Promise<ContractTransaction>;
 
-  wallets(arg0: string, overrides?: CallOverrides): Promise<string>;
-
   callStatic: {
-    addProvider(
-      provider: string,
-      wallet: string,
-      overrides?: CallOverrides
-    ): Promise<void>;
+    addProvider(provider: string, overrides?: CallOverrides): Promise<void>;
 
     initialize(
       owner: string,
       _providers: string[],
-      _wallets: string[],
       overrides?: CallOverrides
     ): Promise<void>;
 
@@ -273,17 +239,21 @@ export class Providers extends BaseContract {
 
     renounceOwnership(overrides?: CallOverrides): Promise<void>;
 
-    setWallet(wallet: string, overrides?: CallOverrides): Promise<void>;
-
     transferOwnership(
       newOwner: string,
       overrides?: CallOverrides
     ): Promise<void>;
-
-    wallets(arg0: string, overrides?: CallOverrides): Promise<string>;
   };
 
   filters: {
+    "AddProvider(address)"(
+      provider?: null
+    ): TypedEventFilter<[string], { provider: string }>;
+
+    AddProvider(
+      provider?: null
+    ): TypedEventFilter<[string], { provider: string }>;
+
     "OwnershipTransferred(address,address)"(
       previousOwner?: string | null,
       newOwner?: string | null
@@ -300,16 +270,6 @@ export class Providers extends BaseContract {
       { previousOwner: string; newOwner: string }
     >;
 
-    "ProviderUpdated(address,address)"(
-      provider?: null,
-      wallet?: null
-    ): TypedEventFilter<[string, string], { provider: string; wallet: string }>;
-
-    ProviderUpdated(
-      provider?: null,
-      wallet?: null
-    ): TypedEventFilter<[string, string], { provider: string; wallet: string }>;
-
     "RemoveProvider(address)"(
       provider?: null
     ): TypedEventFilter<[string], { provider: string }>;
@@ -322,14 +282,12 @@ export class Providers extends BaseContract {
   estimateGas: {
     addProvider(
       provider: string,
-      wallet: string,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<BigNumber>;
 
     initialize(
       owner: string,
       _providers: string[],
-      _wallets: string[],
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<BigNumber>;
 
@@ -353,30 +311,21 @@ export class Providers extends BaseContract {
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<BigNumber>;
 
-    setWallet(
-      wallet: string,
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<BigNumber>;
-
     transferOwnership(
       newOwner: string,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<BigNumber>;
-
-    wallets(arg0: string, overrides?: CallOverrides): Promise<BigNumber>;
   };
 
   populateTransaction: {
     addProvider(
       provider: string,
-      wallet: string,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<PopulatedTransaction>;
 
     initialize(
       owner: string,
       _providers: string[],
-      _wallets: string[],
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<PopulatedTransaction>;
 
@@ -403,19 +352,9 @@ export class Providers extends BaseContract {
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<PopulatedTransaction>;
 
-    setWallet(
-      wallet: string,
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<PopulatedTransaction>;
-
     transferOwnership(
       newOwner: string,
       overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<PopulatedTransaction>;
-
-    wallets(
-      arg0: string,
-      overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
   };
 }

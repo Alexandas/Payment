@@ -39,7 +39,6 @@ interface DstChainPaymentInterface extends ethers.utils.Interface {
     "pausers(address)": FunctionFragment;
     "pay((address,uint64,bytes32,tuple[]))": FunctionFragment;
     "payFromSourceChain(address,uint256,bytes)": FunctionFragment;
-    "providerBalances(address)": FunctionFragment;
     "providers()": FunctionFragment;
     "removePauser(address)": FunctionFragment;
     "renounceOwnership()": FunctionFragment;
@@ -119,10 +118,6 @@ interface DstChainPaymentInterface extends ethers.utils.Interface {
   encodeFunctionData(
     functionFragment: "payFromSourceChain",
     values: [string, BigNumberish, BytesLike]
-  ): string;
-  encodeFunctionData(
-    functionFragment: "providerBalances",
-    values: [string]
   ): string;
   encodeFunctionData(functionFragment: "providers", values?: undefined): string;
   encodeFunctionData(
@@ -215,10 +210,6 @@ interface DstChainPaymentInterface extends ethers.utils.Interface {
   decodeFunctionResult(functionFragment: "pay", data: BytesLike): Result;
   decodeFunctionResult(
     functionFragment: "payFromSourceChain",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(
-    functionFragment: "providerBalances",
     data: BytesLike
   ): Result;
   decodeFunctionResult(functionFragment: "providers", data: BytesLike): Result;
@@ -532,11 +523,6 @@ export class DstChainPayment extends BaseContract {
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<ContractTransaction>;
 
-    providerBalances(
-      arg0: string,
-      overrides?: CallOverrides
-    ): Promise<[BigNumber]>;
-
     providers(overrides?: CallOverrides): Promise<[string]>;
 
     removePauser(
@@ -693,8 +679,6 @@ export class DstChainPayment extends BaseContract {
     overrides?: Overrides & { from?: string | Promise<string> }
   ): Promise<ContractTransaction>;
 
-  providerBalances(arg0: string, overrides?: CallOverrides): Promise<BigNumber>;
-
   providers(overrides?: CallOverrides): Promise<string>;
 
   removePauser(
@@ -846,11 +830,6 @@ export class DstChainPayment extends BaseContract {
       _token: string,
       dstAmount: BigNumberish,
       message: BytesLike,
-      overrides?: CallOverrides
-    ): Promise<BigNumber>;
-
-    providerBalances(
-      arg0: string,
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
@@ -1208,11 +1187,6 @@ export class DstChainPayment extends BaseContract {
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<BigNumber>;
 
-    providerBalances(
-      arg0: string,
-      overrides?: CallOverrides
-    ): Promise<BigNumber>;
-
     providers(overrides?: CallOverrides): Promise<BigNumber>;
 
     removePauser(
@@ -1365,11 +1339,6 @@ export class DstChainPayment extends BaseContract {
       dstAmount: BigNumberish,
       message: BytesLike,
       overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<PopulatedTransaction>;
-
-    providerBalances(
-      arg0: string,
-      overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
     providers(overrides?: CallOverrides): Promise<PopulatedTransaction>;
