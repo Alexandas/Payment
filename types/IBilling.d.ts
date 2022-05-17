@@ -23,7 +23,6 @@ interface IBillingInterface extends ethers.utils.Interface {
     "adaptor()": FunctionFragment;
     "billTypedHash()": FunctionFragment;
     "providers()": FunctionFragment;
-    "token()": FunctionFragment;
   };
 
   encodeFunctionData(functionFragment: "adaptor", values?: undefined): string;
@@ -32,7 +31,6 @@ interface IBillingInterface extends ethers.utils.Interface {
     values?: undefined
   ): string;
   encodeFunctionData(functionFragment: "providers", values?: undefined): string;
-  encodeFunctionData(functionFragment: "token", values?: undefined): string;
 
   decodeFunctionResult(functionFragment: "adaptor", data: BytesLike): Result;
   decodeFunctionResult(
@@ -40,21 +38,18 @@ interface IBillingInterface extends ethers.utils.Interface {
     data: BytesLike
   ): Result;
   decodeFunctionResult(functionFragment: "providers", data: BytesLike): Result;
-  decodeFunctionResult(functionFragment: "token", data: BytesLike): Result;
 
   events: {
     "BillTypedHashUpdated(bytes32)": EventFragment;
     "Billing(address,uint64,bytes32,bytes,uint256)": EventFragment;
     "ProvidersUpdated(address)": EventFragment;
     "ResourceAdaptorUpdated(address)": EventFragment;
-    "TokenUpdated(address)": EventFragment;
   };
 
   getEvent(nameOrSignatureOrTopic: "BillTypedHashUpdated"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "Billing"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "ProvidersUpdated"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "ResourceAdaptorUpdated"): EventFragment;
-  getEvent(nameOrSignatureOrTopic: "TokenUpdated"): EventFragment;
 }
 
 export type BillTypedHashUpdatedEvent = TypedEvent<[string] & { hash: string }>;
@@ -76,8 +71,6 @@ export type ProvidersUpdatedEvent = TypedEvent<
 export type ResourceAdaptorUpdatedEvent = TypedEvent<
   [string] & { adaptor: string }
 >;
-
-export type TokenUpdatedEvent = TypedEvent<[string] & { token: string }>;
 
 export class IBilling extends BaseContract {
   connect(signerOrProvider: Signer | Provider | string): this;
@@ -128,8 +121,6 @@ export class IBilling extends BaseContract {
     billTypedHash(overrides?: CallOverrides): Promise<[string]>;
 
     providers(overrides?: CallOverrides): Promise<[string]>;
-
-    token(overrides?: CallOverrides): Promise<[string]>;
   };
 
   adaptor(overrides?: CallOverrides): Promise<string>;
@@ -138,16 +129,12 @@ export class IBilling extends BaseContract {
 
   providers(overrides?: CallOverrides): Promise<string>;
 
-  token(overrides?: CallOverrides): Promise<string>;
-
   callStatic: {
     adaptor(overrides?: CallOverrides): Promise<string>;
 
     billTypedHash(overrides?: CallOverrides): Promise<string>;
 
     providers(overrides?: CallOverrides): Promise<string>;
-
-    token(overrides?: CallOverrides): Promise<string>;
   };
 
   filters: {
@@ -208,12 +195,6 @@ export class IBilling extends BaseContract {
     ResourceAdaptorUpdated(
       adaptor?: null
     ): TypedEventFilter<[string], { adaptor: string }>;
-
-    "TokenUpdated(address)"(
-      token?: null
-    ): TypedEventFilter<[string], { token: string }>;
-
-    TokenUpdated(token?: null): TypedEventFilter<[string], { token: string }>;
   };
 
   estimateGas: {
@@ -222,8 +203,6 @@ export class IBilling extends BaseContract {
     billTypedHash(overrides?: CallOverrides): Promise<BigNumber>;
 
     providers(overrides?: CallOverrides): Promise<BigNumber>;
-
-    token(overrides?: CallOverrides): Promise<BigNumber>;
   };
 
   populateTransaction: {
@@ -232,7 +211,5 @@ export class IBilling extends BaseContract {
     billTypedHash(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
     providers(overrides?: CallOverrides): Promise<PopulatedTransaction>;
-
-    token(overrides?: CallOverrides): Promise<PopulatedTransaction>;
   };
 }

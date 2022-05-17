@@ -14,7 +14,11 @@ abstract contract ResourPayloadTool {
 	/// @param dstAmount token amount
 	/// @param payloads source chain payment payload
 	/// @return newPayloads dst chain payment payload
-	function _convertSourceChainPayloads(uint256 dstAmount, ResourceData.Payload[] memory payloads) internal pure returns (ResourceData.Payload[] memory newPayloads) {
+	function _convertSourceChainPayloads(uint256 dstAmount, ResourceData.Payload[] memory payloads)
+		internal
+		pure
+		returns (ResourceData.Payload[] memory newPayloads)
+	{
 		require(payloads.length > 0, 'ResourPayloadTool: invalid payload length');
 		uint256 total = totalValue(payloads);
 		require(total > 0, 'ResourPayloadTool: zero total value');
@@ -38,5 +42,4 @@ abstract contract ResourPayloadTool {
 			}
 		}
 	}
-
 }

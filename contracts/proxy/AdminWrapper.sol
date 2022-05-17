@@ -7,7 +7,6 @@ import '@openzeppelin/contracts/utils/StorageSlot.sol';
 /// @author Alexandas
 /// @dev proxy admin wrapper
 contract AdminWrapper {
-
 	/// @dev return admin address from storage slot
 	/// @return admin admin contract address
 	function _getAdmin() internal view returns (address) {

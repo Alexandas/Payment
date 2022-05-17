@@ -80,5 +80,4 @@ abstract contract ControllersWrapper is OwnableUpgradeable {
 		ipfsStorageController = _ipfsStorageController;
 		emit IPFSStorageControllerUpdated(_ipfsStorageController);
 	}
-
 }

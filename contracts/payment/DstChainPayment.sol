@@ -63,12 +63,7 @@ contract DstChainPayment is
 		require(token == _token, 'DstChainPayment: invalid token');
 		(address provider, uint64 nonce, bytes32 account, ResourceData.Payload[] memory payloads) = decodeSourceChainMessage(message);
 		uint256 amount = matchTokenToResource(dstAmount);
-		PaymentPayload memory payload = PaymentPayload(
-			provider, 
-			nonce, 
-			account, 
-			_convertSourceChainPayloads(amount, payloads)
-		);
+		PaymentPayload memory payload = PaymentPayload(provider, nonce, account, _convertSourceChainPayloads(amount, payloads));
 		_processPayloads(payload.account, payload.payloads, false);
 		_pay(payload.provider, dstAmount);
 

@@ -7,7 +7,6 @@ import './IBilling.sol';
 /// @author Alexandas
 /// @dev FundWallet interface
 interface IFundWallet is IBilling {
-
 	enum Purpose {
 		Null,
 		Recharge,
@@ -19,10 +18,6 @@ interface IFundWallet is IBilling {
 		address owner;
 		uint256 amount;
 	}
-
-	/// @dev emit when set wallet owner typed hash updated
-	/// @param hash set wallet owner typed hash
-	event WalletOwnerTypedHashUpdated(bytes32 hash);
 
 	/// @dev emit when recharge type hash updated
 	/// @param hash recharge type hash
@@ -63,9 +58,6 @@ interface IFundWallet is IBilling {
 	/// @param amount token amount
 	event Withdrawn(address provider, uint64 nonce, bytes32 account, address to, uint256 amount);
 
-	/// @dev return wallet owner typed hash
-	function walletOwnerTypedHash() external view returns (bytes32);
-
 	/// @dev return recharge typed hash
 	function rechargeTypedHash() external view returns (bytes32);
 
@@ -79,7 +71,11 @@ interface IFundWallet is IBilling {
 	/// @param provider provider address
 	/// @param account user account
 	/// @param newOwner new wallet owner for account
-	function transferWalletOwner(address provider, bytes32 account, address newOwner) external;
+	function transferWalletOwner(
+		address provider,
+		bytes32 account,
+		address newOwner
+	) external;
 
 	/// @dev recharge for account
 	/// @param provider provider address
@@ -100,17 +96,19 @@ interface IFundWallet is IBilling {
 	/// @param nonce nonce
 	/// @param account user account
 	/// @param to token receiver
+	/// @param amount token amount
 	/// @param bill bill bytes
 	/// @param signature provider signature
-	/// @return amount token amount
+	/// @return fee bill fee
 	function withdraw(
 		address provider,
 		uint64 nonce,
 		bytes32 account,
 		address to,
+		uint256 amount,
 		bytes memory bill,
 		bytes memory signature
-	) external returns (uint256);
+	) external returns (uint256 fee);
 
 	/// @dev spend bill for account
 	/// @param provider provider address
@@ -126,5 +124,4 @@ interface IFundWallet is IBilling {
 		bytes memory bill,
 		bytes memory signature
 	) external returns (uint256 fee);
-
 }

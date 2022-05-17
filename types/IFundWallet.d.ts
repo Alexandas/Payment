@@ -28,10 +28,8 @@ interface IFundWalletInterface extends ethers.utils.Interface {
     "recharge(address,uint64,bytes32,uint256,bytes)": FunctionFragment;
     "rechargeTypedHash()": FunctionFragment;
     "spend(address,uint64,bytes32,bytes,bytes)": FunctionFragment;
-    "token()": FunctionFragment;
     "transferWalletOwner(address,bytes32,address)": FunctionFragment;
-    "walletOwnerTypedHash()": FunctionFragment;
-    "withdraw(address,uint64,bytes32,address,bytes,bytes)": FunctionFragment;
+    "withdraw(address,uint64,bytes32,address,uint256,bytes,bytes)": FunctionFragment;
   };
 
   encodeFunctionData(functionFragment: "adaptor", values?: undefined): string;
@@ -56,18 +54,21 @@ interface IFundWalletInterface extends ethers.utils.Interface {
     functionFragment: "spend",
     values: [string, BigNumberish, BytesLike, BytesLike, BytesLike]
   ): string;
-  encodeFunctionData(functionFragment: "token", values?: undefined): string;
   encodeFunctionData(
     functionFragment: "transferWalletOwner",
     values: [string, BytesLike, string]
   ): string;
   encodeFunctionData(
-    functionFragment: "walletOwnerTypedHash",
-    values?: undefined
-  ): string;
-  encodeFunctionData(
     functionFragment: "withdraw",
-    values: [string, BigNumberish, BytesLike, string, BytesLike, BytesLike]
+    values: [
+      string,
+      BigNumberish,
+      BytesLike,
+      string,
+      BigNumberish,
+      BytesLike,
+      BytesLike
+    ]
   ): string;
 
   decodeFunctionResult(functionFragment: "adaptor", data: BytesLike): Result;
@@ -83,13 +84,8 @@ interface IFundWalletInterface extends ethers.utils.Interface {
     data: BytesLike
   ): Result;
   decodeFunctionResult(functionFragment: "spend", data: BytesLike): Result;
-  decodeFunctionResult(functionFragment: "token", data: BytesLike): Result;
   decodeFunctionResult(
     functionFragment: "transferWalletOwner",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(
-    functionFragment: "walletOwnerTypedHash",
     data: BytesLike
   ): Result;
   decodeFunctionResult(functionFragment: "withdraw", data: BytesLike): Result;
@@ -103,9 +99,7 @@ interface IFundWalletInterface extends ethers.utils.Interface {
     "Recharged(address,uint64,bytes32,uint256)": EventFragment;
     "ResourceAdaptorUpdated(address)": EventFragment;
     "Spent(address,uint64,bytes32,uint256)": EventFragment;
-    "TokenUpdated(address)": EventFragment;
     "WalletOwnerTransferred(address,bytes32,address)": EventFragment;
-    "WalletOwnerTypedHashUpdated(bytes32)": EventFragment;
     "Withdrawn(address,uint64,bytes32,address,uint256)": EventFragment;
   };
 
@@ -117,11 +111,7 @@ interface IFundWalletInterface extends ethers.utils.Interface {
   getEvent(nameOrSignatureOrTopic: "Recharged"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "ResourceAdaptorUpdated"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "Spent"): EventFragment;
-  getEvent(nameOrSignatureOrTopic: "TokenUpdated"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "WalletOwnerTransferred"): EventFragment;
-  getEvent(
-    nameOrSignatureOrTopic: "WalletOwnerTypedHashUpdated"
-  ): EventFragment;
   getEvent(nameOrSignatureOrTopic: "Withdrawn"): EventFragment;
 }
 
@@ -176,18 +166,12 @@ export type SpentEvent = TypedEvent<
   }
 >;
 
-export type TokenUpdatedEvent = TypedEvent<[string] & { token: string }>;
-
 export type WalletOwnerTransferredEvent = TypedEvent<
   [string, string, string] & {
     provider: string;
     account: string;
     newOwner: string;
   }
->;
-
-export type WalletOwnerTypedHashUpdatedEvent = TypedEvent<
-  [string] & { hash: string }
 >;
 
 export type WithdrawnEvent = TypedEvent<
@@ -276,8 +260,6 @@ export class IFundWallet extends BaseContract {
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<ContractTransaction>;
 
-    token(overrides?: CallOverrides): Promise<[string]>;
-
     transferWalletOwner(
       provider: string,
       account: BytesLike,
@@ -285,13 +267,12 @@ export class IFundWallet extends BaseContract {
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<ContractTransaction>;
 
-    walletOwnerTypedHash(overrides?: CallOverrides): Promise<[string]>;
-
     withdraw(
       provider: string,
       nonce: BigNumberish,
       account: BytesLike,
       to: string,
+      amount: BigNumberish,
       bill: BytesLike,
       signature: BytesLike,
       overrides?: Overrides & { from?: string | Promise<string> }
@@ -330,8 +311,6 @@ export class IFundWallet extends BaseContract {
     overrides?: Overrides & { from?: string | Promise<string> }
   ): Promise<ContractTransaction>;
 
-  token(overrides?: CallOverrides): Promise<string>;
-
   transferWalletOwner(
     provider: string,
     account: BytesLike,
@@ -339,13 +318,12 @@ export class IFundWallet extends BaseContract {
     overrides?: Overrides & { from?: string | Promise<string> }
   ): Promise<ContractTransaction>;
 
-  walletOwnerTypedHash(overrides?: CallOverrides): Promise<string>;
-
   withdraw(
     provider: string,
     nonce: BigNumberish,
     account: BytesLike,
     to: string,
+    amount: BigNumberish,
     bill: BytesLike,
     signature: BytesLike,
     overrides?: Overrides & { from?: string | Promise<string> }
@@ -384,8 +362,6 @@ export class IFundWallet extends BaseContract {
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
-    token(overrides?: CallOverrides): Promise<string>;
-
     transferWalletOwner(
       provider: string,
       account: BytesLike,
@@ -393,13 +369,12 @@ export class IFundWallet extends BaseContract {
       overrides?: CallOverrides
     ): Promise<void>;
 
-    walletOwnerTypedHash(overrides?: CallOverrides): Promise<string>;
-
     withdraw(
       provider: string,
       nonce: BigNumberish,
       account: BytesLike,
       to: string,
+      amount: BigNumberish,
       bill: BytesLike,
       signature: BytesLike,
       overrides?: CallOverrides
@@ -533,12 +508,6 @@ export class IFundWallet extends BaseContract {
       { provider: string; nonce: BigNumber; account: string; fee: BigNumber }
     >;
 
-    "TokenUpdated(address)"(
-      token?: null
-    ): TypedEventFilter<[string], { token: string }>;
-
-    TokenUpdated(token?: null): TypedEventFilter<[string], { token: string }>;
-
     "WalletOwnerTransferred(address,bytes32,address)"(
       provider?: null,
       account?: null,
@@ -556,14 +525,6 @@ export class IFundWallet extends BaseContract {
       [string, string, string],
       { provider: string; account: string; newOwner: string }
     >;
-
-    "WalletOwnerTypedHashUpdated(bytes32)"(
-      hash?: null
-    ): TypedEventFilter<[string], { hash: string }>;
-
-    WalletOwnerTypedHashUpdated(
-      hash?: null
-    ): TypedEventFilter<[string], { hash: string }>;
 
     "Withdrawn(address,uint64,bytes32,address,uint256)"(
       provider?: null,
@@ -633,8 +594,6 @@ export class IFundWallet extends BaseContract {
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<BigNumber>;
 
-    token(overrides?: CallOverrides): Promise<BigNumber>;
-
     transferWalletOwner(
       provider: string,
       account: BytesLike,
@@ -642,13 +601,12 @@ export class IFundWallet extends BaseContract {
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<BigNumber>;
 
-    walletOwnerTypedHash(overrides?: CallOverrides): Promise<BigNumber>;
-
     withdraw(
       provider: string,
       nonce: BigNumberish,
       account: BytesLike,
       to: string,
+      amount: BigNumberish,
       bill: BytesLike,
       signature: BytesLike,
       overrides?: Overrides & { from?: string | Promise<string> }
@@ -688,8 +646,6 @@ export class IFundWallet extends BaseContract {
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<PopulatedTransaction>;
 
-    token(overrides?: CallOverrides): Promise<PopulatedTransaction>;
-
     transferWalletOwner(
       provider: string,
       account: BytesLike,
@@ -697,15 +653,12 @@ export class IFundWallet extends BaseContract {
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<PopulatedTransaction>;
 
-    walletOwnerTypedHash(
-      overrides?: CallOverrides
-    ): Promise<PopulatedTransaction>;
-
     withdraw(
       provider: string,
       nonce: BigNumberish,
       account: BytesLike,
       to: string,
+      amount: BigNumberish,
       bill: BytesLike,
       signature: BytesLike,
       overrides?: Overrides & { from?: string | Promise<string> }

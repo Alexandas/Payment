@@ -35,5 +35,4 @@ abstract contract MessageReceiverWrapper is OwnableUpgradeable {
 		messageReceiver = _messageReceiver;
 		emit MessageReceiverUpdated(_messageReceiver);
 	}
-
 }

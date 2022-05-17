@@ -84,19 +84,6 @@ const _abi = [
     type: "event",
   },
   {
-    anonymous: false,
-    inputs: [
-      {
-        indexed: false,
-        internalType: "contract IERC20Upgradeable",
-        name: "token",
-        type: "address",
-      },
-    ],
-    name: "TokenUpdated",
-    type: "event",
-  },
-  {
     inputs: [],
     name: "adaptor",
     outputs: [
@@ -128,19 +115,6 @@ const _abi = [
     outputs: [
       {
         internalType: "contract IProviders",
-        name: "",
-        type: "address",
-      },
-    ],
-    stateMutability: "view",
-    type: "function",
-  },
-  {
-    inputs: [],
-    name: "token",
-    outputs: [
-      {
-        internalType: "contract IERC20Upgradeable",
         name: "",
         type: "address",
       },

@@ -87,14 +87,14 @@ contract MessageSender is IMessageSender, OwnerWithdrawable {
 	/// @param _message message
 	/// @param executor exector address
 	function executeMessageWithTransferRefund(
-        address _token,
-        uint256 _amount,
-        bytes calldata _message,
-        address executor
-    ) external payable onlyMessageBus returns (ExecutionStatus) {
+		address _token,
+		uint256 _amount,
+		bytes calldata _message,
+		address executor
+	) external payable onlyMessageBus returns (ExecutionStatus) {
 		emit MessageWithTransferRefund(_token, _amount, _message, executor);
-        return ExecutionStatus.Success;
-    }
+		return ExecutionStatus.Success;
+	}
 
 	/// @dev set src chain payment
 	/// @param _payment src chain payment address
@@ -156,7 +156,7 @@ contract MessageSender is IMessageSender, OwnerWithdrawable {
 		uint64 dstChainId,
 		bytes calldata message
 	) external view override returns (bytes32) {
-		return keccak256(abi.encodePacked(MsgDataTypes.MsgType.MessageOnly, route.sender, route.receiver, route.srcChainId, route.srcTxHash, dstChainId, message));
+		return
+			keccak256(abi.encodePacked(MsgDataTypes.MsgType.MessageOnly, route.sender, route.receiver, route.srcChainId, route.srcTxHash, dstChainId, message));
 	}
-
 }

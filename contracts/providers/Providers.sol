@@ -22,10 +22,7 @@ contract Providers is IProviders, OwnableUpgradeable {
 	/// @dev proxy initialize function
 	/// @param owner contract owner
 	/// @param _providers providers
-	function initialize(
-		address owner,
-		address[] memory _providers
-	) external initializer {
+	function initialize(address owner, address[] memory _providers) external initializer {
 		_transferOwnership(owner);
 		__Init_Providers(_providers);
 	}
@@ -68,7 +65,7 @@ contract Providers is IProviders, OwnableUpgradeable {
 	function _removeProvider(address provider) internal {
 		require(isProvider(provider), 'Providers: nonexistent provider');
 		delete providers[provider];
-	
+
 		emit RemoveProvider(provider);
 	}
 

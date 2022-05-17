@@ -7,7 +7,6 @@ import './IAdaptorWrapper.sol';
 /// @author Alexandas
 /// @dev normal resource controller interface
 interface INormalResourceController is IAdaptorWrapper {
-
 	/// @dev emit when resource expanded
 	/// @param account user account
 	/// @param value token value for resource decimals

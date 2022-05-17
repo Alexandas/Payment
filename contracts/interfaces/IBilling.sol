@@ -21,6 +21,7 @@ interface IBilling is IProvidersWrapper {
 	}
 
 	struct Bill {
+		uint256 expiration;
 		uint256 totalValue;
 		BillPayload[] payloads;
 	}
@@ -28,10 +29,6 @@ interface IBilling is IProvidersWrapper {
 	/// @dev emit when BillTypedHash updated
 	/// @param hash BillTypedHash
 	event BillTypedHashUpdated(bytes32 hash);
-
-	/// @dev emit when token updated
-	/// @param token token address
-	event TokenUpdated(IERC20Upgradeable token);
 
 	/// @dev emit when resource adaptor updated
 	/// @param adaptor resource adaptor address
@@ -47,14 +44,9 @@ interface IBilling is IProvidersWrapper {
 
 	/// @dev get bill types hash
 	/// @return type hash for bill
-	function billTypedHash() external view returns(bytes32);
-
-	/// @dev get the pay token
-	/// @return token address
-	function token() external view returns (IERC20Upgradeable);
+	function billTypedHash() external view returns (bytes32);
 
 	/// @dev get the resource adaptor
 	/// @return resource adaptor address
 	function adaptor() external view returns (IResourceAdaptor);
-
 }

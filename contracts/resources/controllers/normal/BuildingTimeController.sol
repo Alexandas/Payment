@@ -7,13 +7,12 @@ import './NormalResourceController.sol';
 /// @author Alexandas
 /// @dev Building time controller controller
 contract BuildingTimeController is NormalResourceController {
-
 	/// @dev proxy initialize function
 	/// @param owner contract owner
 	/// @param dstChainPayment dst chain payment contract address
 	/// @param adaptor resource adaptor contract address
 	function initialize(
-		address owner, 		
+		address owner,
 		address dstChainPayment,
 		IResourceAdaptor adaptor
 	) external initializer {

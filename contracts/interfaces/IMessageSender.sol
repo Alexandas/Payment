@@ -5,17 +5,16 @@ pragma solidity >=0.8.0;
 import 'sgn-v2-contracts/contracts/message/libraries/MsgDataTypes.sol';
 
 interface IMessageSender {
-
 	/// @dev emit when src chain payment address updated
-	/// @param payment payment address 
+	/// @param payment payment address
 	event SrcChainPaymentUpdated(address payment);
 
 	/// @dev emit when src chain messageBus address updated
-	/// @param messageBus messageBus address 
+	/// @param messageBus messageBus address
 	event MessageBusUpdated(address messageBus);
 
 	/// @dev emit when dst chain receiver address updated
-	/// @param receiver receiver address 
+	/// @param receiver receiver address
 	event ReceiverUpdated(address receiver);
 
 	/// @dev emit when dst chain updated

@@ -38,7 +38,7 @@ interface IIPFSStorageController is IAdaptorWrapper {
 	/// @param account user account
 	/// @return start time for ipfs resource
 	function startTime(bytes32 account) external view returns (uint256);
-	
+
 	/// @dev return available expiration time for the account
 	/// @param account user account
 	/// @return available expiration time for the account

@@ -58,7 +58,12 @@ contract ContentTracer is ProvidersWrapper, OwnableUpgradeable {
 	/// @param providers providers contract address
 	/// @param controller ipfs storage controller
 	/// @param defaultExpiration ipfs content default expiration
-	function initialize(address owner, IProviders providers, IIPFSStorageController controller, uint256 defaultExpiration) external initializer {
+	function initialize(
+		address owner,
+		IProviders providers,
+		IIPFSStorageController controller,
+		uint256 defaultExpiration
+	) external initializer {
 		_transferOwnership(owner);
 		__Init_Providers(providers);
 		_setController(controller);
@@ -124,7 +129,7 @@ contract ContentTracer is ProvidersWrapper, OwnableUpgradeable {
 	) internal nonSize(size) {
 		require(!exists(provider, account, content), 'ContentTracer: content exists');
 		contentSizes[provider][account][content] = size;
-		uint256 expiration = controller.isExpired(account)? defaultExpiration : controller.expiredAt(account);
+		uint256 expiration = controller.isExpired(account) ? defaultExpiration : controller.expiredAt(account);
 
 		emit Insert(provider, account, content, size, expiration);
 	}
@@ -132,10 +137,7 @@ contract ContentTracer is ProvidersWrapper, OwnableUpgradeable {
 	/// @dev remove ipfs content
 	/// @param accounts array of user account
 	/// @param contents array of ipfs contents
-	function removeMult(
-		bytes32[] memory accounts,
-		string[] memory contents
-	) external onlyProvider {
+	function removeMult(bytes32[] memory accounts, string[] memory contents) external onlyProvider {
 		require(accounts.length == contents.length, 'ContentTracer: Invalid parameter length.');
 		for (uint256 i = 0; i < accounts.length; i++) {
 			_remove(msg.sender, accounts[i], contents[i]);
@@ -165,7 +167,11 @@ contract ContentTracer is ProvidersWrapper, OwnableUpgradeable {
 	/// @param account user account
 	/// @param content ipfs content
 	/// @return ipfs ipfs content exists
-	function exists(address provider, bytes32 account, string memory content) public view returns (bool) {
+	function exists(
+		address provider,
+		bytes32 account,
+		string memory content
+	) public view returns (bool) {
 		return contentSizes[provider][account][content] != 0;
 	}
 
@@ -174,10 +180,13 @@ contract ContentTracer is ProvidersWrapper, OwnableUpgradeable {
 	/// @param account user account
 	/// @param content ipfs content
 	/// @return ipfs ipfs content size
-	function size(address provider, bytes32 account, string memory content) public view returns (uint256) {
+	function size(
+		address provider,
+		bytes32 account,
+		string memory content
+	) public view returns (uint256) {
 		require(providers.isProvider(provider), 'ContentTracer: nonexistent provider');
 		require(exists(provider, account, content), 'ContentTracer: nonexistent content');
 		return contentSizes[provider][account][content];
 	}
-
 }

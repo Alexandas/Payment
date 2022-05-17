@@ -7,7 +7,6 @@ import '../../libraries/ResourceData.sol';
 /// @author Alexandas
 /// @dev resource adpator interface
 interface IResourceAdaptor {
-
 	struct PriceAdaptor {
 		ResourceData.ResourceType resourceType;
 		uint256 price;
@@ -34,7 +33,7 @@ interface IResourceAdaptor {
 		uint256 _indexBlock
 	) external view returns (uint256);
 
-	/// @dev get amount resource with value at a specific block 
+	/// @dev get amount resource with value at a specific block
 	/// @param resourceType resource type
 	/// @param value token value
 	/// @param _indexBlock block numer
@@ -56,7 +55,7 @@ interface IResourceAdaptor {
 	/// @return token value in resource decimals(18)
 	function getValueOf(ResourceData.ResourceType resourceType, uint256 amount) external view returns (uint256);
 
-	/// @dev return resource amount with value 
+	/// @dev return resource amount with value
 	/// @param resourceType resource type
 	/// @param value token value in resource decimals(18)
 	/// @return resource amount

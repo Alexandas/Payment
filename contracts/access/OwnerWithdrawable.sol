@@ -8,7 +8,7 @@ import '@openzeppelin/contracts-upgradeable/token/ERC20/utils/SafeERC20Upgradeab
 
 /// @author Alexandas
 /// @dev Make the contract owner can withdraw token and eth
-abstract contract OwnerWithdrawable is OwnableUpgradeable  {
+abstract contract OwnerWithdrawable is OwnableUpgradeable {
 	using SafeERC20Upgradeable for IERC20Upgradeable;
 
 	/// @dev emit when token is withdrawn
@@ -22,16 +22,20 @@ abstract contract OwnerWithdrawable is OwnableUpgradeable  {
 	/// @param value token value
 	event NativeWithdrawal(address to, uint256 value);
 
-	/// @dev withdraw token 
+	/// @dev withdraw token
 	/// @param token token address
 	/// @param to receiver address
 	/// @param value token value
-	function ownerWithdrawERC20(IERC20Upgradeable token, address to, uint256 value) external onlyOwner {
+	function ownerWithdrawERC20(
+		IERC20Upgradeable token,
+		address to,
+		uint256 value
+	) external onlyOwner {
 		token.safeTransfer(to, value);
 		emit Withdrawal(token, to, value);
 	}
 
-	/// @dev withdraw ETH 
+	/// @dev withdraw ETH
 	/// @param to receiver address
 	/// @param value token value
 	function ownerWithdrawNative(address payable to, uint256 value) external onlyOwner {
@@ -39,5 +43,4 @@ abstract contract OwnerWithdrawable is OwnableUpgradeable  {
 		require(success, 'Payment: withdraw native token failed');
 		emit NativeWithdrawal(to, value);
 	}
-
 }

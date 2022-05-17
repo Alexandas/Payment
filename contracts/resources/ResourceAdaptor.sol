@@ -23,10 +23,7 @@ contract ResourceAdaptor is IResourceAdaptor, OwnableUpgradeable {
 	/// @dev proxy initialize function
 	/// @param owner contract owner
 	/// @param adaptors price adaptors
-	function initialize(
-		address owner,
-		PriceAdaptor[] memory adaptors
-	) external initializer {
+	function initialize(address owner, PriceAdaptor[] memory adaptors) external initializer {
 		_transferOwnership(owner);
 		__Init_Price_Adaptors(adaptors);
 	}
@@ -57,7 +54,7 @@ contract ResourceAdaptor is IResourceAdaptor, OwnableUpgradeable {
 	/// @dev get price for resource at a specific block
 	/// @param resourceType resource type
 	/// @param _indexBlock block number
-	/// @return price for resource at a specific block	
+	/// @return price for resource at a specific block
 	function priceAt(ResourceData.ResourceType resourceType, uint256 _indexBlock) public view override returns (uint256) {
 		require(priceTraces[resourceType][_indexBlock] != 0, 'ResourceAdaptor: invalid indexBlock');
 		return priceTraces[resourceType][_indexBlock];
@@ -76,7 +73,7 @@ contract ResourceAdaptor is IResourceAdaptor, OwnableUpgradeable {
 		return priceAt(resourceType, _indexBlock).mul(amount);
 	}
 
-	/// @dev get amount resource with value at a specific block 
+	/// @dev get amount resource with value at a specific block
 	/// @param resourceType resource type
 	/// @param value token value
 	/// @param _indexBlock block numer
@@ -104,12 +101,11 @@ contract ResourceAdaptor is IResourceAdaptor, OwnableUpgradeable {
 		return priceOf(resourceType).mul(amount);
 	}
 
-	/// @dev return resource amount with value 
+	/// @dev return resource amount with value
 	/// @param resourceType resource type
 	/// @param value token value in resource decimals(18)
 	/// @return resource amount
 	function getAmountOf(ResourceData.ResourceType resourceType, uint256 value) public view override returns (uint256) {
 		return value.div(priceOf(resourceType));
 	}
-
 }

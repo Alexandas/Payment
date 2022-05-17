@@ -194,19 +194,6 @@ const _abi = [
     inputs: [
       {
         indexed: false,
-        internalType: "contract IERC20Upgradeable",
-        name: "token",
-        type: "address",
-      },
-    ],
-    name: "TokenUpdated",
-    type: "event",
-  },
-  {
-    anonymous: false,
-    inputs: [
-      {
-        indexed: false,
         internalType: "address",
         name: "provider",
         type: "address",
@@ -225,19 +212,6 @@ const _abi = [
       },
     ],
     name: "WalletOwnerTransferred",
-    type: "event",
-  },
-  {
-    anonymous: false,
-    inputs: [
-      {
-        indexed: false,
-        internalType: "bytes32",
-        name: "hash",
-        type: "bytes32",
-      },
-    ],
-    name: "WalletOwnerTypedHashUpdated",
     type: "event",
   },
   {
@@ -426,19 +400,6 @@ const _abi = [
     type: "function",
   },
   {
-    inputs: [],
-    name: "token",
-    outputs: [
-      {
-        internalType: "contract IERC20Upgradeable",
-        name: "",
-        type: "address",
-      },
-    ],
-    stateMutability: "view",
-    type: "function",
-  },
-  {
     inputs: [
       {
         internalType: "address",
@@ -459,19 +420,6 @@ const _abi = [
     name: "transferWalletOwner",
     outputs: [],
     stateMutability: "nonpayable",
-    type: "function",
-  },
-  {
-    inputs: [],
-    name: "walletOwnerTypedHash",
-    outputs: [
-      {
-        internalType: "bytes32",
-        name: "",
-        type: "bytes32",
-      },
-    ],
-    stateMutability: "view",
     type: "function",
   },
   {
@@ -497,6 +445,11 @@ const _abi = [
         type: "address",
       },
       {
+        internalType: "uint256",
+        name: "amount",
+        type: "uint256",
+      },
+      {
         internalType: "bytes",
         name: "bill",
         type: "bytes",
@@ -511,7 +464,7 @@ const _abi = [
     outputs: [
       {
         internalType: "uint256",
-        name: "",
+        name: "fee",
         type: "uint256",
       },
     ],

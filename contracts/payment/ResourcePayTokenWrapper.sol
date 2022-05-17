@@ -7,7 +7,7 @@ import '@openzeppelin/contracts-upgradeable/interfaces/IERC20Upgradeable.sol';
 import '@openzeppelin/contracts-upgradeable/utils/math/SafeMathUpgradeable.sol';
 
 /// @author Alexandas
-/// @dev source chain payment contract
+/// @dev token wrapper contract
 abstract contract ResourcePayTokenWrapper is Initializable {
 	using SafeMathUpgradeable for uint256;
 
@@ -25,6 +25,7 @@ abstract contract ResourcePayTokenWrapper is Initializable {
 	}
 
 	function _setToken(IERC20Upgradeable _token) internal {
+		require(address(_token) != address(0), 'ResourcePayTokenWrapper: zero address');
 		token = _token;
 		emit TokenUpdated(token);
 	}
@@ -67,5 +68,4 @@ abstract contract ResourcePayTokenWrapper is Initializable {
 		require(success, 'ResourcePayTokenWrapper: invalid token');
 		return abi.decode(data, (uint256));
 	}
-
 }

@@ -5,7 +5,6 @@ pragma solidity >=0.8.0;
 /// @author Alexandas
 /// @dev providers interface
 interface IProviders {
-
 	/// @dev emit when provider is added
 	/// @param provider provider address
 	event AddProvider(address provider);

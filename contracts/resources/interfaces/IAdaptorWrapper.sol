@@ -8,7 +8,6 @@ import '../../libraries/ResourceData.sol';
 /// @author Alexandas
 /// @dev resource adaptor interface
 interface IAdaptorWrapper {
-
 	/// @dev emit when resource adaptor updated
 	/// @param adaptor resource adaptor contract address
 	event ResourceAdaptorUpdated(IResourceAdaptor adaptor);

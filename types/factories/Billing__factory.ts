@@ -194,6 +194,11 @@ const _abi = [
         components: [
           {
             internalType: "uint256",
+            name: "expiration",
+            type: "uint256",
+          },
+          {
+            internalType: "uint256",
             name: "totalValue",
             type: "uint256",
           },
@@ -239,6 +244,11 @@ const _abi = [
     inputs: [
       {
         components: [
+          {
+            internalType: "uint256",
+            name: "expiration",
+            type: "uint256",
+          },
           {
             internalType: "uint256",
             name: "totalValue",
@@ -325,6 +335,44 @@ const _abi = [
     type: "function",
   },
   {
+    inputs: [
+      {
+        internalType: "uint256",
+        name: "value",
+        type: "uint256",
+      },
+    ],
+    name: "matchResourceToToken",
+    outputs: [
+      {
+        internalType: "uint256",
+        name: "",
+        type: "uint256",
+      },
+    ],
+    stateMutability: "view",
+    type: "function",
+  },
+  {
+    inputs: [
+      {
+        internalType: "uint256",
+        name: "value",
+        type: "uint256",
+      },
+    ],
+    name: "matchTokenToResource",
+    outputs: [
+      {
+        internalType: "uint256",
+        name: "",
+        type: "uint256",
+      },
+    ],
+    stateMutability: "view",
+    type: "function",
+  },
+  {
     inputs: [],
     name: "providers",
     outputs: [
@@ -339,12 +387,38 @@ const _abi = [
   },
   {
     inputs: [],
+    name: "resourceDecimals",
+    outputs: [
+      {
+        internalType: "uint256",
+        name: "",
+        type: "uint256",
+      },
+    ],
+    stateMutability: "view",
+    type: "function",
+  },
+  {
+    inputs: [],
     name: "token",
     outputs: [
       {
         internalType: "contract IERC20Upgradeable",
         name: "",
         type: "address",
+      },
+    ],
+    stateMutability: "view",
+    type: "function",
+  },
+  {
+    inputs: [],
+    name: "tokenDecimals",
+    outputs: [
+      {
+        internalType: "uint256",
+        name: "",
+        type: "uint256",
       },
     ],
     stateMutability: "view",

@@ -25,10 +25,14 @@ interface BillingInterface extends ethers.utils.Interface {
     "billHash(address,uint64,bytes32,bytes)": FunctionFragment;
     "billTypedHash()": FunctionFragment;
     "decodeBill(bytes)": FunctionFragment;
-    "encodeBill((uint256,tuple[]))": FunctionFragment;
+    "encodeBill((uint256,uint256,tuple[]))": FunctionFragment;
     "hashTypedDataV4ForBill(address,uint64,bytes32,bytes)": FunctionFragment;
+    "matchResourceToToken(uint256)": FunctionFragment;
+    "matchTokenToResource(uint256)": FunctionFragment;
     "providers()": FunctionFragment;
+    "resourceDecimals()": FunctionFragment;
     "token()": FunctionFragment;
+    "tokenDecimals()": FunctionFragment;
   };
 
   encodeFunctionData(functionFragment: "adaptor", values?: undefined): string;
@@ -52,6 +56,7 @@ interface BillingInterface extends ethers.utils.Interface {
     functionFragment: "encodeBill",
     values: [
       {
+        expiration: BigNumberish;
         totalValue: BigNumberish;
         payloads: {
           indexBlock: BigNumberish;
@@ -64,8 +69,24 @@ interface BillingInterface extends ethers.utils.Interface {
     functionFragment: "hashTypedDataV4ForBill",
     values: [string, BigNumberish, BytesLike, BytesLike]
   ): string;
+  encodeFunctionData(
+    functionFragment: "matchResourceToToken",
+    values: [BigNumberish]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "matchTokenToResource",
+    values: [BigNumberish]
+  ): string;
   encodeFunctionData(functionFragment: "providers", values?: undefined): string;
+  encodeFunctionData(
+    functionFragment: "resourceDecimals",
+    values?: undefined
+  ): string;
   encodeFunctionData(functionFragment: "token", values?: undefined): string;
+  encodeFunctionData(
+    functionFragment: "tokenDecimals",
+    values?: undefined
+  ): string;
 
   decodeFunctionResult(functionFragment: "adaptor", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "balanceOf", data: BytesLike): Result;
@@ -80,8 +101,24 @@ interface BillingInterface extends ethers.utils.Interface {
     functionFragment: "hashTypedDataV4ForBill",
     data: BytesLike
   ): Result;
+  decodeFunctionResult(
+    functionFragment: "matchResourceToToken",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "matchTokenToResource",
+    data: BytesLike
+  ): Result;
   decodeFunctionResult(functionFragment: "providers", data: BytesLike): Result;
+  decodeFunctionResult(
+    functionFragment: "resourceDecimals",
+    data: BytesLike
+  ): Result;
   decodeFunctionResult(functionFragment: "token", data: BytesLike): Result;
+  decodeFunctionResult(
+    functionFragment: "tokenDecimals",
+    data: BytesLike
+  ): Result;
 
   events: {
     "BillTypedHashUpdated(bytes32)": EventFragment;
@@ -189,6 +226,7 @@ export class Billing extends BaseContract {
       [
         [
           BigNumber,
+          BigNumber,
           ([
             BigNumber,
             ([number, BigNumber] & {
@@ -203,6 +241,7 @@ export class Billing extends BaseContract {
             })[];
           })[]
         ] & {
+          expiration: BigNumber;
           totalValue: BigNumber;
           payloads: ([
             BigNumber,
@@ -223,6 +262,7 @@ export class Billing extends BaseContract {
 
     encodeBill(
       bill: {
+        expiration: BigNumberish;
         totalValue: BigNumberish;
         payloads: {
           indexBlock: BigNumberish;
@@ -240,9 +280,23 @@ export class Billing extends BaseContract {
       overrides?: CallOverrides
     ): Promise<[string]>;
 
+    matchResourceToToken(
+      value: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<[BigNumber]>;
+
+    matchTokenToResource(
+      value: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<[BigNumber]>;
+
     providers(overrides?: CallOverrides): Promise<[string]>;
 
+    resourceDecimals(overrides?: CallOverrides): Promise<[BigNumber]>;
+
     token(overrides?: CallOverrides): Promise<[string]>;
+
+    tokenDecimals(overrides?: CallOverrides): Promise<[BigNumber]>;
   };
 
   adaptor(overrides?: CallOverrides): Promise<string>;
@@ -269,6 +323,7 @@ export class Billing extends BaseContract {
   ): Promise<
     [
       BigNumber,
+      BigNumber,
       ([
         BigNumber,
         ([number, BigNumber] & { resourceType: number; amount: BigNumber })[]
@@ -280,6 +335,7 @@ export class Billing extends BaseContract {
         })[];
       })[]
     ] & {
+      expiration: BigNumber;
       totalValue: BigNumber;
       payloads: ([
         BigNumber,
@@ -296,6 +352,7 @@ export class Billing extends BaseContract {
 
   encodeBill(
     bill: {
+      expiration: BigNumberish;
       totalValue: BigNumberish;
       payloads: {
         indexBlock: BigNumberish;
@@ -313,9 +370,23 @@ export class Billing extends BaseContract {
     overrides?: CallOverrides
   ): Promise<string>;
 
+  matchResourceToToken(
+    value: BigNumberish,
+    overrides?: CallOverrides
+  ): Promise<BigNumber>;
+
+  matchTokenToResource(
+    value: BigNumberish,
+    overrides?: CallOverrides
+  ): Promise<BigNumber>;
+
   providers(overrides?: CallOverrides): Promise<string>;
 
+  resourceDecimals(overrides?: CallOverrides): Promise<BigNumber>;
+
   token(overrides?: CallOverrides): Promise<string>;
+
+  tokenDecimals(overrides?: CallOverrides): Promise<BigNumber>;
 
   callStatic: {
     adaptor(overrides?: CallOverrides): Promise<string>;
@@ -342,6 +413,7 @@ export class Billing extends BaseContract {
     ): Promise<
       [
         BigNumber,
+        BigNumber,
         ([
           BigNumber,
           ([number, BigNumber] & { resourceType: number; amount: BigNumber })[]
@@ -353,6 +425,7 @@ export class Billing extends BaseContract {
           })[];
         })[]
       ] & {
+        expiration: BigNumber;
         totalValue: BigNumber;
         payloads: ([
           BigNumber,
@@ -369,6 +442,7 @@ export class Billing extends BaseContract {
 
     encodeBill(
       bill: {
+        expiration: BigNumberish;
         totalValue: BigNumberish;
         payloads: {
           indexBlock: BigNumberish;
@@ -386,9 +460,23 @@ export class Billing extends BaseContract {
       overrides?: CallOverrides
     ): Promise<string>;
 
+    matchResourceToToken(
+      value: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
+
+    matchTokenToResource(
+      value: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
+
     providers(overrides?: CallOverrides): Promise<string>;
 
+    resourceDecimals(overrides?: CallOverrides): Promise<BigNumber>;
+
     token(overrides?: CallOverrides): Promise<string>;
+
+    tokenDecimals(overrides?: CallOverrides): Promise<BigNumber>;
   };
 
   filters: {
@@ -480,6 +568,7 @@ export class Billing extends BaseContract {
 
     encodeBill(
       bill: {
+        expiration: BigNumberish;
         totalValue: BigNumberish;
         payloads: {
           indexBlock: BigNumberish;
@@ -497,9 +586,23 @@ export class Billing extends BaseContract {
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
+    matchResourceToToken(
+      value: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
+
+    matchTokenToResource(
+      value: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
+
     providers(overrides?: CallOverrides): Promise<BigNumber>;
 
+    resourceDecimals(overrides?: CallOverrides): Promise<BigNumber>;
+
     token(overrides?: CallOverrides): Promise<BigNumber>;
+
+    tokenDecimals(overrides?: CallOverrides): Promise<BigNumber>;
   };
 
   populateTransaction: {
@@ -528,6 +631,7 @@ export class Billing extends BaseContract {
 
     encodeBill(
       bill: {
+        expiration: BigNumberish;
         totalValue: BigNumberish;
         payloads: {
           indexBlock: BigNumberish;
@@ -545,8 +649,22 @@ export class Billing extends BaseContract {
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
+    matchResourceToToken(
+      value: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
+
+    matchTokenToResource(
+      value: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
+
     providers(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
+    resourceDecimals(overrides?: CallOverrides): Promise<PopulatedTransaction>;
+
     token(overrides?: CallOverrides): Promise<PopulatedTransaction>;
+
+    tokenDecimals(overrides?: CallOverrides): Promise<PopulatedTransaction>;
   };
 }

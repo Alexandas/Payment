@@ -12,7 +12,7 @@ import '../../../payment/DstChainPaymentWrapper.sol';
 abstract contract NormalResourceController is INormalResourceController, DstChainPaymentWrapper, AdaptorWrapper {
 	using SafeMathUpgradeable for uint256;
 
-	/// @dev resource balances for account 
+	/// @dev resource balances for account
 	mapping(bytes32 => uint256) internal balances;
 
 	constructor() initializer {}
@@ -45,7 +45,7 @@ abstract contract NormalResourceController is INormalResourceController, DstChai
 	/// @dev resource balance
 	/// @param account user account
 	/// @return balance of the account
-	function balanceOf(bytes32 account) public view override returns(uint256) {
+	function balanceOf(bytes32 account) public view override returns (uint256) {
 		return balances[account];
 	}
 }

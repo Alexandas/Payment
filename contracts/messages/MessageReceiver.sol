@@ -73,14 +73,7 @@ contract MessageReceiver is OwnerWithdrawable {
 	/// @param _srcChainId src chain chainId
 	/// @param _message src chain message
 	/// @param executor executor address
-	event MessageWithTransferFallback(
-		address _sender,
-        address _token,
-        uint256 _amount,
-        uint64 _srcChainId,
-        bytes _message,
-        address executor
-	);
+	event MessageWithTransferFallback(address _sender, address _token, uint256 _amount, uint64 _srcChainId, bytes _message, address executor);
 
 	modifier onlyMessageBus() {
 		require(msg.sender == messageBus, 'MessageReceiver: caller is not message bus');
@@ -111,13 +104,13 @@ contract MessageReceiver is OwnerWithdrawable {
 	/// @param message src chain message
 	/// @param _executor executor address
 	function executeMessageWithTransfer(
-        address sender,
-        IERC20Upgradeable token,
-        uint256 amount,
-        uint64 srcChainId,
-        bytes memory message,
-        address _executor
-    ) external payable onlyMessageBus returns (ExecutionStatus) {
+		address sender,
+		IERC20Upgradeable token,
+		uint256 amount,
+		uint64 srcChainId,
+		bytes memory message,
+		address _executor
+	) external payable onlyMessageBus returns (ExecutionStatus) {
 		require(executor == _executor, 'MessageReceiver: invalid executor');
 		token.safeApprove(address(dstChainPayment), amount);
 		try dstChainPayment.payFromSourceChain(token, amount, message) {
@@ -127,7 +120,7 @@ contract MessageReceiver is OwnerWithdrawable {
 		}
 		token.safeApprove(address(dstChainPayment), 0);
 		return ExecutionStatus.Success;
-    }
+	}
 
 	/// @dev execute message with transfer fallback
 	/// @param _sender message sender address
@@ -137,13 +130,13 @@ contract MessageReceiver is OwnerWithdrawable {
 	/// @param _message src chain message
 	/// @param executor executor address
 	function executeMessageWithTransferFallback(
-        address _sender,
-        address _token,
-        uint256 _amount,
-        uint64 _srcChainId,
-        bytes memory _message,
-        address executor
-    ) external payable onlyMessageBus returns (ExecutionStatus) {
+		address _sender,
+		address _token,
+		uint256 _amount,
+		uint64 _srcChainId,
+		bytes memory _message,
+		address executor
+	) external payable onlyMessageBus returns (ExecutionStatus) {
 		emit MessageWithTransferFallback(_sender, _token, _amount, _srcChainId, _message, executor);
 		return ExecutionStatus.Success;
 	}
@@ -184,8 +177,8 @@ contract MessageReceiver is OwnerWithdrawable {
 		emit MessageBusUpdated(messageBus);
 	}
 
-	/// @dev set executor address 
-	/// @param _executor executor address 
+	/// @dev set executor address
+	/// @param _executor executor address
 	function setExecutor(address _executor) external onlyOwner {
 		_setExecutor(_executor);
 	}
@@ -194,5 +187,4 @@ contract MessageReceiver is OwnerWithdrawable {
 		executor = _executor;
 		emit ExecutorUpdated(_executor);
 	}
-
 }

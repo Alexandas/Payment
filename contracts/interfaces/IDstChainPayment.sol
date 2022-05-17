@@ -8,7 +8,6 @@ import '../libraries/ResourceData.sol';
 /// @author Alexandas
 /// @dev DstChainPayment interface
 interface IDstChainPayment {
-
 	struct PaymentPayload {
 		address provider;
 		uint64 nonce;
@@ -37,5 +36,4 @@ interface IDstChainPayment {
 	/// @param payload payment payload
 	/// @return value token used
 	function pay(PaymentPayload memory payload) external returns (uint256 value);
-
 }

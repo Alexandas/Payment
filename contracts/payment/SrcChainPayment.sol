@@ -32,13 +32,7 @@ contract SrcChainPayment is OwnerWithdrawable, Pauser, ResourPayloadTool, Resour
 	/// @param account sender
 	/// @param payloads payment payloads
 	/// @param maxSlippage maxSlippage in cBridge
-	event Paid(
-		address provider,
-		uint64 nonce,
-		bytes32 account,
-		ResourceData.Payload[] payloads,
-		uint32 maxSlippage
-	);
+	event Paid(address provider, uint64 nonce, bytes32 account, ResourceData.Payload[] payloads, uint32 maxSlippage);
 
 	constructor() initializer {}
 
@@ -115,22 +109,31 @@ contract SrcChainPayment is OwnerWithdrawable, Pauser, ResourPayloadTool, Resour
 
 	/// @dev calculate message fee
 	/// @param provider provider address
-	/// @param nonce nonce 
+	/// @param nonce nonce
 	/// @param account user account
 	/// @param payloads payment payloads
 	/// @return value message fee
-	function calcFee(address provider, uint64 nonce, bytes32 account, ResourceData.Payload[] memory payloads) public view returns(uint256 value) {
+	function calcFee(
+		address provider,
+		uint64 nonce,
+		bytes32 account,
+		ResourceData.Payload[] memory payloads
+	) public view returns (uint256 value) {
 		return messageSender.calcFee(encodeMessage(provider, nonce, account, payloads));
 	}
 
 	/// @dev encode payment message
 	/// @param provider provider address
-	/// @param nonce nonce 
+	/// @param nonce nonce
 	/// @param account user account
 	/// @param payloads payment payloads
 	/// @return message message bytes
-	function encodeMessage(address provider, uint64 nonce, bytes32 account, ResourceData.Payload[] memory payloads) public pure returns (bytes memory) {
+	function encodeMessage(
+		address provider,
+		uint64 nonce,
+		bytes32 account,
+		ResourceData.Payload[] memory payloads
+	) public pure returns (bytes memory) {
 		return abi.encode(provider, nonce, account, payloads);
 	}
-
 }
