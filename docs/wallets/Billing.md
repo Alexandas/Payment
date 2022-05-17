@@ -8,7 +8,6 @@
 | Var | Type |
 | --- | --- |
 | billTypedHash | bytes32 |
-| token | contract IERC20Upgradeable |
 | adaptor | contract IResourceAdaptor |
 
 ## Functions

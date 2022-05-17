@@ -49,7 +49,7 @@ function getValueAt(enum ResourceData.ResourceType resourceType,uint256 amount,u
 |`token` | value in resource decimals(18)
 ### getAmountAt
 
-> get amount resource with value at a specific block 
+> get amount resource with value at a specific block
 
 
 #### Declaration
@@ -109,7 +109,7 @@ function getValueOf(enum ResourceData.ResourceType resourceType,uint256 amount) 
 |`token` | value in resource decimals(18)
 ### getAmountOf
 
-> return resource amount with value 
+> return resource amount with value
 
 
 #### Declaration

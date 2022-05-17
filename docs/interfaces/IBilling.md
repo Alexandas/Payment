@@ -21,21 +21,6 @@ function billTypedHash() external returns (bytes32)
 | Type | Description |
 | --- | --- |
 |`type` | hash for bill
-### token
-
-> get the pay token
-
-
-#### Declaration
-```
-function token() external returns (contract IERC20Upgradeable)
-```
-
-
-#### Returns:
-| Type | Description |
-| --- | --- |
-|`token` | address
 ### adaptor
 
 > get the resource adaptor
@@ -63,15 +48,6 @@ function adaptor() external returns (contract IResourceAdaptor)
 | Param | Type | Indexed | Description |
 | --- | --- | :---: | --- |
 |`hash` | bytes32 |  | BillTypedHash
-### TokenUpdated
-
-> emit when token updated
-
-  
-#### Params:
-| Param | Type | Indexed | Description |
-| --- | --- | :---: | --- |
-|`token` | contract IERC20Upgradeable |  | token address
 ### ResourceAdaptorUpdated
 
 > emit when resource adaptor updated

@@ -2,7 +2,7 @@
 
 
 
-> source chain payment contract
+> token wrapper contract
 
 ## Globals
 | Var | Type |

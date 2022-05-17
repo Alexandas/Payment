@@ -101,7 +101,7 @@ function setMessageBus(address messageBus) external onlyOwner
 
 ### setExecutor
 
-> set executor address 
+> set executor address
 
 
 #### Declaration

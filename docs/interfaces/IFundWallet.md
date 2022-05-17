@@ -6,17 +6,6 @@
 
 
 ## Functions
-### walletOwnerTypedHash
-
-> return wallet owner typed hash
-
-#### Declaration
-```
-function walletOwnerTypedHash() external returns (bytes32)
-```
-
-
-
 ### rechargeTypedHash
 
 > return recharge typed hash
@@ -91,7 +80,7 @@ function recharge(address provider,uint64 nonce,bytes32 account,uint256 amount,b
 
 #### Declaration
 ```
-function withdraw(address provider,uint64 nonce,bytes32 account,address to,bytes bill,bytes signature) external returns (uint256)
+function withdraw(address provider,uint64 nonce,bytes32 account,address to,uint256 amount,bytes bill,bytes signature) external returns (uint256 fee)
 ```
 
 #### Args:
@@ -101,13 +90,14 @@ function withdraw(address provider,uint64 nonce,bytes32 account,address to,bytes
 |`nonce` | uint64 | nonce
 |`account` | bytes32 | user account
 |`to` | address | token receiver
+|`amount` | uint256 | token amount
 |`bill` | bytes | bill bytes
 |`signature` | bytes | provider signature
 
 #### Returns:
 | Type | Description |
 | --- | --- |
-|`amount` | token amount
+|`fee` | bill fee
 ### spend
 
 > spend bill for account
@@ -131,15 +121,6 @@ function spend(address provider,uint64 nonce,bytes32 account,bytes bill,bytes si
 
 ## Events
 
-### WalletOwnerTypedHashUpdated
-
-> emit when set wallet owner typed hash updated
-
-  
-#### Params:
-| Param | Type | Indexed | Description |
-| --- | --- | :---: | --- |
-|`hash` | bytes32 |  | set wallet owner typed hash
 ### RechargeTypedHashUpdated
 
 > emit when recharge type hash updated

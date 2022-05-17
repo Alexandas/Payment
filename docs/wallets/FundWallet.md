@@ -7,7 +7,6 @@
 ## Globals
 | Var | Type |
 | --- | --- |
-| walletOwnerTypedHash | bytes32 |
 | rechargeTypedHash | bytes32 |
 | nonces | mapping(address => mapping(bytes32 => mapping(uint64 => enum IFundWallet.Purpose))) |
 | wallets | mapping(address => mapping(bytes32 => struct IFundWallet.Wallet)) |
@@ -35,24 +34,6 @@ function initialize(address owner,address pauser,contract IResourceAdaptor adapt
 |`version` | string | EIP712 domain version
 |`rechargeTypes` | string | recharge types
 |`billTypes` | string | bill types
-
-### setWalletOwner
-
-> set wallet owner for account
-
-
-#### Declaration
-```
-function setWalletOwner(address provider,bytes32 account,address owner,bytes signature) external
-```
-
-#### Args:
-| Arg | Type | Description |
-| --- | --- | --- |
-|`provider` | address | provider address
-|`account` | bytes32 | user account
-|`owner` | address | wallet owner
-|`signature` | bytes | provider signature
 
 ### recharge
 
@@ -100,7 +81,7 @@ function spend(address provider,uint64 nonce,bytes32 account,bytes bill,bytes si
 
 #### Declaration
 ```
-function withdraw(address provider,uint64 nonce,bytes32 account,address to,bytes bill,bytes signature) external nonNonce onlyWalletOwner whenNotPaused nonReentrant returns (uint256 amount)
+function withdraw(address provider,uint64 nonce,bytes32 account,address to,uint256 amount,bytes bill,bytes signature) external nonNonce onlyWalletOwner whenNotPaused nonReentrant returns (uint256 fee)
 ```
 
 #### Args:
@@ -110,13 +91,14 @@ function withdraw(address provider,uint64 nonce,bytes32 account,address to,bytes
 |`nonce` | uint64 | nonce
 |`account` | bytes32 | user account
 |`to` | address | token receiver
+|`amount` | uint256 | token amount
 |`bill` | bytes | bill bytes
 |`signature` | bytes | provider signature
 
 #### Returns:
 | Type | Description |
 | --- | --- |
-|`amount` | token amount
+|`fee` | bill fee
 ### transferWalletOwner
 
 > transfer wallet owner for account
@@ -133,21 +115,6 @@ function transferWalletOwner(address provider,bytes32 account,address newOwner) 
 |`provider` | address | provider address
 |`account` | bytes32 | user account
 |`newOwner` | address | new wallet owner for account
-
-### setWalletOwnerTypedHash
-
-> update recharge typed hash
-
-
-#### Declaration
-```
-function setWalletOwnerTypedHash(string types) external onlyOwner
-```
-
-#### Args:
-| Arg | Type | Description |
-| --- | --- | --- |
-|`types` | string | recharge types
 
 ### setRechargeTypedHash
 

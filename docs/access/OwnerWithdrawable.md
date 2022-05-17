@@ -8,7 +8,7 @@
 ## Functions
 ### ownerWithdrawERC20
 
-> withdraw token 
+> withdraw token
 
 
 #### Declaration
@@ -25,7 +25,7 @@ function ownerWithdrawERC20(contract IERC20Upgradeable token,address to,uint256 
 
 ### ownerWithdrawNative
 
-> withdraw ETH 
+> withdraw ETH
 
 
 #### Declaration
