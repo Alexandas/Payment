@@ -22,5 +22,8 @@
 		"./deploy",
 		"./test",
 		"./types"
+	],
+	"exclude": [
+		"node_modules"
 	]
 }
