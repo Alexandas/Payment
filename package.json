@@ -5,7 +5,7 @@
 	"engines": {
 		"node": ">= 12.18.0"
 	},
-	"author": "Dinn",
+	"author": "Alexandas",
 	"license": "MIT",
 	"keywords": [
 		"ethereum",
