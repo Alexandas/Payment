@@ -51,7 +51,7 @@ contract FundWallet is IFundWallet, Billing, OwnerWithdrawable, Pauser, Reentran
 	/// @param name EIP712 domain name
 	/// @param version EIP712 domain version
 	/// @param rechargeTypes recharge types
-	/// @param billTypes bill types
+	/// @param billsTypes bills types
 	function initialize(
 		address owner,
 		address pauser,
@@ -61,7 +61,7 @@ contract FundWallet is IFundWallet, Billing, OwnerWithdrawable, Pauser, Reentran
 		string memory name,
 		string memory version,
 		string memory rechargeTypes,
-		string memory billTypes
+		string memory billsTypes
 	) external initializer {
 		_transferOwnership(owner);
 		__Init_Pauser(pauser);
@@ -70,7 +70,7 @@ contract FundWallet is IFundWallet, Billing, OwnerWithdrawable, Pauser, Reentran
 		__Init_Token(_token);
 		__EIP712_init(name, version);
 		__Init_Recharge_Typed_Hash(rechargeTypes);
-		__Init_Bill_Typed_Hash(billTypes);
+		__Init_Bills_Typed_Hash(billsTypes);
 	}
 
 	/// @dev initialize recharge typed hash
@@ -117,21 +117,23 @@ contract FundWallet is IFundWallet, Billing, OwnerWithdrawable, Pauser, Reentran
 		emit Recharged(provider, nonce, account, amount);
 	}
 
-	/// @dev spend bill for account
+	/// @dev spend bills for account
 	/// @param provider provider address
 	/// @param nonce nonce
 	/// @param account user account
-	/// @param bill bill bytes
+	/// @param bills bills bytes
+	/// @param expiration tx expiration
 	/// @param signature provider signature
-	/// @param fee bill fee
+	/// @param fee bills fee
 	function spend(
 		address provider,
 		uint64 nonce,
 		bytes32 account,
-		bytes memory bill,
+		bytes memory bills,
+		uint256 expiration,
 		bytes memory signature
 	) external override nonNonce(provider, account, nonce) whenNotPaused nonReentrant returns (uint256 fee) {
-		fee = _spend(provider, nonce, account, bill, signature);
+		fee = _spend(Payload(provider, nonce, account, bills, expiration), signature);
 		wallets[provider][account].amount = wallets[provider][account].amount.sub(fee);
 		_updateNonce(provider, account, nonce, Purpose.Spend);
 
@@ -139,38 +141,30 @@ contract FundWallet is IFundWallet, Billing, OwnerWithdrawable, Pauser, Reentran
 	}
 
 	/// @dev withdraw token for account
-	/// @param provider provider address
-	/// @param nonce nonce
-	/// @param account user account
+	/// @param payload bill payload
 	/// @param to token receiver
 	/// @param amount token amount
-	/// @param bill bill bytes
 	/// @param signature provider signature
 	/// @return fee bill fee
 	function withdraw(
-		address provider,
-		uint64 nonce,
-		bytes32 account,
+		Payload memory payload,
 		address to,
 		uint256 amount,
-		bytes memory bill,
 		bytes memory signature
-	) external override nonNonce(provider, account, nonce) onlyWalletOwner(provider, account) whenNotPaused nonReentrant returns (uint256 fee) {
-		address prov = provider;
-		bytes32 acc = account;
-		uint64 n = nonce;
+	) external override nonNonce(payload.provider, payload.account, payload.nonce) onlyWalletOwner(payload.provider, payload.account) whenNotPaused nonReentrant returns (uint256 fee) {
+		fee = _spend(payload, signature);
+		address provider = payload.provider;
+		bytes32 account = payload.account;
+		uint64 nonce = payload.nonce;
+		uint256 left = wallets[provider][account].amount.sub(fee);
 		address receiver = to;
 		uint256 value = amount;
-		bytes memory data = bill;
-		bytes memory sig = signature;
-		fee = _spend(prov, n, acc, data, sig);
-		uint256 left = wallets[prov][acc].amount.sub(fee);
 		require(left >= value, 'FundWallet: insufficient balance');
-		wallets[prov][acc].amount = left.sub(value);
+		wallets[provider][account].amount = left.sub(value);
 		token.safeTransfer(receiver, value);
-		_updateNonce(prov, acc, n, Purpose.Withdraw);
+		_updateNonce(provider, account, nonce, Purpose.Withdraw);
 
-		emit Withdrawn(prov, n, acc, receiver, value);
+		emit Withdrawn(provider, nonce, account, receiver, value);
 	}
 
 	/// @dev transfer wallet owner for account
@@ -218,10 +212,10 @@ contract FundWallet is IFundWallet, Billing, OwnerWithdrawable, Pauser, Reentran
 		_setRechargeTypedHash(keccak256(bytes(types)));
 	}
 
-	/// @dev update bill typed hash
-	/// @param types bill types
-	function setBillTypedHash(string memory types) external onlyOwner {
-		_setBillTypedHash(keccak256(bytes(types)));
+	/// @dev update bills typed hash
+	/// @param types bills types
+	function setBillsTypedHash(string memory types) external onlyOwner {
+		_setBillsTypedHash(keccak256(bytes(types)));
 	}
 
 	/// @dev update token

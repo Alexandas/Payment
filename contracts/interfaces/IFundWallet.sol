@@ -92,21 +92,15 @@ interface IFundWallet is IBilling {
 	) external;
 
 	/// @dev withdraw token for account
-	/// @param provider provider address
-	/// @param nonce nonce
-	/// @param account user account
+	/// @param payload bill payload
 	/// @param to token receiver
 	/// @param amount token amount
-	/// @param bill bill bytes
 	/// @param signature provider signature
 	/// @return fee bill fee
 	function withdraw(
-		address provider,
-		uint64 nonce,
-		bytes32 account,
+		Payload memory payload,
 		address to,
 		uint256 amount,
-		bytes memory bill,
 		bytes memory signature
 	) external returns (uint256 fee);
 
@@ -114,14 +108,16 @@ interface IFundWallet is IBilling {
 	/// @param provider provider address
 	/// @param nonce nonce
 	/// @param account user account
-	/// @param bill bill bytes
+	/// @param bills bills bytes
+	/// @param expiration tx expiration
 	/// @param signature provider signature
-	/// @param fee bill fee
+	/// @param fee bills fee
 	function spend(
 		address provider,
 		uint64 nonce,
 		bytes32 account,
-		bytes memory bill,
+		bytes memory bills,
+		uint256 expiration,
 		bytes memory signature
 	) external returns (uint256 fee);
 }

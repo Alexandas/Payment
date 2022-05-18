@@ -21,47 +21,49 @@ import type { TypedEventFilter, TypedEvent, TypedListener } from "./common";
 interface IBillingInterface extends ethers.utils.Interface {
   functions: {
     "adaptor()": FunctionFragment;
-    "billTypedHash()": FunctionFragment;
+    "billsTypedHash()": FunctionFragment;
     "providers()": FunctionFragment;
   };
 
   encodeFunctionData(functionFragment: "adaptor", values?: undefined): string;
   encodeFunctionData(
-    functionFragment: "billTypedHash",
+    functionFragment: "billsTypedHash",
     values?: undefined
   ): string;
   encodeFunctionData(functionFragment: "providers", values?: undefined): string;
 
   decodeFunctionResult(functionFragment: "adaptor", data: BytesLike): Result;
   decodeFunctionResult(
-    functionFragment: "billTypedHash",
+    functionFragment: "billsTypedHash",
     data: BytesLike
   ): Result;
   decodeFunctionResult(functionFragment: "providers", data: BytesLike): Result;
 
   events: {
-    "BillTypedHashUpdated(bytes32)": EventFragment;
     "Billing(address,uint64,bytes32,bytes,uint256)": EventFragment;
+    "BillsTypedHashUpdated(bytes32)": EventFragment;
     "ProvidersUpdated(address)": EventFragment;
     "ResourceAdaptorUpdated(address)": EventFragment;
   };
 
-  getEvent(nameOrSignatureOrTopic: "BillTypedHashUpdated"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "Billing"): EventFragment;
+  getEvent(nameOrSignatureOrTopic: "BillsTypedHashUpdated"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "ProvidersUpdated"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "ResourceAdaptorUpdated"): EventFragment;
 }
-
-export type BillTypedHashUpdatedEvent = TypedEvent<[string] & { hash: string }>;
 
 export type BillingEvent = TypedEvent<
   [string, BigNumber, string, string, BigNumber] & {
     provider: string;
     nonce: BigNumber;
     account: string;
-    bill: string;
+    bills: string;
     amount: BigNumber;
   }
+>;
+
+export type BillsTypedHashUpdatedEvent = TypedEvent<
+  [string] & { hash: string }
 >;
 
 export type ProvidersUpdatedEvent = TypedEvent<
@@ -118,39 +120,31 @@ export class IBilling extends BaseContract {
   functions: {
     adaptor(overrides?: CallOverrides): Promise<[string]>;
 
-    billTypedHash(overrides?: CallOverrides): Promise<[string]>;
+    billsTypedHash(overrides?: CallOverrides): Promise<[string]>;
 
     providers(overrides?: CallOverrides): Promise<[string]>;
   };
 
   adaptor(overrides?: CallOverrides): Promise<string>;
 
-  billTypedHash(overrides?: CallOverrides): Promise<string>;
+  billsTypedHash(overrides?: CallOverrides): Promise<string>;
 
   providers(overrides?: CallOverrides): Promise<string>;
 
   callStatic: {
     adaptor(overrides?: CallOverrides): Promise<string>;
 
-    billTypedHash(overrides?: CallOverrides): Promise<string>;
+    billsTypedHash(overrides?: CallOverrides): Promise<string>;
 
     providers(overrides?: CallOverrides): Promise<string>;
   };
 
   filters: {
-    "BillTypedHashUpdated(bytes32)"(
-      hash?: null
-    ): TypedEventFilter<[string], { hash: string }>;
-
-    BillTypedHashUpdated(
-      hash?: null
-    ): TypedEventFilter<[string], { hash: string }>;
-
     "Billing(address,uint64,bytes32,bytes,uint256)"(
       provider?: null,
       nonce?: null,
       account?: null,
-      bill?: null,
+      bills?: null,
       amount?: null
     ): TypedEventFilter<
       [string, BigNumber, string, string, BigNumber],
@@ -158,7 +152,7 @@ export class IBilling extends BaseContract {
         provider: string;
         nonce: BigNumber;
         account: string;
-        bill: string;
+        bills: string;
         amount: BigNumber;
       }
     >;
@@ -167,7 +161,7 @@ export class IBilling extends BaseContract {
       provider?: null,
       nonce?: null,
       account?: null,
-      bill?: null,
+      bills?: null,
       amount?: null
     ): TypedEventFilter<
       [string, BigNumber, string, string, BigNumber],
@@ -175,10 +169,18 @@ export class IBilling extends BaseContract {
         provider: string;
         nonce: BigNumber;
         account: string;
-        bill: string;
+        bills: string;
         amount: BigNumber;
       }
     >;
+
+    "BillsTypedHashUpdated(bytes32)"(
+      hash?: null
+    ): TypedEventFilter<[string], { hash: string }>;
+
+    BillsTypedHashUpdated(
+      hash?: null
+    ): TypedEventFilter<[string], { hash: string }>;
 
     "ProvidersUpdated(address)"(
       providers?: null
@@ -200,7 +202,7 @@ export class IBilling extends BaseContract {
   estimateGas: {
     adaptor(overrides?: CallOverrides): Promise<BigNumber>;
 
-    billTypedHash(overrides?: CallOverrides): Promise<BigNumber>;
+    billsTypedHash(overrides?: CallOverrides): Promise<BigNumber>;
 
     providers(overrides?: CallOverrides): Promise<BigNumber>;
   };
@@ -208,7 +210,7 @@ export class IBilling extends BaseContract {
   populateTransaction: {
     adaptor(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
-    billTypedHash(overrides?: CallOverrides): Promise<PopulatedTransaction>;
+    billsTypedHash(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
     providers(overrides?: CallOverrides): Promise<PopulatedTransaction>;
   };

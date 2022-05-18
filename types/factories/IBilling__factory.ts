@@ -12,19 +12,6 @@ const _abi = [
     inputs: [
       {
         indexed: false,
-        internalType: "bytes32",
-        name: "hash",
-        type: "bytes32",
-      },
-    ],
-    name: "BillTypedHashUpdated",
-    type: "event",
-  },
-  {
-    anonymous: false,
-    inputs: [
-      {
-        indexed: false,
         internalType: "address",
         name: "provider",
         type: "address",
@@ -44,7 +31,7 @@ const _abi = [
       {
         indexed: false,
         internalType: "bytes",
-        name: "bill",
+        name: "bills",
         type: "bytes",
       },
       {
@@ -55,6 +42,19 @@ const _abi = [
       },
     ],
     name: "Billing",
+    type: "event",
+  },
+  {
+    anonymous: false,
+    inputs: [
+      {
+        indexed: false,
+        internalType: "bytes32",
+        name: "hash",
+        type: "bytes32",
+      },
+    ],
+    name: "BillsTypedHashUpdated",
     type: "event",
   },
   {
@@ -98,7 +98,7 @@ const _abi = [
   },
   {
     inputs: [],
-    name: "billTypedHash",
+    name: "billsTypedHash",
     outputs: [
       {
         internalType: "bytes32",

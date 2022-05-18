@@ -12,19 +12,6 @@ const _abi = [
     inputs: [
       {
         indexed: false,
-        internalType: "bytes32",
-        name: "hash",
-        type: "bytes32",
-      },
-    ],
-    name: "BillTypedHashUpdated",
-    type: "event",
-  },
-  {
-    anonymous: false,
-    inputs: [
-      {
-        indexed: false,
         internalType: "address",
         name: "provider",
         type: "address",
@@ -44,7 +31,7 @@ const _abi = [
       {
         indexed: false,
         internalType: "bytes",
-        name: "bill",
+        name: "bills",
         type: "bytes",
       },
       {
@@ -55,6 +42,19 @@ const _abi = [
       },
     ],
     name: "Billing",
+    type: "event",
+  },
+  {
+    anonymous: false,
+    inputs: [
+      {
+        indexed: false,
+        internalType: "bytes32",
+        name: "hash",
+        type: "bytes32",
+      },
+    ],
+    name: "BillsTypedHashUpdated",
     type: "event",
   },
   {
@@ -266,7 +266,7 @@ const _abi = [
   },
   {
     inputs: [],
-    name: "billTypedHash",
+    name: "billsTypedHash",
     outputs: [
       {
         internalType: "bytes32",
@@ -379,8 +379,13 @@ const _abi = [
       },
       {
         internalType: "bytes",
-        name: "bill",
+        name: "bills",
         type: "bytes",
+      },
+      {
+        internalType: "uint256",
+        name: "expiration",
+        type: "uint256",
       },
       {
         internalType: "bytes",
@@ -425,19 +430,36 @@ const _abi = [
   {
     inputs: [
       {
-        internalType: "address",
-        name: "provider",
-        type: "address",
-      },
-      {
-        internalType: "uint64",
-        name: "nonce",
-        type: "uint64",
-      },
-      {
-        internalType: "bytes32",
-        name: "account",
-        type: "bytes32",
+        components: [
+          {
+            internalType: "address",
+            name: "provider",
+            type: "address",
+          },
+          {
+            internalType: "uint64",
+            name: "nonce",
+            type: "uint64",
+          },
+          {
+            internalType: "bytes32",
+            name: "account",
+            type: "bytes32",
+          },
+          {
+            internalType: "bytes",
+            name: "bills",
+            type: "bytes",
+          },
+          {
+            internalType: "uint256",
+            name: "expiration",
+            type: "uint256",
+          },
+        ],
+        internalType: "struct IBilling.Payload",
+        name: "payload",
+        type: "tuple",
       },
       {
         internalType: "address",
@@ -448,11 +470,6 @@ const _abi = [
         internalType: "uint256",
         name: "amount",
         type: "uint256",
-      },
-      {
-        internalType: "bytes",
-        name: "bill",
-        type: "bytes",
       },
       {
         internalType: "bytes",

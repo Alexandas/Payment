@@ -12,19 +12,6 @@ const _abi = [
     inputs: [
       {
         indexed: false,
-        internalType: "bytes32",
-        name: "hash",
-        type: "bytes32",
-      },
-    ],
-    name: "BillTypedHashUpdated",
-    type: "event",
-  },
-  {
-    anonymous: false,
-    inputs: [
-      {
-        indexed: false,
         internalType: "address",
         name: "provider",
         type: "address",
@@ -44,7 +31,7 @@ const _abi = [
       {
         indexed: false,
         internalType: "bytes",
-        name: "bill",
+        name: "bills",
         type: "bytes",
       },
       {
@@ -55,6 +42,19 @@ const _abi = [
       },
     ],
     name: "Billing",
+    type: "event",
+  },
+  {
+    anonymous: false,
+    inputs: [
+      {
+        indexed: false,
+        internalType: "bytes32",
+        name: "hash",
+        type: "bytes32",
+      },
+    ],
+    name: "BillsTypedHashUpdated",
     type: "event",
   },
   {
@@ -152,11 +152,16 @@ const _abi = [
       },
       {
         internalType: "bytes",
-        name: "bill",
+        name: "bills",
         type: "bytes",
       },
+      {
+        internalType: "uint256",
+        name: "expiration",
+        type: "uint256",
+      },
     ],
-    name: "billHash",
+    name: "billsHash",
     outputs: [
       {
         internalType: "bytes32",
@@ -169,7 +174,7 @@ const _abi = [
   },
   {
     inputs: [],
-    name: "billTypedHash",
+    name: "billsTypedHash",
     outputs: [
       {
         internalType: "bytes32",
@@ -188,53 +193,36 @@ const _abi = [
         type: "bytes",
       },
     ],
-    name: "decodeBill",
+    name: "decodeBills",
     outputs: [
       {
         components: [
           {
             internalType: "uint256",
-            name: "expiration",
-            type: "uint256",
-          },
-          {
-            internalType: "uint256",
-            name: "totalValue",
+            name: "indexBlock",
             type: "uint256",
           },
           {
             components: [
               {
-                internalType: "uint256",
-                name: "indexBlock",
-                type: "uint256",
+                internalType: "enum ResourceData.ResourceType",
+                name: "resourceType",
+                type: "uint8",
               },
               {
-                components: [
-                  {
-                    internalType: "enum ResourceData.ResourceType",
-                    name: "resourceType",
-                    type: "uint8",
-                  },
-                  {
-                    internalType: "uint256",
-                    name: "amount",
-                    type: "uint256",
-                  },
-                ],
-                internalType: "struct IBilling.BillEntry[]",
-                name: "entries",
-                type: "tuple[]",
+                internalType: "uint256",
+                name: "amount",
+                type: "uint256",
               },
             ],
-            internalType: "struct IBilling.BillPayload[]",
-            name: "payloads",
+            internalType: "struct IBilling.BillEntry[]",
+            name: "entries",
             type: "tuple[]",
           },
         ],
-        internalType: "struct IBilling.Bill",
+        internalType: "struct IBilling.Bill[]",
         name: "",
-        type: "tuple",
+        type: "tuple[]",
       },
     ],
     stateMutability: "pure",
@@ -246,50 +234,33 @@ const _abi = [
         components: [
           {
             internalType: "uint256",
-            name: "expiration",
-            type: "uint256",
-          },
-          {
-            internalType: "uint256",
-            name: "totalValue",
+            name: "indexBlock",
             type: "uint256",
           },
           {
             components: [
               {
-                internalType: "uint256",
-                name: "indexBlock",
-                type: "uint256",
+                internalType: "enum ResourceData.ResourceType",
+                name: "resourceType",
+                type: "uint8",
               },
               {
-                components: [
-                  {
-                    internalType: "enum ResourceData.ResourceType",
-                    name: "resourceType",
-                    type: "uint8",
-                  },
-                  {
-                    internalType: "uint256",
-                    name: "amount",
-                    type: "uint256",
-                  },
-                ],
-                internalType: "struct IBilling.BillEntry[]",
-                name: "entries",
-                type: "tuple[]",
+                internalType: "uint256",
+                name: "amount",
+                type: "uint256",
               },
             ],
-            internalType: "struct IBilling.BillPayload[]",
-            name: "payloads",
+            internalType: "struct IBilling.BillEntry[]",
+            name: "entries",
             type: "tuple[]",
           },
         ],
-        internalType: "struct IBilling.Bill",
-        name: "bill",
-        type: "tuple",
+        internalType: "struct IBilling.Bill[]",
+        name: "bills",
+        type: "tuple[]",
       },
     ],
-    name: "encodeBill",
+    name: "encodeBills",
     outputs: [
       {
         internalType: "bytes",
@@ -319,11 +290,16 @@ const _abi = [
       },
       {
         internalType: "bytes",
-        name: "bill",
+        name: "bills",
         type: "bytes",
       },
+      {
+        internalType: "uint256",
+        name: "expiration",
+        type: "uint256",
+      },
     ],
-    name: "hashTypedDataV4ForBill",
+    name: "hashTypedDataV4ForBills",
     outputs: [
       {
         internalType: "bytes32",

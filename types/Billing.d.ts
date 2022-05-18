@@ -22,11 +22,11 @@ interface BillingInterface extends ethers.utils.Interface {
   functions: {
     "adaptor()": FunctionFragment;
     "balanceOf(address,bytes32)": FunctionFragment;
-    "billHash(address,uint64,bytes32,bytes)": FunctionFragment;
-    "billTypedHash()": FunctionFragment;
-    "decodeBill(bytes)": FunctionFragment;
-    "encodeBill((uint256,uint256,tuple[]))": FunctionFragment;
-    "hashTypedDataV4ForBill(address,uint64,bytes32,bytes)": FunctionFragment;
+    "billsHash(address,uint64,bytes32,bytes,uint256)": FunctionFragment;
+    "billsTypedHash()": FunctionFragment;
+    "decodeBills(bytes)": FunctionFragment;
+    "encodeBills(tuple[])": FunctionFragment;
+    "hashTypedDataV4ForBills(address,uint64,bytes32,bytes,uint256)": FunctionFragment;
     "matchResourceToToken(uint256)": FunctionFragment;
     "matchTokenToResource(uint256)": FunctionFragment;
     "providers()": FunctionFragment;
@@ -41,33 +41,29 @@ interface BillingInterface extends ethers.utils.Interface {
     values: [string, BytesLike]
   ): string;
   encodeFunctionData(
-    functionFragment: "billHash",
-    values: [string, BigNumberish, BytesLike, BytesLike]
+    functionFragment: "billsHash",
+    values: [string, BigNumberish, BytesLike, BytesLike, BigNumberish]
   ): string;
   encodeFunctionData(
-    functionFragment: "billTypedHash",
+    functionFragment: "billsTypedHash",
     values?: undefined
   ): string;
   encodeFunctionData(
-    functionFragment: "decodeBill",
+    functionFragment: "decodeBills",
     values: [BytesLike]
   ): string;
   encodeFunctionData(
-    functionFragment: "encodeBill",
+    functionFragment: "encodeBills",
     values: [
       {
-        expiration: BigNumberish;
-        totalValue: BigNumberish;
-        payloads: {
-          indexBlock: BigNumberish;
-          entries: { resourceType: BigNumberish; amount: BigNumberish }[];
-        }[];
-      }
+        indexBlock: BigNumberish;
+        entries: { resourceType: BigNumberish; amount: BigNumberish }[];
+      }[]
     ]
   ): string;
   encodeFunctionData(
-    functionFragment: "hashTypedDataV4ForBill",
-    values: [string, BigNumberish, BytesLike, BytesLike]
+    functionFragment: "hashTypedDataV4ForBills",
+    values: [string, BigNumberish, BytesLike, BytesLike, BigNumberish]
   ): string;
   encodeFunctionData(
     functionFragment: "matchResourceToToken",
@@ -90,15 +86,21 @@ interface BillingInterface extends ethers.utils.Interface {
 
   decodeFunctionResult(functionFragment: "adaptor", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "balanceOf", data: BytesLike): Result;
-  decodeFunctionResult(functionFragment: "billHash", data: BytesLike): Result;
+  decodeFunctionResult(functionFragment: "billsHash", data: BytesLike): Result;
   decodeFunctionResult(
-    functionFragment: "billTypedHash",
+    functionFragment: "billsTypedHash",
     data: BytesLike
   ): Result;
-  decodeFunctionResult(functionFragment: "decodeBill", data: BytesLike): Result;
-  decodeFunctionResult(functionFragment: "encodeBill", data: BytesLike): Result;
   decodeFunctionResult(
-    functionFragment: "hashTypedDataV4ForBill",
+    functionFragment: "decodeBills",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "encodeBills",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "hashTypedDataV4ForBills",
     data: BytesLike
   ): Result;
   decodeFunctionResult(
@@ -121,30 +123,32 @@ interface BillingInterface extends ethers.utils.Interface {
   ): Result;
 
   events: {
-    "BillTypedHashUpdated(bytes32)": EventFragment;
     "Billing(address,uint64,bytes32,bytes,uint256)": EventFragment;
+    "BillsTypedHashUpdated(bytes32)": EventFragment;
     "ProvidersUpdated(address)": EventFragment;
     "ResourceAdaptorUpdated(address)": EventFragment;
     "TokenUpdated(address)": EventFragment;
   };
 
-  getEvent(nameOrSignatureOrTopic: "BillTypedHashUpdated"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "Billing"): EventFragment;
+  getEvent(nameOrSignatureOrTopic: "BillsTypedHashUpdated"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "ProvidersUpdated"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "ResourceAdaptorUpdated"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "TokenUpdated"): EventFragment;
 }
-
-export type BillTypedHashUpdatedEvent = TypedEvent<[string] & { hash: string }>;
 
 export type BillingEvent = TypedEvent<
   [string, BigNumber, string, string, BigNumber] & {
     provider: string;
     nonce: BigNumber;
     account: string;
-    bill: string;
+    bills: string;
     amount: BigNumber;
   }
+>;
+
+export type BillsTypedHashUpdatedEvent = TypedEvent<
+  [string] & { hash: string }
 >;
 
 export type ProvidersUpdatedEvent = TypedEvent<
@@ -209,74 +213,49 @@ export class Billing extends BaseContract {
       overrides?: CallOverrides
     ): Promise<[BigNumber]>;
 
-    billHash(
+    billsHash(
       provider: string,
       nonce: BigNumberish,
       account: BytesLike,
-      bill: BytesLike,
+      bills: BytesLike,
+      expiration: BigNumberish,
       overrides?: CallOverrides
     ): Promise<[string]>;
 
-    billTypedHash(overrides?: CallOverrides): Promise<[string]>;
+    billsTypedHash(overrides?: CallOverrides): Promise<[string]>;
 
-    decodeBill(
+    decodeBills(
       data: BytesLike,
       overrides?: CallOverrides
     ): Promise<
       [
-        [
+        ([
           BigNumber,
-          BigNumber,
-          ([
-            BigNumber,
-            ([number, BigNumber] & {
-              resourceType: number;
-              amount: BigNumber;
-            })[]
-          ] & {
-            indexBlock: BigNumber;
-            entries: ([number, BigNumber] & {
-              resourceType: number;
-              amount: BigNumber;
-            })[];
-          })[]
+          ([number, BigNumber] & { resourceType: number; amount: BigNumber })[]
         ] & {
-          expiration: BigNumber;
-          totalValue: BigNumber;
-          payloads: ([
-            BigNumber,
-            ([number, BigNumber] & {
-              resourceType: number;
-              amount: BigNumber;
-            })[]
-          ] & {
-            indexBlock: BigNumber;
-            entries: ([number, BigNumber] & {
-              resourceType: number;
-              amount: BigNumber;
-            })[];
+          indexBlock: BigNumber;
+          entries: ([number, BigNumber] & {
+            resourceType: number;
+            amount: BigNumber;
           })[];
-        }
+        })[]
       ]
     >;
 
-    encodeBill(
-      bill: {
-        expiration: BigNumberish;
-        totalValue: BigNumberish;
-        payloads: {
-          indexBlock: BigNumberish;
-          entries: { resourceType: BigNumberish; amount: BigNumberish }[];
-        }[];
-      },
+    encodeBills(
+      bills: {
+        indexBlock: BigNumberish;
+        entries: { resourceType: BigNumberish; amount: BigNumberish }[];
+      }[],
       overrides?: CallOverrides
     ): Promise<[string]>;
 
-    hashTypedDataV4ForBill(
+    hashTypedDataV4ForBills(
       provider: string,
       nonce: BigNumberish,
       account: BytesLike,
-      bill: BytesLike,
+      bills: BytesLike,
+      expiration: BigNumberish,
       overrides?: CallOverrides
     ): Promise<[string]>;
 
@@ -307,66 +286,47 @@ export class Billing extends BaseContract {
     overrides?: CallOverrides
   ): Promise<BigNumber>;
 
-  billHash(
+  billsHash(
     provider: string,
     nonce: BigNumberish,
     account: BytesLike,
-    bill: BytesLike,
+    bills: BytesLike,
+    expiration: BigNumberish,
     overrides?: CallOverrides
   ): Promise<string>;
 
-  billTypedHash(overrides?: CallOverrides): Promise<string>;
+  billsTypedHash(overrides?: CallOverrides): Promise<string>;
 
-  decodeBill(
+  decodeBills(
     data: BytesLike,
     overrides?: CallOverrides
   ): Promise<
-    [
+    ([
       BigNumber,
-      BigNumber,
-      ([
-        BigNumber,
-        ([number, BigNumber] & { resourceType: number; amount: BigNumber })[]
-      ] & {
-        indexBlock: BigNumber;
-        entries: ([number, BigNumber] & {
-          resourceType: number;
-          amount: BigNumber;
-        })[];
-      })[]
+      ([number, BigNumber] & { resourceType: number; amount: BigNumber })[]
     ] & {
-      expiration: BigNumber;
-      totalValue: BigNumber;
-      payloads: ([
-        BigNumber,
-        ([number, BigNumber] & { resourceType: number; amount: BigNumber })[]
-      ] & {
-        indexBlock: BigNumber;
-        entries: ([number, BigNumber] & {
-          resourceType: number;
-          amount: BigNumber;
-        })[];
+      indexBlock: BigNumber;
+      entries: ([number, BigNumber] & {
+        resourceType: number;
+        amount: BigNumber;
       })[];
-    }
+    })[]
   >;
 
-  encodeBill(
-    bill: {
-      expiration: BigNumberish;
-      totalValue: BigNumberish;
-      payloads: {
-        indexBlock: BigNumberish;
-        entries: { resourceType: BigNumberish; amount: BigNumberish }[];
-      }[];
-    },
+  encodeBills(
+    bills: {
+      indexBlock: BigNumberish;
+      entries: { resourceType: BigNumberish; amount: BigNumberish }[];
+    }[],
     overrides?: CallOverrides
   ): Promise<string>;
 
-  hashTypedDataV4ForBill(
+  hashTypedDataV4ForBills(
     provider: string,
     nonce: BigNumberish,
     account: BytesLike,
-    bill: BytesLike,
+    bills: BytesLike,
+    expiration: BigNumberish,
     overrides?: CallOverrides
   ): Promise<string>;
 
@@ -397,66 +357,47 @@ export class Billing extends BaseContract {
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
-    billHash(
+    billsHash(
       provider: string,
       nonce: BigNumberish,
       account: BytesLike,
-      bill: BytesLike,
+      bills: BytesLike,
+      expiration: BigNumberish,
       overrides?: CallOverrides
     ): Promise<string>;
 
-    billTypedHash(overrides?: CallOverrides): Promise<string>;
+    billsTypedHash(overrides?: CallOverrides): Promise<string>;
 
-    decodeBill(
+    decodeBills(
       data: BytesLike,
       overrides?: CallOverrides
     ): Promise<
-      [
+      ([
         BigNumber,
-        BigNumber,
-        ([
-          BigNumber,
-          ([number, BigNumber] & { resourceType: number; amount: BigNumber })[]
-        ] & {
-          indexBlock: BigNumber;
-          entries: ([number, BigNumber] & {
-            resourceType: number;
-            amount: BigNumber;
-          })[];
-        })[]
+        ([number, BigNumber] & { resourceType: number; amount: BigNumber })[]
       ] & {
-        expiration: BigNumber;
-        totalValue: BigNumber;
-        payloads: ([
-          BigNumber,
-          ([number, BigNumber] & { resourceType: number; amount: BigNumber })[]
-        ] & {
-          indexBlock: BigNumber;
-          entries: ([number, BigNumber] & {
-            resourceType: number;
-            amount: BigNumber;
-          })[];
+        indexBlock: BigNumber;
+        entries: ([number, BigNumber] & {
+          resourceType: number;
+          amount: BigNumber;
         })[];
-      }
+      })[]
     >;
 
-    encodeBill(
-      bill: {
-        expiration: BigNumberish;
-        totalValue: BigNumberish;
-        payloads: {
-          indexBlock: BigNumberish;
-          entries: { resourceType: BigNumberish; amount: BigNumberish }[];
-        }[];
-      },
+    encodeBills(
+      bills: {
+        indexBlock: BigNumberish;
+        entries: { resourceType: BigNumberish; amount: BigNumberish }[];
+      }[],
       overrides?: CallOverrides
     ): Promise<string>;
 
-    hashTypedDataV4ForBill(
+    hashTypedDataV4ForBills(
       provider: string,
       nonce: BigNumberish,
       account: BytesLike,
-      bill: BytesLike,
+      bills: BytesLike,
+      expiration: BigNumberish,
       overrides?: CallOverrides
     ): Promise<string>;
 
@@ -480,19 +421,11 @@ export class Billing extends BaseContract {
   };
 
   filters: {
-    "BillTypedHashUpdated(bytes32)"(
-      hash?: null
-    ): TypedEventFilter<[string], { hash: string }>;
-
-    BillTypedHashUpdated(
-      hash?: null
-    ): TypedEventFilter<[string], { hash: string }>;
-
     "Billing(address,uint64,bytes32,bytes,uint256)"(
       provider?: null,
       nonce?: null,
       account?: null,
-      bill?: null,
+      bills?: null,
       amount?: null
     ): TypedEventFilter<
       [string, BigNumber, string, string, BigNumber],
@@ -500,7 +433,7 @@ export class Billing extends BaseContract {
         provider: string;
         nonce: BigNumber;
         account: string;
-        bill: string;
+        bills: string;
         amount: BigNumber;
       }
     >;
@@ -509,7 +442,7 @@ export class Billing extends BaseContract {
       provider?: null,
       nonce?: null,
       account?: null,
-      bill?: null,
+      bills?: null,
       amount?: null
     ): TypedEventFilter<
       [string, BigNumber, string, string, BigNumber],
@@ -517,10 +450,18 @@ export class Billing extends BaseContract {
         provider: string;
         nonce: BigNumber;
         account: string;
-        bill: string;
+        bills: string;
         amount: BigNumber;
       }
     >;
+
+    "BillsTypedHashUpdated(bytes32)"(
+      hash?: null
+    ): TypedEventFilter<[string], { hash: string }>;
+
+    BillsTypedHashUpdated(
+      hash?: null
+    ): TypedEventFilter<[string], { hash: string }>;
 
     "ProvidersUpdated(address)"(
       providers?: null
@@ -554,35 +495,33 @@ export class Billing extends BaseContract {
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
-    billHash(
+    billsHash(
       provider: string,
       nonce: BigNumberish,
       account: BytesLike,
-      bill: BytesLike,
+      bills: BytesLike,
+      expiration: BigNumberish,
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
-    billTypedHash(overrides?: CallOverrides): Promise<BigNumber>;
+    billsTypedHash(overrides?: CallOverrides): Promise<BigNumber>;
 
-    decodeBill(data: BytesLike, overrides?: CallOverrides): Promise<BigNumber>;
+    decodeBills(data: BytesLike, overrides?: CallOverrides): Promise<BigNumber>;
 
-    encodeBill(
-      bill: {
-        expiration: BigNumberish;
-        totalValue: BigNumberish;
-        payloads: {
-          indexBlock: BigNumberish;
-          entries: { resourceType: BigNumberish; amount: BigNumberish }[];
-        }[];
-      },
+    encodeBills(
+      bills: {
+        indexBlock: BigNumberish;
+        entries: { resourceType: BigNumberish; amount: BigNumberish }[];
+      }[],
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
-    hashTypedDataV4ForBill(
+    hashTypedDataV4ForBills(
       provider: string,
       nonce: BigNumberish,
       account: BytesLike,
-      bill: BytesLike,
+      bills: BytesLike,
+      expiration: BigNumberish,
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
@@ -614,38 +553,36 @@ export class Billing extends BaseContract {
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
-    billHash(
+    billsHash(
       provider: string,
       nonce: BigNumberish,
       account: BytesLike,
-      bill: BytesLike,
+      bills: BytesLike,
+      expiration: BigNumberish,
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
-    billTypedHash(overrides?: CallOverrides): Promise<PopulatedTransaction>;
+    billsTypedHash(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
-    decodeBill(
+    decodeBills(
       data: BytesLike,
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
-    encodeBill(
-      bill: {
-        expiration: BigNumberish;
-        totalValue: BigNumberish;
-        payloads: {
-          indexBlock: BigNumberish;
-          entries: { resourceType: BigNumberish; amount: BigNumberish }[];
-        }[];
-      },
+    encodeBills(
+      bills: {
+        indexBlock: BigNumberish;
+        entries: { resourceType: BigNumberish; amount: BigNumberish }[];
+      }[],
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
-    hashTypedDataV4ForBill(
+    hashTypedDataV4ForBills(
       provider: string,
       nonce: BigNumberish,
       account: BytesLike,
-      bill: BytesLike,
+      bills: BytesLike,
+      expiration: BigNumberish,
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 

@@ -15,36 +15,38 @@ interface IBilling is IProvidersWrapper {
 		uint256 amount;
 	}
 
-	struct BillPayload {
+	struct Bill {
 		uint256 indexBlock;
 		BillEntry[] entries;
 	}
 
-	struct Bill {
+	struct Payload {
+		address provider;
+		uint64 nonce;
+		bytes32 account;
+		bytes bills;
 		uint256 expiration;
-		uint256 totalValue;
-		BillPayload[] payloads;
 	}
 
 	/// @dev emit when BillTypedHash updated
 	/// @param hash BillTypedHash
-	event BillTypedHashUpdated(bytes32 hash);
+	event BillsTypedHashUpdated(bytes32 hash);
 
 	/// @dev emit when resource adaptor updated
 	/// @param adaptor resource adaptor address
 	event ResourceAdaptorUpdated(IResourceAdaptor adaptor);
 
-	/// @dev emit when a bill finalized
+	/// @dev emit when bills finalized
 	/// @param provider provider address
 	/// @param nonce nonce
-	/// @param account bill's account
-	/// @param bill bill info
+	/// @param account user account
+	/// @param bills bills data
 	/// @param amount fee
-	event Billing(address provider, uint64 nonce, bytes32 account, bytes bill, uint256 amount);
+	event Billing(address provider, uint64 nonce, bytes32 account, bytes bills, uint256 amount);
 
-	/// @dev get bill types hash
-	/// @return type hash for bill
-	function billTypedHash() external view returns (bytes32);
+	/// @dev get bills types hash
+	/// @return type hash for bills
+	function billsTypedHash() external view returns (bytes32);
 
 	/// @dev get the resource adaptor
 	/// @return resource adaptor address
