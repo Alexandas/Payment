@@ -1,7 +1,7 @@
 {
-	"name": "Payment",
+	"name": "4everland-contracts",
 	"version": "0.1.0",
-	"description": "payment contracts",
+	"description": "4everland payment and ipfs content tracer contracts",
 	"engines": {
 		"node": ">= 12.18.0"
 	},
