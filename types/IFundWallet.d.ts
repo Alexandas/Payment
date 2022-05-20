@@ -108,7 +108,6 @@ interface IFundWalletInterface extends ethers.utils.Interface {
     "RechargeTypedHashUpdated(bytes32)": EventFragment;
     "Recharged(address,uint64,bytes32,uint256)": EventFragment;
     "ResourceAdaptorUpdated(address)": EventFragment;
-    "Spent(address,uint64,bytes32,uint256)": EventFragment;
     "WalletOwnerTransferred(address,bytes32,address)": EventFragment;
     "Withdrawn(address,uint64,bytes32,address,uint256)": EventFragment;
   };
@@ -120,7 +119,6 @@ interface IFundWalletInterface extends ethers.utils.Interface {
   getEvent(nameOrSignatureOrTopic: "RechargeTypedHashUpdated"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "Recharged"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "ResourceAdaptorUpdated"): EventFragment;
-  getEvent(nameOrSignatureOrTopic: "Spent"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "WalletOwnerTransferred"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "Withdrawn"): EventFragment;
 }
@@ -167,15 +165,6 @@ export type RechargedEvent = TypedEvent<
 
 export type ResourceAdaptorUpdatedEvent = TypedEvent<
   [string] & { adaptor: string }
->;
-
-export type SpentEvent = TypedEvent<
-  [string, BigNumber, string, BigNumber] & {
-    provider: string;
-    nonce: BigNumber;
-    account: string;
-    fee: BigNumber;
-  }
 >;
 
 export type WalletOwnerTransferredEvent = TypedEvent<
@@ -511,26 +500,6 @@ export class IFundWallet extends BaseContract {
     ResourceAdaptorUpdated(
       adaptor?: null
     ): TypedEventFilter<[string], { adaptor: string }>;
-
-    "Spent(address,uint64,bytes32,uint256)"(
-      provider?: null,
-      nonce?: null,
-      account?: null,
-      fee?: null
-    ): TypedEventFilter<
-      [string, BigNumber, string, BigNumber],
-      { provider: string; nonce: BigNumber; account: string; fee: BigNumber }
-    >;
-
-    Spent(
-      provider?: null,
-      nonce?: null,
-      account?: null,
-      fee?: null
-    ): TypedEventFilter<
-      [string, BigNumber, string, BigNumber],
-      { provider: string; nonce: BigNumber; account: string; fee: BigNumber }
-    >;
 
     "WalletOwnerTransferred(address,bytes32,address)"(
       provider?: null,

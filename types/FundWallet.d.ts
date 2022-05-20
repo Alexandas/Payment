@@ -332,7 +332,6 @@ interface FundWalletInterface extends ethers.utils.Interface {
     "RechargeTypedHashUpdated(bytes32)": EventFragment;
     "Recharged(address,uint64,bytes32,uint256)": EventFragment;
     "ResourceAdaptorUpdated(address)": EventFragment;
-    "Spent(address,uint64,bytes32,uint256)": EventFragment;
     "TokenUpdated(address)": EventFragment;
     "Unpaused(address)": EventFragment;
     "WalletOwnerTransferred(address,bytes32,address)": EventFragment;
@@ -352,7 +351,6 @@ interface FundWalletInterface extends ethers.utils.Interface {
   getEvent(nameOrSignatureOrTopic: "RechargeTypedHashUpdated"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "Recharged"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "ResourceAdaptorUpdated"): EventFragment;
-  getEvent(nameOrSignatureOrTopic: "Spent"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "TokenUpdated"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "Unpaused"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "WalletOwnerTransferred"): EventFragment;
@@ -416,15 +414,6 @@ export type RechargedEvent = TypedEvent<
 
 export type ResourceAdaptorUpdatedEvent = TypedEvent<
   [string] & { adaptor: string }
->;
-
-export type SpentEvent = TypedEvent<
-  [string, BigNumber, string, BigNumber] & {
-    provider: string;
-    nonce: BigNumber;
-    account: string;
-    fee: BigNumber;
-  }
 >;
 
 export type TokenUpdatedEvent = TypedEvent<[string] & { token: string }>;
@@ -1299,26 +1288,6 @@ export class FundWallet extends BaseContract {
     ResourceAdaptorUpdated(
       adaptor?: null
     ): TypedEventFilter<[string], { adaptor: string }>;
-
-    "Spent(address,uint64,bytes32,uint256)"(
-      provider?: null,
-      nonce?: null,
-      account?: null,
-      fee?: null
-    ): TypedEventFilter<
-      [string, BigNumber, string, BigNumber],
-      { provider: string; nonce: BigNumber; account: string; fee: BigNumber }
-    >;
-
-    Spent(
-      provider?: null,
-      nonce?: null,
-      account?: null,
-      fee?: null
-    ): TypedEventFilter<
-      [string, BigNumber, string, BigNumber],
-      { provider: string; nonce: BigNumber; account: string; fee: BigNumber }
-    >;
 
     "TokenUpdated(address)"(
       token?: null

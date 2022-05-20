@@ -7,37 +7,37 @@
 ## Globals
 | Var | Type |
 | --- | --- |
-| billTypedHash | bytes32 |
+| billsTypedHash | bytes32 |
 | adaptor | contract IResourceAdaptor |
 
 ## Functions
-### encodeBill
+### encodeBills
 
 > encode bill to bytes
 
 
 #### Declaration
 ```
-function encodeBill(struct IBilling.Bill bill) external returns (bytes)
+function encodeBills(struct IBilling.Bill[] bills) external returns (bytes)
 ```
 
 #### Args:
 | Arg | Type | Description |
 | --- | --- | --- |
-|`bill` | struct IBilling.Bill | user bill
+|`bills` | struct IBilling.Bill[] | user bills
 
 #### Returns:
 | Type | Description |
 | --- | --- |
-|`bill` | bytes
-### decodeBill
+|`bills` | bytes
+### decodeBills
 
 > decode bill bytes to user bill
 
 
 #### Declaration
 ```
-function decodeBill(bytes data) external returns (struct IBilling.Bill)
+function decodeBills(bytes data) external returns (struct IBilling.Bill[])
 ```
 
 #### Args:
@@ -48,5 +48,5 @@ function decodeBill(bytes data) external returns (struct IBilling.Bill)
 #### Returns:
 | Type | Description |
 | --- | --- |
-|`user` | bill
+|`user` | bills
 

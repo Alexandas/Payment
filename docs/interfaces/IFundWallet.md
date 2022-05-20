@@ -80,18 +80,15 @@ function recharge(address provider,uint64 nonce,bytes32 account,uint256 amount,b
 
 #### Declaration
 ```
-function withdraw(address provider,uint64 nonce,bytes32 account,address to,uint256 amount,bytes bill,bytes signature) external returns (uint256 fee)
+function withdraw(struct IBilling.Payload payload,address to,uint256 amount,bytes signature) external returns (uint256 fee)
 ```
 
 #### Args:
 | Arg | Type | Description |
 | --- | --- | --- |
-|`provider` | address | provider address
-|`nonce` | uint64 | nonce
-|`account` | bytes32 | user account
+|`payload` | struct IBilling.Payload | bill payload
 |`to` | address | token receiver
 |`amount` | uint256 | token amount
-|`bill` | bytes | bill bytes
 |`signature` | bytes | provider signature
 
 #### Returns:
@@ -105,7 +102,7 @@ function withdraw(address provider,uint64 nonce,bytes32 account,address to,uint2
 
 #### Declaration
 ```
-function spend(address provider,uint64 nonce,bytes32 account,bytes bill,bytes signature, fee) external returns (uint256 fee)
+function spend(address provider,uint64 nonce,bytes32 account,bytes bills,uint256 expiration,bytes signature, fee) external returns (uint256 fee)
 ```
 
 #### Args:
@@ -114,9 +111,10 @@ function spend(address provider,uint64 nonce,bytes32 account,bytes bill,bytes si
 |`provider` | address | provider address
 |`nonce` | uint64 | nonce
 |`account` | bytes32 | user account
-|`bill` | bytes | bill bytes
+|`bills` | bytes | bills bytes
+|`expiration` | uint256 | tx expiration
 |`signature` | bytes | provider signature
-|`fee` |  | bill fee
+|`fee` |  | bills fee
 
 
 ## Events
@@ -165,18 +163,6 @@ function spend(address provider,uint64 nonce,bytes32 account,bytes bill,bytes si
 |`nonce` | uint64 |  | nonce
 |`account` | bytes32 |  | user account
 |`amount` | uint256 |  | token amount
-### Spent
-
-> emit when bill finalized
-
-  
-#### Params:
-| Param | Type | Indexed | Description |
-| --- | --- | :---: | --- |
-|`provider` | address |  | provider address
-|`nonce` | uint64 |  | nonce
-|`account` | bytes32 |  | user account
-|`fee` | uint256 |  | bill fee
 ### Withdrawn
 
 > emit when user withdrawn

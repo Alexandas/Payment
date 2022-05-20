@@ -43,13 +43,6 @@ interface IFundWallet is IBilling {
 	/// @param amount token amount
 	event Recharged(address provider, uint64 nonce, bytes32 account, uint256 amount);
 
-	/// @dev emit when bill finalized
-	/// @param provider provider address
-	/// @param nonce nonce
-	/// @param account user account
-	/// @param fee bill fee
-	event Spent(address provider, uint64 nonce, bytes32 account, uint256 fee);
-
 	/// @dev emit when user withdrawn
 	/// @param provider provider address
 	/// @param nonce nonce

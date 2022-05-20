@@ -6,21 +6,21 @@
 
 
 ## Functions
-### billTypedHash
+### billsTypedHash
 
-> get bill types hash
+> get bills types hash
 
 
 #### Declaration
 ```
-function billTypedHash() external returns (bytes32)
+function billsTypedHash() external returns (bytes32)
 ```
 
 
 #### Returns:
 | Type | Description |
 | --- | --- |
-|`type` | hash for bill
+|`type` | hash for bills
 ### adaptor
 
 > get the resource adaptor
@@ -39,7 +39,7 @@ function adaptor() external returns (contract IResourceAdaptor)
 
 ## Events
 
-### BillTypedHashUpdated
+### BillsTypedHashUpdated
 
 > emit when BillTypedHash updated
 
@@ -59,7 +59,7 @@ function adaptor() external returns (contract IResourceAdaptor)
 |`adaptor` | contract IResourceAdaptor |  | resource adaptor address
 ### Billing
 
-> emit when a bill finalized
+> emit when bills finalized
 
   
 #### Params:
@@ -67,6 +67,6 @@ function adaptor() external returns (contract IResourceAdaptor)
 | --- | --- | :---: | --- |
 |`provider` | address |  | provider address
 |`nonce` | uint64 |  | nonce
-|`account` | bytes32 |  | bill's account
-|`bill` | bytes |  | bill info
+|`account` | bytes32 |  | user account
+|`bills` | bytes |  | bills data
 |`amount` | uint256 |  | fee

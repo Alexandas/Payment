@@ -19,7 +19,7 @@
 
 #### Declaration
 ```
-function initialize(address owner,address pauser,contract IResourceAdaptor adaptor,contract IProviders _providers,contract IERC20Upgradeable _token,string name,string version,string rechargeTypes,string billTypes) external initializer
+function initialize(address owner,address pauser,contract IResourceAdaptor adaptor,contract IProviders _providers,contract IERC20Upgradeable _token,string name,string version,string rechargeTypes,string billsTypes) external initializer
 ```
 
 #### Args:
@@ -33,7 +33,7 @@ function initialize(address owner,address pauser,contract IResourceAdaptor adapt
 |`name` | string | EIP712 domain name
 |`version` | string | EIP712 domain version
 |`rechargeTypes` | string | recharge types
-|`billTypes` | string | bill types
+|`billsTypes` | string | bills types
 
 ### recharge
 
@@ -56,12 +56,12 @@ function recharge(address provider,uint64 nonce,bytes32 account,uint256 amount,b
 
 ### spend
 
-> spend bill for account
+> spend bills for account
 
 
 #### Declaration
 ```
-function spend(address provider,uint64 nonce,bytes32 account,bytes bill,bytes signature, fee) external nonNonce whenNotPaused nonReentrant returns (uint256 fee)
+function spend(address provider,uint64 nonce,bytes32 account,bytes bills,uint256 expiration,bytes signature, fee) external nonNonce whenNotPaused nonReentrant returns (uint256 fee)
 ```
 
 #### Args:
@@ -70,9 +70,10 @@ function spend(address provider,uint64 nonce,bytes32 account,bytes bill,bytes si
 |`provider` | address | provider address
 |`nonce` | uint64 | nonce
 |`account` | bytes32 | user account
-|`bill` | bytes | bill bytes
+|`bills` | bytes | bills bytes
+|`expiration` | uint256 | tx expiration
 |`signature` | bytes | provider signature
-|`fee` |  | bill fee
+|`fee` |  | bills fee
 
 ### withdraw
 
@@ -81,18 +82,15 @@ function spend(address provider,uint64 nonce,bytes32 account,bytes bill,bytes si
 
 #### Declaration
 ```
-function withdraw(address provider,uint64 nonce,bytes32 account,address to,uint256 amount,bytes bill,bytes signature) external nonNonce onlyWalletOwner whenNotPaused nonReentrant returns (uint256 fee)
+function withdraw(struct IBilling.Payload payload,address to,uint256 amount,bytes signature) external nonNonce onlyWalletOwner whenNotPaused nonReentrant returns (uint256 fee)
 ```
 
 #### Args:
 | Arg | Type | Description |
 | --- | --- | --- |
-|`provider` | address | provider address
-|`nonce` | uint64 | nonce
-|`account` | bytes32 | user account
+|`payload` | struct IBilling.Payload | bill payload
 |`to` | address | token receiver
 |`amount` | uint256 | token amount
-|`bill` | bytes | bill bytes
 |`signature` | bytes | provider signature
 
 #### Returns:
@@ -131,20 +129,20 @@ function setRechargeTypedHash(string types) external onlyOwner
 | --- | --- | --- |
 |`types` | string | recharge types
 
-### setBillTypedHash
+### setBillsTypedHash
 
-> update bill typed hash
+> update bills typed hash
 
 
 #### Declaration
 ```
-function setBillTypedHash(string types) external onlyOwner
+function setBillsTypedHash(string types) external onlyOwner
 ```
 
 #### Args:
 | Arg | Type | Description |
 | --- | --- | --- |
-|`types` | string | bill types
+|`types` | string | bills types
 
 ### setToken
 

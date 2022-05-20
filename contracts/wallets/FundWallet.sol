@@ -136,8 +136,6 @@ contract FundWallet is IFundWallet, Billing, OwnerWithdrawable, Pauser, Reentran
 		fee = _spend(Payload(provider, nonce, account, bills, expiration), signature);
 		wallets[provider][account].amount = wallets[provider][account].amount.sub(fee);
 		_updateNonce(provider, account, nonce, Purpose.Spend);
-
-		emit Spent(provider, nonce, account, fee);
 	}
 
 	/// @dev withdraw token for account

@@ -8,7 +8,6 @@
 | Var | Type |
 | --- | --- |
 | controller | contract IIPFSStorageController |
-| defaultExpiration | uint256 |
 | contentSizes | mapping(address => mapping(bytes32 => mapping(string => uint256))) |
 
 ## Functions
@@ -19,7 +18,7 @@
 
 #### Declaration
 ```
-function initialize(address owner,contract IProviders providers,contract IIPFSStorageController controller,uint256 defaultExpiration) external initializer
+function initialize(address owner,contract IProviders providers,contract IIPFSStorageController controller) external initializer
 ```
 
 #### Args:
@@ -28,7 +27,6 @@ function initialize(address owner,contract IProviders providers,contract IIPFSSt
 |`owner` | address | contract owner
 |`providers` | contract IProviders | providers contract address
 |`controller` | contract IIPFSStorageController | ipfs storage controller
-|`defaultExpiration` | uint256 | ipfs content default expiration
 
 ### setController
 
@@ -44,21 +42,6 @@ function setController(contract IIPFSStorageController _controller) external onl
 | Arg | Type | Description |
 | --- | --- | --- |
 |`_controller` | contract IIPFSStorageController | ipfs storage controller
-
-### setDefaultExpiration
-
-> update ipfs content default expiration
-
-
-#### Declaration
-```
-function setDefaultExpiration(uint256 expiration) external onlyOwner
-```
-
-#### Args:
-| Arg | Type | Description |
-| --- | --- | --- |
-|`expiration` | uint256 | ipfs content default expiration
 
 ### insertMult
 
@@ -105,15 +88,6 @@ function removeMult(bytes32[] accounts,string[] contents) external onlyProvider
 | Param | Type | Indexed | Description |
 | --- | --- | :---: | --- |
 |`controller` | contract IIPFSStorageController |  | ipfs storage controller
-### DefaultExpirationUpdated
-
-> emit when default expiration updated
-
-  
-#### Params:
-| Param | Type | Indexed | Description |
-| --- | --- | :---: | --- |
-|`expiration` | uint256 |  | default ipfs content expiration
 ### Insert
 
 > emit when ipfs content inserted
