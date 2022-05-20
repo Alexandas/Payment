@@ -23,9 +23,8 @@ interface ContentTracerInterface extends ethers.utils.Interface {
   functions: {
     "contentSizes(address,bytes32,string)": FunctionFragment;
     "controller()": FunctionFragment;
-    "defaultExpiration()": FunctionFragment;
     "exists(address,bytes32,string)": FunctionFragment;
-    "initialize(address,address,address,uint256)": FunctionFragment;
+    "initialize(address,address,address)": FunctionFragment;
     "insert(bytes32,string,uint256)": FunctionFragment;
     "insertMult(bytes32[],string[],uint256[])": FunctionFragment;
     "owner()": FunctionFragment;
@@ -34,7 +33,6 @@ interface ContentTracerInterface extends ethers.utils.Interface {
     "removeMult(bytes32[],string[])": FunctionFragment;
     "renounceOwnership()": FunctionFragment;
     "setController(address)": FunctionFragment;
-    "setDefaultExpiration(uint256)": FunctionFragment;
     "size(address,bytes32,string)": FunctionFragment;
     "transferOwnership(address)": FunctionFragment;
   };
@@ -48,16 +46,12 @@ interface ContentTracerInterface extends ethers.utils.Interface {
     values?: undefined
   ): string;
   encodeFunctionData(
-    functionFragment: "defaultExpiration",
-    values?: undefined
-  ): string;
-  encodeFunctionData(
     functionFragment: "exists",
     values: [string, BytesLike, string]
   ): string;
   encodeFunctionData(
     functionFragment: "initialize",
-    values: [string, string, string, BigNumberish]
+    values: [string, string, string]
   ): string;
   encodeFunctionData(
     functionFragment: "insert",
@@ -86,10 +80,6 @@ interface ContentTracerInterface extends ethers.utils.Interface {
     values: [string]
   ): string;
   encodeFunctionData(
-    functionFragment: "setDefaultExpiration",
-    values: [BigNumberish]
-  ): string;
-  encodeFunctionData(
     functionFragment: "size",
     values: [string, BytesLike, string]
   ): string;
@@ -103,10 +93,6 @@ interface ContentTracerInterface extends ethers.utils.Interface {
     data: BytesLike
   ): Result;
   decodeFunctionResult(functionFragment: "controller", data: BytesLike): Result;
-  decodeFunctionResult(
-    functionFragment: "defaultExpiration",
-    data: BytesLike
-  ): Result;
   decodeFunctionResult(functionFragment: "exists", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "initialize", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "insert", data: BytesLike): Result;
@@ -123,10 +109,6 @@ interface ContentTracerInterface extends ethers.utils.Interface {
     functionFragment: "setController",
     data: BytesLike
   ): Result;
-  decodeFunctionResult(
-    functionFragment: "setDefaultExpiration",
-    data: BytesLike
-  ): Result;
   decodeFunctionResult(functionFragment: "size", data: BytesLike): Result;
   decodeFunctionResult(
     functionFragment: "transferOwnership",
@@ -135,7 +117,6 @@ interface ContentTracerInterface extends ethers.utils.Interface {
 
   events: {
     "ControllerUpdated(address)": EventFragment;
-    "DefaultExpirationUpdated(uint256)": EventFragment;
     "Insert(address,bytes32,string,uint256,uint256)": EventFragment;
     "OwnershipTransferred(address,address)": EventFragment;
     "ProvidersUpdated(address)": EventFragment;
@@ -143,7 +124,6 @@ interface ContentTracerInterface extends ethers.utils.Interface {
   };
 
   getEvent(nameOrSignatureOrTopic: "ControllerUpdated"): EventFragment;
-  getEvent(nameOrSignatureOrTopic: "DefaultExpirationUpdated"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "Insert"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "OwnershipTransferred"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "ProvidersUpdated"): EventFragment;
@@ -152,10 +132,6 @@ interface ContentTracerInterface extends ethers.utils.Interface {
 
 export type ControllerUpdatedEvent = TypedEvent<
   [string] & { controller: string }
->;
-
-export type DefaultExpirationUpdatedEvent = TypedEvent<
-  [BigNumber] & { expiration: BigNumber }
 >;
 
 export type InsertEvent = TypedEvent<
@@ -237,8 +213,6 @@ export class ContentTracer extends BaseContract {
 
     controller(overrides?: CallOverrides): Promise<[string]>;
 
-    defaultExpiration(overrides?: CallOverrides): Promise<[BigNumber]>;
-
     exists(
       provider: string,
       account: BytesLike,
@@ -250,7 +224,6 @@ export class ContentTracer extends BaseContract {
       owner: string,
       providers: string,
       controller: string,
-      defaultExpiration: BigNumberish,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<ContractTransaction>;
 
@@ -293,11 +266,6 @@ export class ContentTracer extends BaseContract {
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<ContractTransaction>;
 
-    setDefaultExpiration(
-      expiration: BigNumberish,
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<ContractTransaction>;
-
     size(
       provider: string,
       account: BytesLike,
@@ -320,8 +288,6 @@ export class ContentTracer extends BaseContract {
 
   controller(overrides?: CallOverrides): Promise<string>;
 
-  defaultExpiration(overrides?: CallOverrides): Promise<BigNumber>;
-
   exists(
     provider: string,
     account: BytesLike,
@@ -333,7 +299,6 @@ export class ContentTracer extends BaseContract {
     owner: string,
     providers: string,
     controller: string,
-    defaultExpiration: BigNumberish,
     overrides?: Overrides & { from?: string | Promise<string> }
   ): Promise<ContractTransaction>;
 
@@ -376,11 +341,6 @@ export class ContentTracer extends BaseContract {
     overrides?: Overrides & { from?: string | Promise<string> }
   ): Promise<ContractTransaction>;
 
-  setDefaultExpiration(
-    expiration: BigNumberish,
-    overrides?: Overrides & { from?: string | Promise<string> }
-  ): Promise<ContractTransaction>;
-
   size(
     provider: string,
     account: BytesLike,
@@ -403,8 +363,6 @@ export class ContentTracer extends BaseContract {
 
     controller(overrides?: CallOverrides): Promise<string>;
 
-    defaultExpiration(overrides?: CallOverrides): Promise<BigNumber>;
-
     exists(
       provider: string,
       account: BytesLike,
@@ -416,7 +374,6 @@ export class ContentTracer extends BaseContract {
       owner: string,
       providers: string,
       controller: string,
-      defaultExpiration: BigNumberish,
       overrides?: CallOverrides
     ): Promise<void>;
 
@@ -457,11 +414,6 @@ export class ContentTracer extends BaseContract {
       overrides?: CallOverrides
     ): Promise<void>;
 
-    setDefaultExpiration(
-      expiration: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<void>;
-
     size(
       provider: string,
       account: BytesLike,
@@ -483,14 +435,6 @@ export class ContentTracer extends BaseContract {
     ControllerUpdated(
       controller?: null
     ): TypedEventFilter<[string], { controller: string }>;
-
-    "DefaultExpirationUpdated(uint256)"(
-      expiration?: null
-    ): TypedEventFilter<[BigNumber], { expiration: BigNumber }>;
-
-    DefaultExpirationUpdated(
-      expiration?: null
-    ): TypedEventFilter<[BigNumber], { expiration: BigNumber }>;
 
     "Insert(address,bytes32,string,uint256,uint256)"(
       provider?: null,
@@ -579,8 +523,6 @@ export class ContentTracer extends BaseContract {
 
     controller(overrides?: CallOverrides): Promise<BigNumber>;
 
-    defaultExpiration(overrides?: CallOverrides): Promise<BigNumber>;
-
     exists(
       provider: string,
       account: BytesLike,
@@ -592,7 +534,6 @@ export class ContentTracer extends BaseContract {
       owner: string,
       providers: string,
       controller: string,
-      defaultExpiration: BigNumberish,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<BigNumber>;
 
@@ -635,11 +576,6 @@ export class ContentTracer extends BaseContract {
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<BigNumber>;
 
-    setDefaultExpiration(
-      expiration: BigNumberish,
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<BigNumber>;
-
     size(
       provider: string,
       account: BytesLike,
@@ -663,8 +599,6 @@ export class ContentTracer extends BaseContract {
 
     controller(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
-    defaultExpiration(overrides?: CallOverrides): Promise<PopulatedTransaction>;
-
     exists(
       provider: string,
       account: BytesLike,
@@ -676,7 +610,6 @@ export class ContentTracer extends BaseContract {
       owner: string,
       providers: string,
       controller: string,
-      defaultExpiration: BigNumberish,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<PopulatedTransaction>;
 
@@ -716,11 +649,6 @@ export class ContentTracer extends BaseContract {
 
     setController(
       _controller: string,
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<PopulatedTransaction>;
-
-    setDefaultExpiration(
-      expiration: BigNumberish,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<PopulatedTransaction>;
 

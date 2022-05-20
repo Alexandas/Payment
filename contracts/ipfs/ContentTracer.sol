@@ -15,19 +15,12 @@ contract ContentTracer is ProvidersWrapper, OwnableUpgradeable {
 	/// @dev ipfs storage controller
 	IIPFSStorageController public controller;
 
-	/// @dev default ipfs content expiration
-	uint256 public defaultExpiration;
-
 	/// @dev ipfs content content size
 	mapping(address => mapping(bytes32 => mapping(string => uint256))) public contentSizes;
 
 	/// @dev emit when ipfs storage controller updated
 	/// @param controller ipfs storage controller
 	event ControllerUpdated(IIPFSStorageController controller);
-
-	/// @dev emit when default expiration updated
-	/// @param expiration default ipfs content expiration
-	event DefaultExpirationUpdated(uint256 expiration);
 
 	/// @dev emit when ipfs content inserted
 	/// @param provider provider address
@@ -57,17 +50,14 @@ contract ContentTracer is ProvidersWrapper, OwnableUpgradeable {
 	/// @param owner contract owner
 	/// @param providers providers contract address
 	/// @param controller ipfs storage controller
-	/// @param defaultExpiration ipfs content default expiration
 	function initialize(
 		address owner,
 		IProviders providers,
-		IIPFSStorageController controller,
-		uint256 defaultExpiration
+		IIPFSStorageController controller
 	) external initializer {
 		_transferOwnership(owner);
 		__Init_Providers(providers);
 		_setController(controller);
-		_setDefaultExpiration(defaultExpiration);
 	}
 
 	/// @dev update ipfs storage controller
@@ -79,17 +69,6 @@ contract ContentTracer is ProvidersWrapper, OwnableUpgradeable {
 	function _setController(IIPFSStorageController _controller) internal {
 		controller = _controller;
 		emit ControllerUpdated(_controller);
-	}
-
-	/// @dev update ipfs content default expiration
-	/// @param expiration ipfs content default expiration
-	function setDefaultExpiration(uint256 expiration) external onlyOwner {
-		_setDefaultExpiration(expiration);
-	}
-
-	function _setDefaultExpiration(uint256 expiration) internal {
-		defaultExpiration = expiration;
-		emit DefaultExpirationUpdated(expiration);
 	}
 
 	/// @dev insert multiple ipfs content for accounts
@@ -128,10 +107,10 @@ contract ContentTracer is ProvidersWrapper, OwnableUpgradeable {
 		uint256 size
 	) internal nonSize(size) {
 		require(!exists(provider, account, content), 'ContentTracer: content exists');
+		require(!controller.isExpired(account), 'ContentTracer: account expired');
 		contentSizes[provider][account][content] = size;
-		uint256 expiration = controller.isExpired(account) ? defaultExpiration : controller.expiredAt(account);
 
-		emit Insert(provider, account, content, size, expiration);
+		emit Insert(provider, account, content, size, controller.expiredAt(account));
 	}
 
 	/// @dev remove ipfs content
