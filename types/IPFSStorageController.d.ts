@@ -181,6 +181,7 @@ interface IPFSStorageControllerInterface extends ethers.utils.Interface {
   events: {
     "DstChainPaymentUpdated(address)": EventFragment;
     "Expanded(bytes32,uint256,uint256)": EventFragment;
+    "Initialized(uint8)": EventFragment;
     "OwnershipTransferred(address,address)": EventFragment;
     "ResourceAdaptorUpdated(address)": EventFragment;
     "ResourceTypeUpdated(uint8)": EventFragment;
@@ -188,6 +189,7 @@ interface IPFSStorageControllerInterface extends ethers.utils.Interface {
 
   getEvent(nameOrSignatureOrTopic: "DstChainPaymentUpdated"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "Expanded"): EventFragment;
+  getEvent(nameOrSignatureOrTopic: "Initialized"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "OwnershipTransferred"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "ResourceAdaptorUpdated"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "ResourceTypeUpdated"): EventFragment;
@@ -204,6 +206,8 @@ export type ExpandedEvent = TypedEvent<
     expandedExpirationFee: BigNumber;
   }
 >;
+
+export type InitializedEvent = TypedEvent<[number] & { version: number }>;
 
 export type OwnershipTransferredEvent = TypedEvent<
   [string, string] & { previousOwner: string; newOwner: string }
@@ -614,6 +618,14 @@ export class IPFSStorageController extends BaseContract {
         expandedExpirationFee: BigNumber;
       }
     >;
+
+    "Initialized(uint8)"(
+      version?: null
+    ): TypedEventFilter<[number], { version: number }>;
+
+    Initialized(
+      version?: null
+    ): TypedEventFilter<[number], { version: number }>;
 
     "OwnershipTransferred(address,address)"(
       previousOwner?: string | null,

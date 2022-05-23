@@ -65,13 +65,17 @@ interface MessageReceiverWrapperInterface extends ethers.utils.Interface {
   ): Result;
 
   events: {
+    "Initialized(uint8)": EventFragment;
     "MessageReceiverUpdated(address)": EventFragment;
     "OwnershipTransferred(address,address)": EventFragment;
   };
 
+  getEvent(nameOrSignatureOrTopic: "Initialized"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "MessageReceiverUpdated"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "OwnershipTransferred"): EventFragment;
 }
+
+export type InitializedEvent = TypedEvent<[number] & { version: number }>;
 
 export type MessageReceiverUpdatedEvent = TypedEvent<
   [string] & { messageReceiver: string }
@@ -181,6 +185,14 @@ export class MessageReceiverWrapper extends BaseContract {
   };
 
   filters: {
+    "Initialized(uint8)"(
+      version?: null
+    ): TypedEventFilter<[number], { version: number }>;
+
+    Initialized(
+      version?: null
+    ): TypedEventFilter<[number], { version: number }>;
+
     "MessageReceiverUpdated(address)"(
       messageReceiver?: null
     ): TypedEventFilter<[string], { messageReceiver: string }>;

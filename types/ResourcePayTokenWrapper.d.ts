@@ -64,11 +64,15 @@ interface ResourcePayTokenWrapperInterface extends ethers.utils.Interface {
   ): Result;
 
   events: {
+    "Initialized(uint8)": EventFragment;
     "TokenUpdated(address)": EventFragment;
   };
 
+  getEvent(nameOrSignatureOrTopic: "Initialized"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "TokenUpdated"): EventFragment;
 }
+
+export type InitializedEvent = TypedEvent<[number] & { version: number }>;
 
 export type TokenUpdatedEvent = TypedEvent<[string] & { token: string }>;
 
@@ -168,6 +172,14 @@ export class ResourcePayTokenWrapper extends BaseContract {
   };
 
   filters: {
+    "Initialized(uint8)"(
+      version?: null
+    ): TypedEventFilter<[number], { version: number }>;
+
+    Initialized(
+      version?: null
+    ): TypedEventFilter<[number], { version: number }>;
+
     "TokenUpdated(address)"(
       token?: null
     ): TypedEventFilter<[string], { token: string }>;

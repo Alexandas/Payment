@@ -28,11 +28,15 @@ interface ProvidersWrapperInterface extends ethers.utils.Interface {
   decodeFunctionResult(functionFragment: "providers", data: BytesLike): Result;
 
   events: {
+    "Initialized(uint8)": EventFragment;
     "ProvidersUpdated(address)": EventFragment;
   };
 
+  getEvent(nameOrSignatureOrTopic: "Initialized"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "ProvidersUpdated"): EventFragment;
 }
+
+export type InitializedEvent = TypedEvent<[number] & { version: number }>;
 
 export type ProvidersUpdatedEvent = TypedEvent<
   [string] & { providers: string }
@@ -92,6 +96,14 @@ export class ProvidersWrapper extends BaseContract {
   };
 
   filters: {
+    "Initialized(uint8)"(
+      version?: null
+    ): TypedEventFilter<[number], { version: number }>;
+
+    Initialized(
+      version?: null
+    ): TypedEventFilter<[number], { version: number }>;
+
     "ProvidersUpdated(address)"(
       providers?: null
     ): TypedEventFilter<[string], { providers: string }>;

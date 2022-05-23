@@ -149,6 +149,7 @@ interface MessageReceiverInterface extends ethers.utils.Interface {
   events: {
     "DstChainPaymentUpdated(address)": EventFragment;
     "ExecutorUpdated(address)": EventFragment;
+    "Initialized(uint8)": EventFragment;
     "MessageBusUpdated(address)": EventFragment;
     "MessageWithTransferExecuted(address,address,uint256,uint64,bytes,address)": EventFragment;
     "MessageWithTransferFailed(address,address,uint256,uint64,bytes,address,bytes)": EventFragment;
@@ -160,6 +161,7 @@ interface MessageReceiverInterface extends ethers.utils.Interface {
 
   getEvent(nameOrSignatureOrTopic: "DstChainPaymentUpdated"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "ExecutorUpdated"): EventFragment;
+  getEvent(nameOrSignatureOrTopic: "Initialized"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "MessageBusUpdated"): EventFragment;
   getEvent(
     nameOrSignatureOrTopic: "MessageWithTransferExecuted"
@@ -178,6 +180,8 @@ export type DstChainPaymentUpdatedEvent = TypedEvent<
 >;
 
 export type ExecutorUpdatedEvent = TypedEvent<[string] & { executor: string }>;
+
+export type InitializedEvent = TypedEvent<[number] & { version: number }>;
 
 export type MessageBusUpdatedEvent = TypedEvent<
   [string] & { messageBus: string }
@@ -536,6 +540,14 @@ export class MessageReceiver extends BaseContract {
     ExecutorUpdated(
       executor?: null
     ): TypedEventFilter<[string], { executor: string }>;
+
+    "Initialized(uint8)"(
+      version?: null
+    ): TypedEventFilter<[number], { version: number }>;
+
+    Initialized(
+      version?: null
+    ): TypedEventFilter<[number], { version: number }>;
 
     "MessageBusUpdated(address)"(
       messageBus?: null

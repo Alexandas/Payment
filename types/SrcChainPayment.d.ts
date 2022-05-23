@@ -211,6 +211,7 @@ interface SrcChainPaymentInterface extends ethers.utils.Interface {
   decodeFunctionResult(functionFragment: "unpause", data: BytesLike): Result;
 
   events: {
+    "Initialized(uint8)": EventFragment;
     "MessageSenderUpdated(address)": EventFragment;
     "NativeWithdrawal(address,uint256)": EventFragment;
     "OwnershipTransferred(address,address)": EventFragment;
@@ -223,6 +224,7 @@ interface SrcChainPaymentInterface extends ethers.utils.Interface {
     "Withdrawal(address,address,uint256)": EventFragment;
   };
 
+  getEvent(nameOrSignatureOrTopic: "Initialized"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "MessageSenderUpdated"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "NativeWithdrawal"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "OwnershipTransferred"): EventFragment;
@@ -234,6 +236,8 @@ interface SrcChainPaymentInterface extends ethers.utils.Interface {
   getEvent(nameOrSignatureOrTopic: "Unpaused"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "Withdrawal"): EventFragment;
 }
+
+export type InitializedEvent = TypedEvent<[number] & { version: number }>;
 
 export type MessageSenderUpdatedEvent = TypedEvent<
   [string] & { messageSender: string }
@@ -665,6 +669,14 @@ export class SrcChainPayment extends BaseContract {
   };
 
   filters: {
+    "Initialized(uint8)"(
+      version?: null
+    ): TypedEventFilter<[number], { version: number }>;
+
+    Initialized(
+      version?: null
+    ): TypedEventFilter<[number], { version: number }>;
+
     "MessageSenderUpdated(address)"(
       messageSender?: null
     ): TypedEventFilter<[string], { messageSender: string }>;

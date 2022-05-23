@@ -173,6 +173,7 @@ interface MessageSenderInterface extends ethers.utils.Interface {
 
   events: {
     "DstChainIdUpdated(uint64)": EventFragment;
+    "Initialized(uint8)": EventFragment;
     "MessageBusUpdated(address)": EventFragment;
     "MessageWithTransferRefund(address,uint256,bytes,address)": EventFragment;
     "NativeWithdrawal(address,uint256)": EventFragment;
@@ -183,6 +184,7 @@ interface MessageSenderInterface extends ethers.utils.Interface {
   };
 
   getEvent(nameOrSignatureOrTopic: "DstChainIdUpdated"): EventFragment;
+  getEvent(nameOrSignatureOrTopic: "Initialized"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "MessageBusUpdated"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "MessageWithTransferRefund"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "NativeWithdrawal"): EventFragment;
@@ -195,6 +197,8 @@ interface MessageSenderInterface extends ethers.utils.Interface {
 export type DstChainIdUpdatedEvent = TypedEvent<
   [BigNumber] & { dstChainId: BigNumber }
 >;
+
+export type InitializedEvent = TypedEvent<[number] & { version: number }>;
 
 export type MessageBusUpdatedEvent = TypedEvent<
   [string] & { messageBus: string }
@@ -553,6 +557,14 @@ export class MessageSender extends BaseContract {
     DstChainIdUpdated(
       dstChainId?: null
     ): TypedEventFilter<[BigNumber], { dstChainId: BigNumber }>;
+
+    "Initialized(uint8)"(
+      version?: null
+    ): TypedEventFilter<[number], { version: number }>;
+
+    Initialized(
+      version?: null
+    ): TypedEventFilter<[number], { version: number }>;
 
     "MessageBusUpdated(address)"(
       messageBus?: null

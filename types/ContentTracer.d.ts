@@ -114,6 +114,7 @@ interface ContentTracerInterface extends ethers.utils.Interface {
 
   events: {
     "ControllerUpdated(address)": EventFragment;
+    "Initialized(uint8)": EventFragment;
     "Insert(address,bytes32,string,uint256,uint256,uint256)": EventFragment;
     "OwnershipTransferred(address,address)": EventFragment;
     "ProvidersUpdated(address)": EventFragment;
@@ -121,6 +122,7 @@ interface ContentTracerInterface extends ethers.utils.Interface {
   };
 
   getEvent(nameOrSignatureOrTopic: "ControllerUpdated"): EventFragment;
+  getEvent(nameOrSignatureOrTopic: "Initialized"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "Insert"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "OwnershipTransferred"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "ProvidersUpdated"): EventFragment;
@@ -130,6 +132,8 @@ interface ContentTracerInterface extends ethers.utils.Interface {
 export type ControllerUpdatedEvent = TypedEvent<
   [string] & { controller: string }
 >;
+
+export type InitializedEvent = TypedEvent<[number] & { version: number }>;
 
 export type InsertEvent = TypedEvent<
   [string, string, string, BigNumber, BigNumber, BigNumber] & {
@@ -441,6 +445,14 @@ export class ContentTracer extends BaseContract {
     ControllerUpdated(
       controller?: null
     ): TypedEventFilter<[string], { controller: string }>;
+
+    "Initialized(uint8)"(
+      version?: null
+    ): TypedEventFilter<[number], { version: number }>;
+
+    Initialized(
+      version?: null
+    ): TypedEventFilter<[number], { version: number }>;
 
     "Insert(address,bytes32,string,uint256,uint256,uint256)"(
       provider?: null,

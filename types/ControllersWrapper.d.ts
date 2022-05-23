@@ -123,6 +123,7 @@ interface ControllersWrapperInterface extends ethers.utils.Interface {
     "BandwidthControllerUpdated(address)": EventFragment;
     "BuildingTimeControllerUpdated(address)": EventFragment;
     "IPFSStorageControllerUpdated(address)": EventFragment;
+    "Initialized(uint8)": EventFragment;
     "OwnershipTransferred(address,address)": EventFragment;
   };
 
@@ -134,6 +135,7 @@ interface ControllersWrapperInterface extends ethers.utils.Interface {
   getEvent(
     nameOrSignatureOrTopic: "IPFSStorageControllerUpdated"
   ): EventFragment;
+  getEvent(nameOrSignatureOrTopic: "Initialized"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "OwnershipTransferred"): EventFragment;
 }
 
@@ -152,6 +154,8 @@ export type BuildingTimeControllerUpdatedEvent = TypedEvent<
 export type IPFSStorageControllerUpdatedEvent = TypedEvent<
   [string] & { _ipfsStorageController: string }
 >;
+
+export type InitializedEvent = TypedEvent<[number] & { version: number }>;
 
 export type OwnershipTransferredEvent = TypedEvent<
   [string, string] & { previousOwner: string; newOwner: string }
@@ -351,6 +355,14 @@ export class ControllersWrapper extends BaseContract {
     IPFSStorageControllerUpdated(
       _ipfsStorageController?: null
     ): TypedEventFilter<[string], { _ipfsStorageController: string }>;
+
+    "Initialized(uint8)"(
+      version?: null
+    ): TypedEventFilter<[number], { version: number }>;
+
+    Initialized(
+      version?: null
+    ): TypedEventFilter<[number], { version: number }>;
 
     "OwnershipTransferred(address,address)"(
       previousOwner?: string | null,

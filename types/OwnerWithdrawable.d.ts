@@ -65,15 +65,19 @@ interface OwnerWithdrawableInterface extends ethers.utils.Interface {
   ): Result;
 
   events: {
+    "Initialized(uint8)": EventFragment;
     "NativeWithdrawal(address,uint256)": EventFragment;
     "OwnershipTransferred(address,address)": EventFragment;
     "Withdrawal(address,address,uint256)": EventFragment;
   };
 
+  getEvent(nameOrSignatureOrTopic: "Initialized"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "NativeWithdrawal"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "OwnershipTransferred"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "Withdrawal"): EventFragment;
 }
+
+export type InitializedEvent = TypedEvent<[number] & { version: number }>;
 
 export type NativeWithdrawalEvent = TypedEvent<
   [string, BigNumber] & { to: string; value: BigNumber }
@@ -205,6 +209,14 @@ export class OwnerWithdrawable extends BaseContract {
   };
 
   filters: {
+    "Initialized(uint8)"(
+      version?: null
+    ): TypedEventFilter<[number], { version: number }>;
+
+    Initialized(
+      version?: null
+    ): TypedEventFilter<[number], { version: number }>;
+
     "NativeWithdrawal(address,uint256)"(
       to?: null,
       value?: null

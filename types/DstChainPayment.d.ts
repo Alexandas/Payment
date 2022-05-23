@@ -295,6 +295,7 @@ interface DstChainPaymentInterface extends ethers.utils.Interface {
     "BandwidthControllerUpdated(address)": EventFragment;
     "BuildingTimeControllerUpdated(address)": EventFragment;
     "IPFSStorageControllerUpdated(address)": EventFragment;
+    "Initialized(uint8)": EventFragment;
     "MessageReceiverUpdated(address)": EventFragment;
     "NativeWithdrawal(address,uint256)": EventFragment;
     "OwnershipTransferred(address,address)": EventFragment;
@@ -316,6 +317,7 @@ interface DstChainPaymentInterface extends ethers.utils.Interface {
   getEvent(
     nameOrSignatureOrTopic: "IPFSStorageControllerUpdated"
   ): EventFragment;
+  getEvent(nameOrSignatureOrTopic: "Initialized"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "MessageReceiverUpdated"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "NativeWithdrawal"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "OwnershipTransferred"): EventFragment;
@@ -344,6 +346,8 @@ export type BuildingTimeControllerUpdatedEvent = TypedEvent<
 export type IPFSStorageControllerUpdatedEvent = TypedEvent<
   [string] & { _ipfsStorageController: string }
 >;
+
+export type InitializedEvent = TypedEvent<[number] & { version: number }>;
 
 export type MessageReceiverUpdatedEvent = TypedEvent<
   [string] & { messageReceiver: string }
@@ -991,6 +995,14 @@ export class DstChainPayment extends BaseContract {
     IPFSStorageControllerUpdated(
       _ipfsStorageController?: null
     ): TypedEventFilter<[string], { _ipfsStorageController: string }>;
+
+    "Initialized(uint8)"(
+      version?: null
+    ): TypedEventFilter<[number], { version: number }>;
+
+    Initialized(
+      version?: null
+    ): TypedEventFilter<[number], { version: number }>;
 
     "MessageReceiverUpdated(address)"(
       messageReceiver?: null

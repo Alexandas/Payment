@@ -125,6 +125,7 @@ interface BillingInterface extends ethers.utils.Interface {
   events: {
     "Billing(address,uint64,bytes32,bytes,uint256)": EventFragment;
     "BillsTypedHashUpdated(bytes32)": EventFragment;
+    "Initialized(uint8)": EventFragment;
     "ProvidersUpdated(address)": EventFragment;
     "ResourceAdaptorUpdated(address)": EventFragment;
     "TokenUpdated(address)": EventFragment;
@@ -132,6 +133,7 @@ interface BillingInterface extends ethers.utils.Interface {
 
   getEvent(nameOrSignatureOrTopic: "Billing"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "BillsTypedHashUpdated"): EventFragment;
+  getEvent(nameOrSignatureOrTopic: "Initialized"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "ProvidersUpdated"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "ResourceAdaptorUpdated"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "TokenUpdated"): EventFragment;
@@ -150,6 +152,8 @@ export type BillingEvent = TypedEvent<
 export type BillsTypedHashUpdatedEvent = TypedEvent<
   [string] & { hash: string }
 >;
+
+export type InitializedEvent = TypedEvent<[number] & { version: number }>;
 
 export type ProvidersUpdatedEvent = TypedEvent<
   [string] & { providers: string }
@@ -462,6 +466,14 @@ export class Billing extends BaseContract {
     BillsTypedHashUpdated(
       hash?: null
     ): TypedEventFilter<[string], { hash: string }>;
+
+    "Initialized(uint8)"(
+      version?: null
+    ): TypedEventFilter<[number], { version: number }>;
+
+    Initialized(
+      version?: null
+    ): TypedEventFilter<[number], { version: number }>;
 
     "ProvidersUpdated(address)"(
       providers?: null

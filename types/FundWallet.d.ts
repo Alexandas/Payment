@@ -322,6 +322,7 @@ interface FundWalletInterface extends ethers.utils.Interface {
   events: {
     "Billing(address,uint64,bytes32,bytes,uint256)": EventFragment;
     "BillsTypedHashUpdated(bytes32)": EventFragment;
+    "Initialized(uint8)": EventFragment;
     "NativeWithdrawal(address,uint256)": EventFragment;
     "NonceUpdated(address,bytes32,uint64,uint8)": EventFragment;
     "OwnershipTransferred(address,address)": EventFragment;
@@ -341,6 +342,7 @@ interface FundWalletInterface extends ethers.utils.Interface {
 
   getEvent(nameOrSignatureOrTopic: "Billing"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "BillsTypedHashUpdated"): EventFragment;
+  getEvent(nameOrSignatureOrTopic: "Initialized"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "NativeWithdrawal"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "NonceUpdated"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "OwnershipTransferred"): EventFragment;
@@ -371,6 +373,8 @@ export type BillingEvent = TypedEvent<
 export type BillsTypedHashUpdatedEvent = TypedEvent<
   [string] & { hash: string }
 >;
+
+export type InitializedEvent = TypedEvent<[number] & { version: number }>;
 
 export type NativeWithdrawalEvent = TypedEvent<
   [string, BigNumber] & { to: string; value: BigNumber }
@@ -1176,6 +1180,14 @@ export class FundWallet extends BaseContract {
     BillsTypedHashUpdated(
       hash?: null
     ): TypedEventFilter<[string], { hash: string }>;
+
+    "Initialized(uint8)"(
+      version?: null
+    ): TypedEventFilter<[number], { version: number }>;
+
+    Initialized(
+      version?: null
+    ): TypedEventFilter<[number], { version: number }>;
 
     "NativeWithdrawal(address,uint256)"(
       to?: null,

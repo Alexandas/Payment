@@ -81,16 +81,20 @@ interface ProvidersInterface extends ethers.utils.Interface {
 
   events: {
     "AddProvider(address)": EventFragment;
+    "Initialized(uint8)": EventFragment;
     "OwnershipTransferred(address,address)": EventFragment;
     "RemoveProvider(address)": EventFragment;
   };
 
   getEvent(nameOrSignatureOrTopic: "AddProvider"): EventFragment;
+  getEvent(nameOrSignatureOrTopic: "Initialized"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "OwnershipTransferred"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "RemoveProvider"): EventFragment;
 }
 
 export type AddProviderEvent = TypedEvent<[string] & { provider: string }>;
+
+export type InitializedEvent = TypedEvent<[number] & { version: number }>;
 
 export type OwnershipTransferredEvent = TypedEvent<
   [string, string] & { previousOwner: string; newOwner: string }
@@ -253,6 +257,14 @@ export class Providers extends BaseContract {
     AddProvider(
       provider?: null
     ): TypedEventFilter<[string], { provider: string }>;
+
+    "Initialized(uint8)"(
+      version?: null
+    ): TypedEventFilter<[number], { version: number }>;
+
+    Initialized(
+      version?: null
+    ): TypedEventFilter<[number], { version: number }>;
 
     "OwnershipTransferred(address,address)"(
       previousOwner?: string | null,
