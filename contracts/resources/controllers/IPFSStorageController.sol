@@ -57,7 +57,7 @@ contract IPFSStorageController is IIPFSStorageController, DstChainPaymentWrapper
 	/// @param account user account
 	/// @return whether ipfs storage is expired for the account
 	function isExpired(bytes32 account) public view override returns (bool) {
-		return block.timestamp > startTime(account).add(expiration(account));
+		return block.timestamp > expiredAt(account);
 	}
 
 	/// @dev return ipfs storage start time for the account

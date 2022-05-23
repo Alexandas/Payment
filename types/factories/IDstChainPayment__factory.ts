@@ -15,12 +15,6 @@ const _abi = [
     inputs: [
       {
         indexed: false,
-        internalType: "address",
-        name: "payer",
-        type: "address",
-      },
-      {
-        indexed: false,
         internalType: "contract IERC20Upgradeable",
         name: "token",
         type: "address",
@@ -141,13 +135,7 @@ const _abi = [
       },
     ],
     name: "payFromSourceChain",
-    outputs: [
-      {
-        internalType: "uint256",
-        name: "value",
-        type: "uint256",
-      },
-    ],
+    outputs: [],
     stateMutability: "nonpayable",
     type: "function",
   },

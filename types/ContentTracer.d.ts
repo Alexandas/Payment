@@ -21,12 +21,12 @@ import type { TypedEventFilter, TypedEvent, TypedListener } from "./common";
 
 interface ContentTracerInterface extends ethers.utils.Interface {
   functions: {
-    "contentSizes(address,bytes32,string)": FunctionFragment;
     "controller()": FunctionFragment;
     "exists(address,bytes32,string)": FunctionFragment;
     "initialize(address,address,address)": FunctionFragment;
-    "insert(bytes32,string,uint256)": FunctionFragment;
-    "insertMult(bytes32[],string[],uint256[])": FunctionFragment;
+    "insert(bytes32,string,uint256,uint256)": FunctionFragment;
+    "insertMult(bytes32[],string[],uint256[],uint256[])": FunctionFragment;
+    "metas(address,bytes32,string)": FunctionFragment;
     "owner()": FunctionFragment;
     "providers()": FunctionFragment;
     "remove(bytes32,string)": FunctionFragment;
@@ -37,10 +37,6 @@ interface ContentTracerInterface extends ethers.utils.Interface {
     "transferOwnership(address)": FunctionFragment;
   };
 
-  encodeFunctionData(
-    functionFragment: "contentSizes",
-    values: [string, BytesLike, string]
-  ): string;
   encodeFunctionData(
     functionFragment: "controller",
     values?: undefined
@@ -55,11 +51,15 @@ interface ContentTracerInterface extends ethers.utils.Interface {
   ): string;
   encodeFunctionData(
     functionFragment: "insert",
-    values: [BytesLike, string, BigNumberish]
+    values: [BytesLike, string, BigNumberish, BigNumberish]
   ): string;
   encodeFunctionData(
     functionFragment: "insertMult",
-    values: [BytesLike[], string[], BigNumberish[]]
+    values: [BytesLike[], string[], BigNumberish[], BigNumberish[]]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "metas",
+    values: [string, BytesLike, string]
   ): string;
   encodeFunctionData(functionFragment: "owner", values?: undefined): string;
   encodeFunctionData(functionFragment: "providers", values?: undefined): string;
@@ -88,15 +88,12 @@ interface ContentTracerInterface extends ethers.utils.Interface {
     values: [string]
   ): string;
 
-  decodeFunctionResult(
-    functionFragment: "contentSizes",
-    data: BytesLike
-  ): Result;
   decodeFunctionResult(functionFragment: "controller", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "exists", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "initialize", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "insert", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "insertMult", data: BytesLike): Result;
+  decodeFunctionResult(functionFragment: "metas", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "owner", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "providers", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "remove", data: BytesLike): Result;
@@ -117,10 +114,10 @@ interface ContentTracerInterface extends ethers.utils.Interface {
 
   events: {
     "ControllerUpdated(address)": EventFragment;
-    "Insert(address,bytes32,string,uint256,uint256)": EventFragment;
+    "Insert(address,bytes32,string,uint256,uint256,uint256)": EventFragment;
     "OwnershipTransferred(address,address)": EventFragment;
     "ProvidersUpdated(address)": EventFragment;
-    "Remove(address,bytes32,string)": EventFragment;
+    "Remove(address,bytes32,string,uint256,uint256)": EventFragment;
   };
 
   getEvent(nameOrSignatureOrTopic: "ControllerUpdated"): EventFragment;
@@ -135,11 +132,12 @@ export type ControllerUpdatedEvent = TypedEvent<
 >;
 
 export type InsertEvent = TypedEvent<
-  [string, string, string, BigNumber, BigNumber] & {
+  [string, string, string, BigNumber, BigNumber, BigNumber] & {
     provider: string;
     account: string;
     content: string;
     size: BigNumber;
+    count: BigNumber;
     expiration: BigNumber;
   }
 >;
@@ -153,10 +151,12 @@ export type ProvidersUpdatedEvent = TypedEvent<
 >;
 
 export type RemoveEvent = TypedEvent<
-  [string, string, string] & {
+  [string, string, string, BigNumber, BigNumber] & {
     provider: string;
     account: string;
     content: string;
+    size: BigNumber;
+    count: BigNumber;
   }
 >;
 
@@ -204,13 +204,6 @@ export class ContentTracer extends BaseContract {
   interface: ContentTracerInterface;
 
   functions: {
-    contentSizes(
-      arg0: string,
-      arg1: BytesLike,
-      arg2: string,
-      overrides?: CallOverrides
-    ): Promise<[BigNumber]>;
-
     controller(overrides?: CallOverrides): Promise<[string]>;
 
     exists(
@@ -231,6 +224,7 @@ export class ContentTracer extends BaseContract {
       account: BytesLike,
       content: string,
       size: BigNumberish,
+      count: BigNumberish,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<ContractTransaction>;
 
@@ -238,8 +232,16 @@ export class ContentTracer extends BaseContract {
       accounts: BytesLike[],
       contents: string[],
       sizes: BigNumberish[],
+      counts: BigNumberish[],
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<ContractTransaction>;
+
+    metas(
+      arg0: string,
+      arg1: BytesLike,
+      arg2: string,
+      overrides?: CallOverrides
+    ): Promise<[BigNumber, BigNumber] & { size: BigNumber; count: BigNumber }>;
 
     owner(overrides?: CallOverrides): Promise<[string]>;
 
@@ -279,13 +281,6 @@ export class ContentTracer extends BaseContract {
     ): Promise<ContractTransaction>;
   };
 
-  contentSizes(
-    arg0: string,
-    arg1: BytesLike,
-    arg2: string,
-    overrides?: CallOverrides
-  ): Promise<BigNumber>;
-
   controller(overrides?: CallOverrides): Promise<string>;
 
   exists(
@@ -306,6 +301,7 @@ export class ContentTracer extends BaseContract {
     account: BytesLike,
     content: string,
     size: BigNumberish,
+    count: BigNumberish,
     overrides?: Overrides & { from?: string | Promise<string> }
   ): Promise<ContractTransaction>;
 
@@ -313,8 +309,16 @@ export class ContentTracer extends BaseContract {
     accounts: BytesLike[],
     contents: string[],
     sizes: BigNumberish[],
+    counts: BigNumberish[],
     overrides?: Overrides & { from?: string | Promise<string> }
   ): Promise<ContractTransaction>;
+
+  metas(
+    arg0: string,
+    arg1: BytesLike,
+    arg2: string,
+    overrides?: CallOverrides
+  ): Promise<[BigNumber, BigNumber] & { size: BigNumber; count: BigNumber }>;
 
   owner(overrides?: CallOverrides): Promise<string>;
 
@@ -354,13 +358,6 @@ export class ContentTracer extends BaseContract {
   ): Promise<ContractTransaction>;
 
   callStatic: {
-    contentSizes(
-      arg0: string,
-      arg1: BytesLike,
-      arg2: string,
-      overrides?: CallOverrides
-    ): Promise<BigNumber>;
-
     controller(overrides?: CallOverrides): Promise<string>;
 
     exists(
@@ -381,6 +378,7 @@ export class ContentTracer extends BaseContract {
       account: BytesLike,
       content: string,
       size: BigNumberish,
+      count: BigNumberish,
       overrides?: CallOverrides
     ): Promise<void>;
 
@@ -388,8 +386,16 @@ export class ContentTracer extends BaseContract {
       accounts: BytesLike[],
       contents: string[],
       sizes: BigNumberish[],
+      counts: BigNumberish[],
       overrides?: CallOverrides
     ): Promise<void>;
+
+    metas(
+      arg0: string,
+      arg1: BytesLike,
+      arg2: string,
+      overrides?: CallOverrides
+    ): Promise<[BigNumber, BigNumber] & { size: BigNumber; count: BigNumber }>;
 
     owner(overrides?: CallOverrides): Promise<string>;
 
@@ -436,19 +442,21 @@ export class ContentTracer extends BaseContract {
       controller?: null
     ): TypedEventFilter<[string], { controller: string }>;
 
-    "Insert(address,bytes32,string,uint256,uint256)"(
+    "Insert(address,bytes32,string,uint256,uint256,uint256)"(
       provider?: null,
       account?: null,
       content?: null,
       size?: null,
+      count?: null,
       expiration?: null
     ): TypedEventFilter<
-      [string, string, string, BigNumber, BigNumber],
+      [string, string, string, BigNumber, BigNumber, BigNumber],
       {
         provider: string;
         account: string;
         content: string;
         size: BigNumber;
+        count: BigNumber;
         expiration: BigNumber;
       }
     >;
@@ -458,14 +466,16 @@ export class ContentTracer extends BaseContract {
       account?: null,
       content?: null,
       size?: null,
+      count?: null,
       expiration?: null
     ): TypedEventFilter<
-      [string, string, string, BigNumber, BigNumber],
+      [string, string, string, BigNumber, BigNumber, BigNumber],
       {
         provider: string;
         account: string;
         content: string;
         size: BigNumber;
+        count: BigNumber;
         expiration: BigNumber;
       }
     >;
@@ -494,33 +504,42 @@ export class ContentTracer extends BaseContract {
       providers?: null
     ): TypedEventFilter<[string], { providers: string }>;
 
-    "Remove(address,bytes32,string)"(
+    "Remove(address,bytes32,string,uint256,uint256)"(
       provider?: null,
       account?: null,
-      content?: null
+      content?: null,
+      size?: null,
+      count?: null
     ): TypedEventFilter<
-      [string, string, string],
-      { provider: string; account: string; content: string }
+      [string, string, string, BigNumber, BigNumber],
+      {
+        provider: string;
+        account: string;
+        content: string;
+        size: BigNumber;
+        count: BigNumber;
+      }
     >;
 
     Remove(
       provider?: null,
       account?: null,
-      content?: null
+      content?: null,
+      size?: null,
+      count?: null
     ): TypedEventFilter<
-      [string, string, string],
-      { provider: string; account: string; content: string }
+      [string, string, string, BigNumber, BigNumber],
+      {
+        provider: string;
+        account: string;
+        content: string;
+        size: BigNumber;
+        count: BigNumber;
+      }
     >;
   };
 
   estimateGas: {
-    contentSizes(
-      arg0: string,
-      arg1: BytesLike,
-      arg2: string,
-      overrides?: CallOverrides
-    ): Promise<BigNumber>;
-
     controller(overrides?: CallOverrides): Promise<BigNumber>;
 
     exists(
@@ -541,6 +560,7 @@ export class ContentTracer extends BaseContract {
       account: BytesLike,
       content: string,
       size: BigNumberish,
+      count: BigNumberish,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<BigNumber>;
 
@@ -548,7 +568,15 @@ export class ContentTracer extends BaseContract {
       accounts: BytesLike[],
       contents: string[],
       sizes: BigNumberish[],
+      counts: BigNumberish[],
       overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<BigNumber>;
+
+    metas(
+      arg0: string,
+      arg1: BytesLike,
+      arg2: string,
+      overrides?: CallOverrides
     ): Promise<BigNumber>;
 
     owner(overrides?: CallOverrides): Promise<BigNumber>;
@@ -590,13 +618,6 @@ export class ContentTracer extends BaseContract {
   };
 
   populateTransaction: {
-    contentSizes(
-      arg0: string,
-      arg1: BytesLike,
-      arg2: string,
-      overrides?: CallOverrides
-    ): Promise<PopulatedTransaction>;
-
     controller(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
     exists(
@@ -617,6 +638,7 @@ export class ContentTracer extends BaseContract {
       account: BytesLike,
       content: string,
       size: BigNumberish,
+      count: BigNumberish,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<PopulatedTransaction>;
 
@@ -624,7 +646,15 @@ export class ContentTracer extends BaseContract {
       accounts: BytesLike[],
       contents: string[],
       sizes: BigNumberish[],
+      counts: BigNumberish[],
       overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<PopulatedTransaction>;
+
+    metas(
+      arg0: string,
+      arg1: BytesLike,
+      arg2: string,
+      overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
     owner(overrides?: CallOverrides): Promise<PopulatedTransaction>;

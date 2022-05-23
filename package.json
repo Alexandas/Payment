@@ -2,6 +2,8 @@
 	"name": "4everland-contracts",
 	"version": "0.1.0",
 	"description": "4everland payment and ipfs content tracer contracts",
+	"main": "./types/index.js",
+	"types": "./types/index.ts",
 	"engines": {
 		"node": ">= 12.18.0"
 	},

@@ -54,20 +54,19 @@ contract DstChainPayment is
 	/// @param _token token address
 	/// @param dstAmount token amount
 	/// @param message payment payload message bytes
-	/// @return value payment value
 	function payFromSourceChain(
 		IERC20Upgradeable _token,
 		uint256 dstAmount,
 		bytes calldata message
-	) external override onlyMessageReceiver whenNotPaused nonReentrant returns (uint256 value) {
+	) external override onlyMessageReceiver whenNotPaused nonReentrant {
 		require(token == _token, 'DstChainPayment: invalid token');
 		(address provider, uint64 nonce, bytes32 account, ResourceData.Payload[] memory payloads) = decodeSourceChainMessage(message);
-		uint256 amount = matchTokenToResource(dstAmount);
-		PaymentPayload memory payload = PaymentPayload(provider, nonce, account, _convertSourceChainPayloads(amount, payloads));
+		uint256 value = matchTokenToResource(dstAmount);
+		PaymentPayload memory payload = PaymentPayload(provider, nonce, account, _convertSourceChainPayloads(value, payloads));
 		_processPayloads(payload.account, payload.payloads, false);
 		_pay(payload.provider, dstAmount);
 
-		emit Paid(msg.sender, token, payload);
+		emit Paid(token, payload);
 	}
 
 	/// @dev pay on dst chain
@@ -78,7 +77,7 @@ contract DstChainPayment is
 		value = matchResourceToToken(value);
 		_pay(payload.provider, value);
 
-		emit Paid(msg.sender, token, payload);
+		emit Paid(token, payload);
 	}
 
 	function _pay(address provider, uint256 amount) internal returns (uint256 value) {
@@ -111,7 +110,7 @@ contract DstChainPayment is
 			}
 			if (withValue) {
 				for (uint256 j = 0; j < payload.values.length; j++) {
-					value = value.add(payload.values[0]);
+					value = value.add(payload.values[j]);
 				}
 			}
 		}

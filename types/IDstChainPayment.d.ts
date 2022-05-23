@@ -48,7 +48,7 @@ interface IDstChainPaymentInterface extends ethers.utils.Interface {
   ): Result;
 
   events: {
-    "Paid(address,address,tuple)": EventFragment;
+    "Paid(address,tuple)": EventFragment;
   };
 
   getEvent(nameOrSignatureOrTopic: "Paid"): EventFragment;
@@ -56,7 +56,6 @@ interface IDstChainPaymentInterface extends ethers.utils.Interface {
 
 export type PaidEvent = TypedEvent<
   [
-    string,
     string,
     [
       string,
@@ -73,7 +72,6 @@ export type PaidEvent = TypedEvent<
       })[];
     }
   ] & {
-    payer: string;
     token: string;
     payload: [
       string,
@@ -187,17 +185,15 @@ export class IDstChainPayment extends BaseContract {
       amount: BigNumberish,
       message: BytesLike,
       overrides?: CallOverrides
-    ): Promise<BigNumber>;
+    ): Promise<void>;
   };
 
   filters: {
-    "Paid(address,address,tuple)"(
-      payer?: null,
+    "Paid(address,tuple)"(
       token?: null,
       payload?: null
     ): TypedEventFilter<
       [
-        string,
         string,
         [
           string,
@@ -218,7 +214,6 @@ export class IDstChainPayment extends BaseContract {
         }
       ],
       {
-        payer: string;
         token: string;
         payload: [
           string,
@@ -241,12 +236,10 @@ export class IDstChainPayment extends BaseContract {
     >;
 
     Paid(
-      payer?: null,
       token?: null,
       payload?: null
     ): TypedEventFilter<
       [
-        string,
         string,
         [
           string,
@@ -267,7 +260,6 @@ export class IDstChainPayment extends BaseContract {
         }
       ],
       {
-        payer: string;
         token: string;
         payload: [
           string,

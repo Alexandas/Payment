@@ -16,21 +16,19 @@ interface IDstChainPayment {
 	}
 
 	/// @dev emit when a user paid
-	/// @param payer payer
 	/// @param token token address
 	/// @param payload payment payload
-	event Paid(address payer, IERC20Upgradeable token, PaymentPayload payload);
+	event Paid(IERC20Upgradeable token, PaymentPayload payload);
 
 	/// @dev pay from the source chain
 	/// @param token token address
 	/// @param amount token amount
 	/// @param message payment payload message
-	/// @return value token used
 	function payFromSourceChain(
 		IERC20Upgradeable token,
 		uint256 amount,
 		bytes calldata message
-	) external returns (uint256 value);
+	) external;
 
 	/// @dev pay on the dst chain
 	/// @param payload payment payload

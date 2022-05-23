@@ -298,7 +298,7 @@ interface DstChainPaymentInterface extends ethers.utils.Interface {
     "MessageReceiverUpdated(address)": EventFragment;
     "NativeWithdrawal(address,uint256)": EventFragment;
     "OwnershipTransferred(address,address)": EventFragment;
-    "Paid(address,address,tuple)": EventFragment;
+    "Paid(address,tuple)": EventFragment;
     "Paused(address)": EventFragment;
     "PauserAdded(address)": EventFragment;
     "PauserRemoved(address)": EventFragment;
@@ -360,7 +360,6 @@ export type OwnershipTransferredEvent = TypedEvent<
 export type PaidEvent = TypedEvent<
   [
     string,
-    string,
     [
       string,
       BigNumber,
@@ -376,7 +375,6 @@ export type PaidEvent = TypedEvent<
       })[];
     }
   ] & {
-    payer: string;
     token: string;
     payload: [
       string,
@@ -905,7 +903,7 @@ export class DstChainPayment extends BaseContract {
       dstAmount: BigNumberish,
       message: BytesLike,
       overrides?: CallOverrides
-    ): Promise<BigNumber>;
+    ): Promise<void>;
 
     providers(overrides?: CallOverrides): Promise<string>;
 
@@ -1028,13 +1026,11 @@ export class DstChainPayment extends BaseContract {
       { previousOwner: string; newOwner: string }
     >;
 
-    "Paid(address,address,tuple)"(
-      payer?: null,
+    "Paid(address,tuple)"(
       token?: null,
       payload?: null
     ): TypedEventFilter<
       [
-        string,
         string,
         [
           string,
@@ -1055,7 +1051,6 @@ export class DstChainPayment extends BaseContract {
         }
       ],
       {
-        payer: string;
         token: string;
         payload: [
           string,
@@ -1078,12 +1073,10 @@ export class DstChainPayment extends BaseContract {
     >;
 
     Paid(
-      payer?: null,
       token?: null,
       payload?: null
     ): TypedEventFilter<
       [
-        string,
         string,
         [
           string,
@@ -1104,7 +1097,6 @@ export class DstChainPayment extends BaseContract {
         }
       ],
       {
-        payer: string;
         token: string;
         payload: [
           string,
