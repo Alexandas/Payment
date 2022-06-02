@@ -16,16 +16,9 @@ const _abi = [
       {
         indexed: false,
         internalType: "address",
-        name: "dstChainPayment",
+        name: "provider",
         type: "address",
       },
-    ],
-    name: "DstChainPaymentUpdated",
-    type: "event",
-  },
-  {
-    anonymous: false,
-    inputs: [
       {
         indexed: false,
         internalType: "bytes32",
@@ -35,11 +28,11 @@ const _abi = [
       {
         indexed: false,
         internalType: "uint256",
-        name: "value",
+        name: "amount",
         type: "uint256",
       },
     ],
-    name: "Expanded",
+    name: "AccountAllocated",
     type: "event",
   },
   {
@@ -79,12 +72,18 @@ const _abi = [
     inputs: [
       {
         indexed: false,
-        internalType: "contract IResourceAdaptor",
-        name: "adaptor",
+        internalType: "address",
+        name: "provider",
         type: "address",
       },
+      {
+        indexed: false,
+        internalType: "uint256",
+        name: "amount",
+        type: "uint256",
+      },
     ],
-    name: "ResourceAdaptorUpdated",
+    name: "ProviderAllocated",
     type: "event",
   },
   {
@@ -92,29 +91,39 @@ const _abi = [
     inputs: [
       {
         indexed: false,
-        internalType: "enum ResourceData.ResourceType",
-        name: "resourceType",
-        type: "uint8",
-      },
-    ],
-    name: "ResourceTypeUpdated",
-    type: "event",
-  },
-  {
-    inputs: [],
-    name: "adaptor",
-    outputs: [
-      {
-        internalType: "contract IResourceAdaptor",
-        name: "",
+        internalType: "contract IRouter",
+        name: "router",
         type: "address",
       },
     ],
-    stateMutability: "view",
+    name: "RouterUpdated",
+    type: "event",
+  },
+  {
+    inputs: [
+      {
+        internalType: "address",
+        name: "provider",
+        type: "address",
+      },
+      {
+        internalType: "uint256",
+        name: "amount",
+        type: "uint256",
+      },
+    ],
+    name: "allocateProvider",
+    outputs: [],
+    stateMutability: "nonpayable",
     type: "function",
   },
   {
     inputs: [
+      {
+        internalType: "address",
+        name: "provider",
+        type: "address",
+      },
       {
         internalType: "bytes32",
         name: "account",
@@ -133,20 +142,12 @@ const _abi = [
     type: "function",
   },
   {
-    inputs: [],
-    name: "dstChainPayment",
-    outputs: [
+    inputs: [
       {
         internalType: "address",
-        name: "",
+        name: "provider",
         type: "address",
       },
-    ],
-    stateMutability: "view",
-    type: "function",
-  },
-  {
-    inputs: [
       {
         internalType: "bytes32",
         name: "account",
@@ -154,51 +155,13 @@ const _abi = [
       },
       {
         internalType: "uint256",
-        name: "value",
-        type: "uint256",
-      },
-    ],
-    name: "expand",
-    outputs: [],
-    stateMutability: "nonpayable",
-    type: "function",
-  },
-  {
-    inputs: [
-      {
-        internalType: "uint256",
-        name: "value",
-        type: "uint256",
-      },
-    ],
-    name: "getAmountOf",
-    outputs: [
-      {
-        internalType: "uint256",
-        name: "",
-        type: "uint256",
-      },
-    ],
-    stateMutability: "view",
-    type: "function",
-  },
-  {
-    inputs: [
-      {
-        internalType: "uint256",
         name: "amount",
         type: "uint256",
       },
     ],
-    name: "getValueOf",
-    outputs: [
-      {
-        internalType: "uint256",
-        name: "",
-        type: "uint256",
-      },
-    ],
-    stateMutability: "view",
+    name: "drip",
+    outputs: [],
+    stateMutability: "nonpayable",
     type: "function",
   },
   {
@@ -215,8 +178,37 @@ const _abi = [
     type: "function",
   },
   {
-    inputs: [],
-    name: "price",
+    inputs: [
+      {
+        internalType: "address",
+        name: "provider",
+        type: "address",
+      },
+      {
+        internalType: "bytes32",
+        name: "account",
+        type: "bytes32",
+      },
+      {
+        internalType: "uint256",
+        name: "amount",
+        type: "uint256",
+      },
+    ],
+    name: "paymentAllocate",
+    outputs: [],
+    stateMutability: "nonpayable",
+    type: "function",
+  },
+  {
+    inputs: [
+      {
+        internalType: "address",
+        name: "provider",
+        type: "address",
+      },
+    ],
+    name: "providerBalanceOf",
     outputs: [
       {
         internalType: "uint256",
@@ -236,54 +228,15 @@ const _abi = [
   },
   {
     inputs: [],
-    name: "resourceType",
+    name: "router",
     outputs: [
       {
-        internalType: "enum ResourceData.ResourceType",
+        internalType: "contract IRouter",
         name: "",
-        type: "uint8",
+        type: "address",
       },
     ],
     stateMutability: "view",
-    type: "function",
-  },
-  {
-    inputs: [
-      {
-        internalType: "address",
-        name: "_dstChainPayment",
-        type: "address",
-      },
-    ],
-    name: "setDstChainPayment",
-    outputs: [],
-    stateMutability: "nonpayable",
-    type: "function",
-  },
-  {
-    inputs: [
-      {
-        internalType: "contract IResourceAdaptor",
-        name: "_adaptor",
-        type: "address",
-      },
-    ],
-    name: "setResourceAdaptor",
-    outputs: [],
-    stateMutability: "nonpayable",
-    type: "function",
-  },
-  {
-    inputs: [
-      {
-        internalType: "enum ResourceData.ResourceType",
-        name: "_resourceType",
-        type: "uint8",
-      },
-    ],
-    name: "setResourceType",
-    outputs: [],
-    stateMutability: "nonpayable",
     type: "function",
   },
   {

@@ -21,157 +21,160 @@ import type { TypedEventFilter, TypedEvent, TypedListener } from "./common";
 
 interface IPFSStorageControllerInterface extends ethers.utils.Interface {
   functions: {
-    "adaptor()": FunctionFragment;
-    "availableExpiration(bytes32)": FunctionFragment;
-    "balanceOf(bytes32)": FunctionFragment;
-    "dstChainPayment()": FunctionFragment;
-    "expand(bytes32,uint256,uint256)": FunctionFragment;
-    "expandedFee(bytes32,uint256,uint256)": FunctionFragment;
-    "expansions(bytes32,uint256,uint256)": FunctionFragment;
-    "expiration(bytes32)": FunctionFragment;
-    "expiredAt(bytes32)": FunctionFragment;
-    "getAmountOf(uint256)": FunctionFragment;
-    "getValueOf(uint256)": FunctionFragment;
-    "initialize(address,address,address)": FunctionFragment;
-    "isExpired(bytes32)": FunctionFragment;
+    "allocateProvider(address,uint256,uint256)": FunctionFragment;
+    "availableExpiration(address,bytes32)": FunctionFragment;
+    "balanceOf(address,bytes32)": FunctionFragment;
+    "drip(address,bytes32,uint256,uint256)": FunctionFragment;
+    "expiration(address,bytes32)": FunctionFragment;
+    "expiredAt(address,bytes32)": FunctionFragment;
+    "initialize(address,address)": FunctionFragment;
+    "isExpired(address,bytes32)": FunctionFragment;
+    "isProviderExpired(address)": FunctionFragment;
     "owner()": FunctionFragment;
-    "price()": FunctionFragment;
+    "paymentAllocate(address,bytes32,uint256,uint256)": FunctionFragment;
+    "providerAvailableExpiration(address)": FunctionFragment;
+    "providerBalanceOf(address)": FunctionFragment;
+    "providerExpiration(address)": FunctionFragment;
+    "providerExpiredAt(address)": FunctionFragment;
+    "providerStartTime(address)": FunctionFragment;
+    "recoverStorage(address,bytes32)": FunctionFragment;
     "renounceOwnership()": FunctionFragment;
-    "resourceType()": FunctionFragment;
-    "setDstChainPayment(address)": FunctionFragment;
-    "setResourceAdaptor(address)": FunctionFragment;
-    "setResourceType(uint8)": FunctionFragment;
-    "startTime(bytes32)": FunctionFragment;
+    "router()": FunctionFragment;
+    "startTime(address,bytes32)": FunctionFragment;
     "transferOwnership(address)": FunctionFragment;
   };
 
-  encodeFunctionData(functionFragment: "adaptor", values?: undefined): string;
+  encodeFunctionData(
+    functionFragment: "allocateProvider",
+    values: [string, BigNumberish, BigNumberish]
+  ): string;
   encodeFunctionData(
     functionFragment: "availableExpiration",
-    values: [BytesLike]
+    values: [string, BytesLike]
   ): string;
   encodeFunctionData(
     functionFragment: "balanceOf",
-    values: [BytesLike]
+    values: [string, BytesLike]
   ): string;
   encodeFunctionData(
-    functionFragment: "dstChainPayment",
-    values?: undefined
-  ): string;
-  encodeFunctionData(
-    functionFragment: "expand",
-    values: [BytesLike, BigNumberish, BigNumberish]
-  ): string;
-  encodeFunctionData(
-    functionFragment: "expandedFee",
-    values: [BytesLike, BigNumberish, BigNumberish]
-  ): string;
-  encodeFunctionData(
-    functionFragment: "expansions",
-    values: [BytesLike, BigNumberish, BigNumberish]
+    functionFragment: "drip",
+    values: [string, BytesLike, BigNumberish, BigNumberish]
   ): string;
   encodeFunctionData(
     functionFragment: "expiration",
-    values: [BytesLike]
+    values: [string, BytesLike]
   ): string;
   encodeFunctionData(
     functionFragment: "expiredAt",
-    values: [BytesLike]
-  ): string;
-  encodeFunctionData(
-    functionFragment: "getAmountOf",
-    values: [BigNumberish]
-  ): string;
-  encodeFunctionData(
-    functionFragment: "getValueOf",
-    values: [BigNumberish]
+    values: [string, BytesLike]
   ): string;
   encodeFunctionData(
     functionFragment: "initialize",
-    values: [string, string, string]
+    values: [string, string]
   ): string;
   encodeFunctionData(
     functionFragment: "isExpired",
-    values: [BytesLike]
+    values: [string, BytesLike]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "isProviderExpired",
+    values: [string]
   ): string;
   encodeFunctionData(functionFragment: "owner", values?: undefined): string;
-  encodeFunctionData(functionFragment: "price", values?: undefined): string;
+  encodeFunctionData(
+    functionFragment: "paymentAllocate",
+    values: [string, BytesLike, BigNumberish, BigNumberish]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "providerAvailableExpiration",
+    values: [string]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "providerBalanceOf",
+    values: [string]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "providerExpiration",
+    values: [string]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "providerExpiredAt",
+    values: [string]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "providerStartTime",
+    values: [string]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "recoverStorage",
+    values: [string, BytesLike]
+  ): string;
   encodeFunctionData(
     functionFragment: "renounceOwnership",
     values?: undefined
   ): string;
-  encodeFunctionData(
-    functionFragment: "resourceType",
-    values?: undefined
-  ): string;
-  encodeFunctionData(
-    functionFragment: "setDstChainPayment",
-    values: [string]
-  ): string;
-  encodeFunctionData(
-    functionFragment: "setResourceAdaptor",
-    values: [string]
-  ): string;
-  encodeFunctionData(
-    functionFragment: "setResourceType",
-    values: [BigNumberish]
-  ): string;
+  encodeFunctionData(functionFragment: "router", values?: undefined): string;
   encodeFunctionData(
     functionFragment: "startTime",
-    values: [BytesLike]
+    values: [string, BytesLike]
   ): string;
   encodeFunctionData(
     functionFragment: "transferOwnership",
     values: [string]
   ): string;
 
-  decodeFunctionResult(functionFragment: "adaptor", data: BytesLike): Result;
+  decodeFunctionResult(
+    functionFragment: "allocateProvider",
+    data: BytesLike
+  ): Result;
   decodeFunctionResult(
     functionFragment: "availableExpiration",
     data: BytesLike
   ): Result;
   decodeFunctionResult(functionFragment: "balanceOf", data: BytesLike): Result;
-  decodeFunctionResult(
-    functionFragment: "dstChainPayment",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(functionFragment: "expand", data: BytesLike): Result;
-  decodeFunctionResult(
-    functionFragment: "expandedFee",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(functionFragment: "expansions", data: BytesLike): Result;
+  decodeFunctionResult(functionFragment: "drip", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "expiration", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "expiredAt", data: BytesLike): Result;
-  decodeFunctionResult(
-    functionFragment: "getAmountOf",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(functionFragment: "getValueOf", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "initialize", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "isExpired", data: BytesLike): Result;
+  decodeFunctionResult(
+    functionFragment: "isProviderExpired",
+    data: BytesLike
+  ): Result;
   decodeFunctionResult(functionFragment: "owner", data: BytesLike): Result;
-  decodeFunctionResult(functionFragment: "price", data: BytesLike): Result;
+  decodeFunctionResult(
+    functionFragment: "paymentAllocate",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "providerAvailableExpiration",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "providerBalanceOf",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "providerExpiration",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "providerExpiredAt",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "providerStartTime",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "recoverStorage",
+    data: BytesLike
+  ): Result;
   decodeFunctionResult(
     functionFragment: "renounceOwnership",
     data: BytesLike
   ): Result;
-  decodeFunctionResult(
-    functionFragment: "resourceType",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(
-    functionFragment: "setDstChainPayment",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(
-    functionFragment: "setResourceAdaptor",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(
-    functionFragment: "setResourceType",
-    data: BytesLike
-  ): Result;
+  decodeFunctionResult(functionFragment: "router", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "startTime", data: BytesLike): Result;
   decodeFunctionResult(
     functionFragment: "transferOwnership",
@@ -179,31 +182,28 @@ interface IPFSStorageControllerInterface extends ethers.utils.Interface {
   ): Result;
 
   events: {
-    "DstChainPaymentUpdated(address)": EventFragment;
-    "Expanded(bytes32,uint256,uint256)": EventFragment;
+    "AccountAllocated(address,bytes32,uint256,uint256)": EventFragment;
     "Initialized(uint8)": EventFragment;
     "OwnershipTransferred(address,address)": EventFragment;
-    "ResourceAdaptorUpdated(address)": EventFragment;
-    "ResourceTypeUpdated(uint8)": EventFragment;
+    "ProviderAllocated(address,uint256,uint256)": EventFragment;
+    "ProviderRecovered(address,bytes32,uint256)": EventFragment;
+    "RouterUpdated(address)": EventFragment;
   };
 
-  getEvent(nameOrSignatureOrTopic: "DstChainPaymentUpdated"): EventFragment;
-  getEvent(nameOrSignatureOrTopic: "Expanded"): EventFragment;
+  getEvent(nameOrSignatureOrTopic: "AccountAllocated"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "Initialized"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "OwnershipTransferred"): EventFragment;
-  getEvent(nameOrSignatureOrTopic: "ResourceAdaptorUpdated"): EventFragment;
-  getEvent(nameOrSignatureOrTopic: "ResourceTypeUpdated"): EventFragment;
+  getEvent(nameOrSignatureOrTopic: "ProviderAllocated"): EventFragment;
+  getEvent(nameOrSignatureOrTopic: "ProviderRecovered"): EventFragment;
+  getEvent(nameOrSignatureOrTopic: "RouterUpdated"): EventFragment;
 }
 
-export type DstChainPaymentUpdatedEvent = TypedEvent<
-  [string] & { dstChainPayment: string }
->;
-
-export type ExpandedEvent = TypedEvent<
-  [string, BigNumber, BigNumber] & {
+export type AccountAllocatedEvent = TypedEvent<
+  [string, string, BigNumber, BigNumber] & {
+    provider: string;
     account: string;
-    expandedStorageFee: BigNumber;
-    expandedExpirationFee: BigNumber;
+    amount: BigNumber;
+    expiration: BigNumber;
   }
 >;
 
@@ -213,13 +213,23 @@ export type OwnershipTransferredEvent = TypedEvent<
   [string, string] & { previousOwner: string; newOwner: string }
 >;
 
-export type ResourceAdaptorUpdatedEvent = TypedEvent<
-  [string] & { adaptor: string }
+export type ProviderAllocatedEvent = TypedEvent<
+  [string, BigNumber, BigNumber] & {
+    provider: string;
+    amount: BigNumber;
+    expiration: BigNumber;
+  }
 >;
 
-export type ResourceTypeUpdatedEvent = TypedEvent<
-  [number] & { resourceType: number }
+export type ProviderRecoveredEvent = TypedEvent<
+  [string, string, BigNumber] & {
+    provider: string;
+    account: string;
+    amount: BigNumber;
+  }
 >;
+
+export type RouterUpdatedEvent = TypedEvent<[string] & { router: string }>;
 
 export class IPFSStorageController extends BaseContract {
   connect(signerOrProvider: Signer | Provider | string): this;
@@ -265,109 +275,111 @@ export class IPFSStorageController extends BaseContract {
   interface: IPFSStorageControllerInterface;
 
   functions: {
-    adaptor(overrides?: CallOverrides): Promise<[string]>;
+    allocateProvider(
+      provider: string,
+      amount: BigNumberish,
+      expiration: BigNumberish,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<ContractTransaction>;
 
     availableExpiration(
+      provider: string,
       account: BytesLike,
       overrides?: CallOverrides
     ): Promise<[BigNumber]>;
 
     balanceOf(
+      provider: string,
       account: BytesLike,
       overrides?: CallOverrides
     ): Promise<[BigNumber]>;
 
-    dstChainPayment(overrides?: CallOverrides): Promise<[string]>;
-
-    expand(
+    drip(
+      provider: string,
       account: BytesLike,
-      expandedStorageFee: BigNumberish,
-      expandedExpirationFee: BigNumberish,
+      amount: BigNumberish,
+      expiration: BigNumberish,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<ContractTransaction>;
 
-    expandedFee(
-      account: BytesLike,
-      expandedStorage: BigNumberish,
-      expandedExpiration: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<
-      [BigNumber, BigNumber] & {
-        expandedStorageFee: BigNumber;
-        expandedExpirationFee: BigNumber;
-      }
-    >;
-
-    expansions(
-      account: BytesLike,
-      expandedStorageFee: BigNumberish,
-      expandedExpirationFee: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<
-      [BigNumber, BigNumber] & {
-        expandedStorage: BigNumber;
-        expandedExpiration: BigNumber;
-      }
-    >;
-
     expiration(
+      provider: string,
       account: BytesLike,
       overrides?: CallOverrides
     ): Promise<[BigNumber]>;
 
     expiredAt(
+      provider: string,
       account: BytesLike,
-      overrides?: CallOverrides
-    ): Promise<[BigNumber]>;
-
-    getAmountOf(
-      value: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<[BigNumber]>;
-
-    getValueOf(
-      amount: BigNumberish,
       overrides?: CallOverrides
     ): Promise<[BigNumber]>;
 
     initialize(
       owner: string,
-      dstChainPayment: string,
-      adaptor: string,
+      router: string,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<ContractTransaction>;
 
     isExpired(
+      provider: string,
       account: BytesLike,
+      overrides?: CallOverrides
+    ): Promise<[boolean]>;
+
+    isProviderExpired(
+      provider: string,
       overrides?: CallOverrides
     ): Promise<[boolean]>;
 
     owner(overrides?: CallOverrides): Promise<[string]>;
 
-    price(overrides?: CallOverrides): Promise<[BigNumber]>;
+    paymentAllocate(
+      provider: string,
+      account: BytesLike,
+      amount: BigNumberish,
+      expiration: BigNumberish,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<ContractTransaction>;
+
+    providerAvailableExpiration(
+      provider: string,
+      overrides?: CallOverrides
+    ): Promise<[BigNumber]>;
+
+    providerBalanceOf(
+      provider: string,
+      overrides?: CallOverrides
+    ): Promise<[BigNumber]>;
+
+    providerExpiration(
+      provider: string,
+      overrides?: CallOverrides
+    ): Promise<[BigNumber]>;
+
+    providerExpiredAt(
+      provider: string,
+      overrides?: CallOverrides
+    ): Promise<[BigNumber]>;
+
+    providerStartTime(
+      provider: string,
+      overrides?: CallOverrides
+    ): Promise<[BigNumber]>;
+
+    recoverStorage(
+      provider: string,
+      account: BytesLike,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<ContractTransaction>;
 
     renounceOwnership(
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<ContractTransaction>;
 
-    resourceType(overrides?: CallOverrides): Promise<[number]>;
-
-    setDstChainPayment(
-      _dstChainPayment: string,
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<ContractTransaction>;
-
-    setResourceAdaptor(
-      _adaptor: string,
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<ContractTransaction>;
-
-    setResourceType(
-      _resourceType: BigNumberish,
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<ContractTransaction>;
+    router(overrides?: CallOverrides): Promise<[string]>;
 
     startTime(
+      provider: string,
       account: BytesLike,
       overrides?: CallOverrides
     ): Promise<[BigNumber]>;
@@ -378,97 +390,114 @@ export class IPFSStorageController extends BaseContract {
     ): Promise<ContractTransaction>;
   };
 
-  adaptor(overrides?: CallOverrides): Promise<string>;
-
-  availableExpiration(
-    account: BytesLike,
-    overrides?: CallOverrides
-  ): Promise<BigNumber>;
-
-  balanceOf(account: BytesLike, overrides?: CallOverrides): Promise<BigNumber>;
-
-  dstChainPayment(overrides?: CallOverrides): Promise<string>;
-
-  expand(
-    account: BytesLike,
-    expandedStorageFee: BigNumberish,
-    expandedExpirationFee: BigNumberish,
+  allocateProvider(
+    provider: string,
+    amount: BigNumberish,
+    expiration: BigNumberish,
     overrides?: Overrides & { from?: string | Promise<string> }
   ): Promise<ContractTransaction>;
 
-  expandedFee(
+  availableExpiration(
+    provider: string,
     account: BytesLike,
-    expandedStorage: BigNumberish,
-    expandedExpiration: BigNumberish,
-    overrides?: CallOverrides
-  ): Promise<
-    [BigNumber, BigNumber] & {
-      expandedStorageFee: BigNumber;
-      expandedExpirationFee: BigNumber;
-    }
-  >;
-
-  expansions(
-    account: BytesLike,
-    expandedStorageFee: BigNumberish,
-    expandedExpirationFee: BigNumberish,
-    overrides?: CallOverrides
-  ): Promise<
-    [BigNumber, BigNumber] & {
-      expandedStorage: BigNumber;
-      expandedExpiration: BigNumber;
-    }
-  >;
-
-  expiration(account: BytesLike, overrides?: CallOverrides): Promise<BigNumber>;
-
-  expiredAt(account: BytesLike, overrides?: CallOverrides): Promise<BigNumber>;
-
-  getAmountOf(
-    value: BigNumberish,
     overrides?: CallOverrides
   ): Promise<BigNumber>;
 
-  getValueOf(
+  balanceOf(
+    provider: string,
+    account: BytesLike,
+    overrides?: CallOverrides
+  ): Promise<BigNumber>;
+
+  drip(
+    provider: string,
+    account: BytesLike,
     amount: BigNumberish,
+    expiration: BigNumberish,
+    overrides?: Overrides & { from?: string | Promise<string> }
+  ): Promise<ContractTransaction>;
+
+  expiration(
+    provider: string,
+    account: BytesLike,
+    overrides?: CallOverrides
+  ): Promise<BigNumber>;
+
+  expiredAt(
+    provider: string,
+    account: BytesLike,
     overrides?: CallOverrides
   ): Promise<BigNumber>;
 
   initialize(
     owner: string,
-    dstChainPayment: string,
-    adaptor: string,
+    router: string,
     overrides?: Overrides & { from?: string | Promise<string> }
   ): Promise<ContractTransaction>;
 
-  isExpired(account: BytesLike, overrides?: CallOverrides): Promise<boolean>;
+  isExpired(
+    provider: string,
+    account: BytesLike,
+    overrides?: CallOverrides
+  ): Promise<boolean>;
+
+  isProviderExpired(
+    provider: string,
+    overrides?: CallOverrides
+  ): Promise<boolean>;
 
   owner(overrides?: CallOverrides): Promise<string>;
 
-  price(overrides?: CallOverrides): Promise<BigNumber>;
+  paymentAllocate(
+    provider: string,
+    account: BytesLike,
+    amount: BigNumberish,
+    expiration: BigNumberish,
+    overrides?: Overrides & { from?: string | Promise<string> }
+  ): Promise<ContractTransaction>;
+
+  providerAvailableExpiration(
+    provider: string,
+    overrides?: CallOverrides
+  ): Promise<BigNumber>;
+
+  providerBalanceOf(
+    provider: string,
+    overrides?: CallOverrides
+  ): Promise<BigNumber>;
+
+  providerExpiration(
+    provider: string,
+    overrides?: CallOverrides
+  ): Promise<BigNumber>;
+
+  providerExpiredAt(
+    provider: string,
+    overrides?: CallOverrides
+  ): Promise<BigNumber>;
+
+  providerStartTime(
+    provider: string,
+    overrides?: CallOverrides
+  ): Promise<BigNumber>;
+
+  recoverStorage(
+    provider: string,
+    account: BytesLike,
+    overrides?: Overrides & { from?: string | Promise<string> }
+  ): Promise<ContractTransaction>;
 
   renounceOwnership(
     overrides?: Overrides & { from?: string | Promise<string> }
   ): Promise<ContractTransaction>;
 
-  resourceType(overrides?: CallOverrides): Promise<number>;
+  router(overrides?: CallOverrides): Promise<string>;
 
-  setDstChainPayment(
-    _dstChainPayment: string,
-    overrides?: Overrides & { from?: string | Promise<string> }
-  ): Promise<ContractTransaction>;
-
-  setResourceAdaptor(
-    _adaptor: string,
-    overrides?: Overrides & { from?: string | Promise<string> }
-  ): Promise<ContractTransaction>;
-
-  setResourceType(
-    _resourceType: BigNumberish,
-    overrides?: Overrides & { from?: string | Promise<string> }
-  ): Promise<ContractTransaction>;
-
-  startTime(account: BytesLike, overrides?: CallOverrides): Promise<BigNumber>;
+  startTime(
+    provider: string,
+    account: BytesLike,
+    overrides?: CallOverrides
+  ): Promise<BigNumber>;
 
   transferOwnership(
     newOwner: string,
@@ -476,104 +505,109 @@ export class IPFSStorageController extends BaseContract {
   ): Promise<ContractTransaction>;
 
   callStatic: {
-    adaptor(overrides?: CallOverrides): Promise<string>;
+    allocateProvider(
+      provider: string,
+      amount: BigNumberish,
+      expiration: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<void>;
 
     availableExpiration(
+      provider: string,
       account: BytesLike,
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
     balanceOf(
+      provider: string,
       account: BytesLike,
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
-    dstChainPayment(overrides?: CallOverrides): Promise<string>;
-
-    expand(
+    drip(
+      provider: string,
       account: BytesLike,
-      expandedStorageFee: BigNumberish,
-      expandedExpirationFee: BigNumberish,
+      amount: BigNumberish,
+      expiration: BigNumberish,
       overrides?: CallOverrides
     ): Promise<void>;
 
-    expandedFee(
-      account: BytesLike,
-      expandedStorage: BigNumberish,
-      expandedExpiration: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<
-      [BigNumber, BigNumber] & {
-        expandedStorageFee: BigNumber;
-        expandedExpirationFee: BigNumber;
-      }
-    >;
-
-    expansions(
-      account: BytesLike,
-      expandedStorageFee: BigNumberish,
-      expandedExpirationFee: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<
-      [BigNumber, BigNumber] & {
-        expandedStorage: BigNumber;
-        expandedExpiration: BigNumber;
-      }
-    >;
-
     expiration(
+      provider: string,
       account: BytesLike,
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
     expiredAt(
+      provider: string,
       account: BytesLike,
-      overrides?: CallOverrides
-    ): Promise<BigNumber>;
-
-    getAmountOf(
-      value: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<BigNumber>;
-
-    getValueOf(
-      amount: BigNumberish,
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
     initialize(
       owner: string,
-      dstChainPayment: string,
-      adaptor: string,
+      router: string,
       overrides?: CallOverrides
     ): Promise<void>;
 
-    isExpired(account: BytesLike, overrides?: CallOverrides): Promise<boolean>;
+    isExpired(
+      provider: string,
+      account: BytesLike,
+      overrides?: CallOverrides
+    ): Promise<boolean>;
+
+    isProviderExpired(
+      provider: string,
+      overrides?: CallOverrides
+    ): Promise<boolean>;
 
     owner(overrides?: CallOverrides): Promise<string>;
 
-    price(overrides?: CallOverrides): Promise<BigNumber>;
+    paymentAllocate(
+      provider: string,
+      account: BytesLike,
+      amount: BigNumberish,
+      expiration: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<void>;
+
+    providerAvailableExpiration(
+      provider: string,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
+
+    providerBalanceOf(
+      provider: string,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
+
+    providerExpiration(
+      provider: string,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
+
+    providerExpiredAt(
+      provider: string,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
+
+    providerStartTime(
+      provider: string,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
+
+    recoverStorage(
+      provider: string,
+      account: BytesLike,
+      overrides?: CallOverrides
+    ): Promise<void>;
 
     renounceOwnership(overrides?: CallOverrides): Promise<void>;
 
-    resourceType(overrides?: CallOverrides): Promise<number>;
-
-    setDstChainPayment(
-      _dstChainPayment: string,
-      overrides?: CallOverrides
-    ): Promise<void>;
-
-    setResourceAdaptor(
-      _adaptor: string,
-      overrides?: CallOverrides
-    ): Promise<void>;
-
-    setResourceType(
-      _resourceType: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<void>;
+    router(overrides?: CallOverrides): Promise<string>;
 
     startTime(
+      provider: string,
       account: BytesLike,
       overrides?: CallOverrides
     ): Promise<BigNumber>;
@@ -585,37 +619,33 @@ export class IPFSStorageController extends BaseContract {
   };
 
   filters: {
-    "DstChainPaymentUpdated(address)"(
-      dstChainPayment?: null
-    ): TypedEventFilter<[string], { dstChainPayment: string }>;
-
-    DstChainPaymentUpdated(
-      dstChainPayment?: null
-    ): TypedEventFilter<[string], { dstChainPayment: string }>;
-
-    "Expanded(bytes32,uint256,uint256)"(
+    "AccountAllocated(address,bytes32,uint256,uint256)"(
+      provider?: null,
       account?: null,
-      expandedStorageFee?: null,
-      expandedExpirationFee?: null
+      amount?: null,
+      expiration?: null
     ): TypedEventFilter<
-      [string, BigNumber, BigNumber],
+      [string, string, BigNumber, BigNumber],
       {
+        provider: string;
         account: string;
-        expandedStorageFee: BigNumber;
-        expandedExpirationFee: BigNumber;
+        amount: BigNumber;
+        expiration: BigNumber;
       }
     >;
 
-    Expanded(
+    AccountAllocated(
+      provider?: null,
       account?: null,
-      expandedStorageFee?: null,
-      expandedExpirationFee?: null
+      amount?: null,
+      expiration?: null
     ): TypedEventFilter<
-      [string, BigNumber, BigNumber],
+      [string, string, BigNumber, BigNumber],
       {
+        provider: string;
         account: string;
-        expandedStorageFee: BigNumber;
-        expandedExpirationFee: BigNumber;
+        amount: BigNumber;
+        expiration: BigNumber;
       }
     >;
 
@@ -643,117 +673,157 @@ export class IPFSStorageController extends BaseContract {
       { previousOwner: string; newOwner: string }
     >;
 
-    "ResourceAdaptorUpdated(address)"(
-      adaptor?: null
-    ): TypedEventFilter<[string], { adaptor: string }>;
+    "ProviderAllocated(address,uint256,uint256)"(
+      provider?: null,
+      amount?: null,
+      expiration?: null
+    ): TypedEventFilter<
+      [string, BigNumber, BigNumber],
+      { provider: string; amount: BigNumber; expiration: BigNumber }
+    >;
 
-    ResourceAdaptorUpdated(
-      adaptor?: null
-    ): TypedEventFilter<[string], { adaptor: string }>;
+    ProviderAllocated(
+      provider?: null,
+      amount?: null,
+      expiration?: null
+    ): TypedEventFilter<
+      [string, BigNumber, BigNumber],
+      { provider: string; amount: BigNumber; expiration: BigNumber }
+    >;
 
-    "ResourceTypeUpdated(uint8)"(
-      resourceType?: null
-    ): TypedEventFilter<[number], { resourceType: number }>;
+    "ProviderRecovered(address,bytes32,uint256)"(
+      provider?: null,
+      account?: null,
+      amount?: null
+    ): TypedEventFilter<
+      [string, string, BigNumber],
+      { provider: string; account: string; amount: BigNumber }
+    >;
 
-    ResourceTypeUpdated(
-      resourceType?: null
-    ): TypedEventFilter<[number], { resourceType: number }>;
+    ProviderRecovered(
+      provider?: null,
+      account?: null,
+      amount?: null
+    ): TypedEventFilter<
+      [string, string, BigNumber],
+      { provider: string; account: string; amount: BigNumber }
+    >;
+
+    "RouterUpdated(address)"(
+      router?: null
+    ): TypedEventFilter<[string], { router: string }>;
+
+    RouterUpdated(
+      router?: null
+    ): TypedEventFilter<[string], { router: string }>;
   };
 
   estimateGas: {
-    adaptor(overrides?: CallOverrides): Promise<BigNumber>;
+    allocateProvider(
+      provider: string,
+      amount: BigNumberish,
+      expiration: BigNumberish,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<BigNumber>;
 
     availableExpiration(
+      provider: string,
       account: BytesLike,
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
     balanceOf(
+      provider: string,
       account: BytesLike,
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
-    dstChainPayment(overrides?: CallOverrides): Promise<BigNumber>;
-
-    expand(
+    drip(
+      provider: string,
       account: BytesLike,
-      expandedStorageFee: BigNumberish,
-      expandedExpirationFee: BigNumberish,
+      amount: BigNumberish,
+      expiration: BigNumberish,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<BigNumber>;
 
-    expandedFee(
-      account: BytesLike,
-      expandedStorage: BigNumberish,
-      expandedExpiration: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<BigNumber>;
-
-    expansions(
-      account: BytesLike,
-      expandedStorageFee: BigNumberish,
-      expandedExpirationFee: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<BigNumber>;
-
     expiration(
+      provider: string,
       account: BytesLike,
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
     expiredAt(
+      provider: string,
       account: BytesLike,
-      overrides?: CallOverrides
-    ): Promise<BigNumber>;
-
-    getAmountOf(
-      value: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<BigNumber>;
-
-    getValueOf(
-      amount: BigNumberish,
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
     initialize(
       owner: string,
-      dstChainPayment: string,
-      adaptor: string,
+      router: string,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<BigNumber>;
 
     isExpired(
+      provider: string,
       account: BytesLike,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
+
+    isProviderExpired(
+      provider: string,
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
     owner(overrides?: CallOverrides): Promise<BigNumber>;
 
-    price(overrides?: CallOverrides): Promise<BigNumber>;
+    paymentAllocate(
+      provider: string,
+      account: BytesLike,
+      amount: BigNumberish,
+      expiration: BigNumberish,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<BigNumber>;
+
+    providerAvailableExpiration(
+      provider: string,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
+
+    providerBalanceOf(
+      provider: string,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
+
+    providerExpiration(
+      provider: string,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
+
+    providerExpiredAt(
+      provider: string,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
+
+    providerStartTime(
+      provider: string,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
+
+    recoverStorage(
+      provider: string,
+      account: BytesLike,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<BigNumber>;
 
     renounceOwnership(
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<BigNumber>;
 
-    resourceType(overrides?: CallOverrides): Promise<BigNumber>;
-
-    setDstChainPayment(
-      _dstChainPayment: string,
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<BigNumber>;
-
-    setResourceAdaptor(
-      _adaptor: string,
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<BigNumber>;
-
-    setResourceType(
-      _resourceType: BigNumberish,
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<BigNumber>;
+    router(overrides?: CallOverrides): Promise<BigNumber>;
 
     startTime(
+      provider: string,
       account: BytesLike,
       overrides?: CallOverrides
     ): Promise<BigNumber>;
@@ -765,99 +835,111 @@ export class IPFSStorageController extends BaseContract {
   };
 
   populateTransaction: {
-    adaptor(overrides?: CallOverrides): Promise<PopulatedTransaction>;
+    allocateProvider(
+      provider: string,
+      amount: BigNumberish,
+      expiration: BigNumberish,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<PopulatedTransaction>;
 
     availableExpiration(
+      provider: string,
       account: BytesLike,
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
     balanceOf(
+      provider: string,
       account: BytesLike,
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
-    dstChainPayment(overrides?: CallOverrides): Promise<PopulatedTransaction>;
-
-    expand(
+    drip(
+      provider: string,
       account: BytesLike,
-      expandedStorageFee: BigNumberish,
-      expandedExpirationFee: BigNumberish,
+      amount: BigNumberish,
+      expiration: BigNumberish,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<PopulatedTransaction>;
 
-    expandedFee(
-      account: BytesLike,
-      expandedStorage: BigNumberish,
-      expandedExpiration: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<PopulatedTransaction>;
-
-    expansions(
-      account: BytesLike,
-      expandedStorageFee: BigNumberish,
-      expandedExpirationFee: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<PopulatedTransaction>;
-
     expiration(
+      provider: string,
       account: BytesLike,
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
     expiredAt(
+      provider: string,
       account: BytesLike,
-      overrides?: CallOverrides
-    ): Promise<PopulatedTransaction>;
-
-    getAmountOf(
-      value: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<PopulatedTransaction>;
-
-    getValueOf(
-      amount: BigNumberish,
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
     initialize(
       owner: string,
-      dstChainPayment: string,
-      adaptor: string,
+      router: string,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<PopulatedTransaction>;
 
     isExpired(
+      provider: string,
       account: BytesLike,
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
+
+    isProviderExpired(
+      provider: string,
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
     owner(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
-    price(overrides?: CallOverrides): Promise<PopulatedTransaction>;
+    paymentAllocate(
+      provider: string,
+      account: BytesLike,
+      amount: BigNumberish,
+      expiration: BigNumberish,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<PopulatedTransaction>;
+
+    providerAvailableExpiration(
+      provider: string,
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
+
+    providerBalanceOf(
+      provider: string,
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
+
+    providerExpiration(
+      provider: string,
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
+
+    providerExpiredAt(
+      provider: string,
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
+
+    providerStartTime(
+      provider: string,
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
+
+    recoverStorage(
+      provider: string,
+      account: BytesLike,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<PopulatedTransaction>;
 
     renounceOwnership(
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<PopulatedTransaction>;
 
-    resourceType(overrides?: CallOverrides): Promise<PopulatedTransaction>;
-
-    setDstChainPayment(
-      _dstChainPayment: string,
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<PopulatedTransaction>;
-
-    setResourceAdaptor(
-      _adaptor: string,
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<PopulatedTransaction>;
-
-    setResourceType(
-      _resourceType: BigNumberish,
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<PopulatedTransaction>;
+    router(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
     startTime(
+      provider: string,
       account: BytesLike,
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;

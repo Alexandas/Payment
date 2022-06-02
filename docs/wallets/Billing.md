@@ -8,7 +8,7 @@
 | Var | Type |
 | --- | --- |
 | billsTypedHash | bytes32 |
-| adaptor | contract IResourceAdaptor |
+| adaptor | contract IResourcePriceAdaptor |
 
 ## Functions
 ### encodeBills

@@ -2,23 +2,47 @@
 
 pragma solidity >=0.8.0;
 
-import './IAdaptorWrapper.sol';
-
 /// @author Alexandas
 /// @dev normal resource controller interface
-interface INormalResourceController is IAdaptorWrapper {
-	/// @dev emit when resource expanded
-	/// @param account user account
-	/// @param value token value for resource decimals
-	event Expanded(bytes32 account, uint256 value);
+interface INormalResourceController {
 
-	/// @dev expand user's normal resource balance
+	/// @dev emit when resource allocated for the provider
+	/// @param provider provider address
+	/// @param amount ipfs storage amount
+	event ProviderAllocated(address provider, uint256 amount);
+
+	/// @dev emit when resource allocated for the account
+	/// @param provider provider address
 	/// @param account user account
-	/// @param value token value in resource decimals(18)
-	function expand(bytes32 account, uint256 value) external;
+	/// @param amount ipfs storage amount
+	event AccountAllocated(address provider, bytes32 account, uint256 amount);
+
+	/// @dev allocate resource for the provider
+	/// @param provider provider address
+	/// @param amount resource amount
+	function allocateProvider(address provider, uint256 amount) external;
+
+	/// @dev allocate user's resource balance
+	/// @param provider provider address
+	/// @param account user account
+	/// @param amount resource amount
+	function paymentAllocate(address provider, bytes32 account, uint256 amount) external;
+
+	/// @dev provider drip resource to account directly
+	/// @param provider provider address
+	/// @param account user account
+	/// @param amount resource amount
+	function drip(address provider, bytes32 account, uint256 amount) external;
 
 	/// @dev resource balance
+	/// @param provider provider address
 	/// @param account user account
 	/// @return balance of the account
-	function balanceOf(bytes32 account) external view returns (uint256);
+	function balanceOf(address provider, bytes32 account) external view returns (uint256);
+
+	/// @dev resource balance
+	/// @param provider provider address
+	/// @return balance of the account
+	function providerBalanceOf(address provider) external view returns (uint256);
+
 }

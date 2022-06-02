@@ -11,6 +11,7 @@ import {
   PopulatedTransaction,
   BaseContract,
   ContractTransaction,
+  Overrides,
   CallOverrides,
 } from "ethers";
 import { BytesLike } from "@ethersproject/bytes";
@@ -20,58 +21,62 @@ import type { TypedEventFilter, TypedEvent, TypedListener } from "./common";
 
 interface IBillingInterface extends ethers.utils.Interface {
   functions: {
-    "adaptor()": FunctionFragment;
-    "billsTypedHash()": FunctionFragment;
-    "providers()": FunctionFragment;
+    "balanceOf(address)": FunctionFragment;
+    "billingTypesHash()": FunctionFragment;
+    "nonces(address,bytes32)": FunctionFragment;
+    "spend(address,bytes32,bytes,uint256,uint64,bytes)": FunctionFragment;
   };
 
-  encodeFunctionData(functionFragment: "adaptor", values?: undefined): string;
+  encodeFunctionData(functionFragment: "balanceOf", values: [string]): string;
   encodeFunctionData(
-    functionFragment: "billsTypedHash",
+    functionFragment: "billingTypesHash",
     values?: undefined
   ): string;
-  encodeFunctionData(functionFragment: "providers", values?: undefined): string;
+  encodeFunctionData(
+    functionFragment: "nonces",
+    values: [string, BytesLike]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "spend",
+    values: [
+      string,
+      BytesLike,
+      BytesLike,
+      BigNumberish,
+      BigNumberish,
+      BytesLike
+    ]
+  ): string;
 
-  decodeFunctionResult(functionFragment: "adaptor", data: BytesLike): Result;
+  decodeFunctionResult(functionFragment: "balanceOf", data: BytesLike): Result;
   decodeFunctionResult(
-    functionFragment: "billsTypedHash",
+    functionFragment: "billingTypesHash",
     data: BytesLike
   ): Result;
-  decodeFunctionResult(functionFragment: "providers", data: BytesLike): Result;
+  decodeFunctionResult(functionFragment: "nonces", data: BytesLike): Result;
+  decodeFunctionResult(functionFragment: "spend", data: BytesLike): Result;
 
   events: {
-    "Billing(address,uint64,bytes32,bytes,uint256)": EventFragment;
-    "BillsTypedHashUpdated(bytes32)": EventFragment;
-    "ProvidersUpdated(address)": EventFragment;
-    "ResourceAdaptorUpdated(address)": EventFragment;
+    "Billing(address,bytes32,bytes,uint256,uint64)": EventFragment;
+    "BillingTypesHashUpdated(bytes32)": EventFragment;
   };
 
   getEvent(nameOrSignatureOrTopic: "Billing"): EventFragment;
-  getEvent(nameOrSignatureOrTopic: "BillsTypedHashUpdated"): EventFragment;
-  getEvent(nameOrSignatureOrTopic: "ProvidersUpdated"): EventFragment;
-  getEvent(nameOrSignatureOrTopic: "ResourceAdaptorUpdated"): EventFragment;
+  getEvent(nameOrSignatureOrTopic: "BillingTypesHashUpdated"): EventFragment;
 }
 
 export type BillingEvent = TypedEvent<
-  [string, BigNumber, string, string, BigNumber] & {
+  [string, string, string, BigNumber, BigNumber] & {
     provider: string;
-    nonce: BigNumber;
     account: string;
     bills: string;
     amount: BigNumber;
+    nonce: BigNumber;
   }
 >;
 
-export type BillsTypedHashUpdatedEvent = TypedEvent<
+export type BillingTypesHashUpdatedEvent = TypedEvent<
   [string] & { hash: string }
->;
-
-export type ProvidersUpdatedEvent = TypedEvent<
-  [string] & { providers: string }
->;
-
-export type ResourceAdaptorUpdatedEvent = TypedEvent<
-  [string] & { adaptor: string }
 >;
 
 export class IBilling extends BaseContract {
@@ -118,100 +123,160 @@ export class IBilling extends BaseContract {
   interface: IBillingInterface;
 
   functions: {
-    adaptor(overrides?: CallOverrides): Promise<[string]>;
+    balanceOf(
+      provider: string,
+      overrides?: CallOverrides
+    ): Promise<[BigNumber]>;
 
-    billsTypedHash(overrides?: CallOverrides): Promise<[string]>;
+    billingTypesHash(overrides?: CallOverrides): Promise<[string]>;
 
-    providers(overrides?: CallOverrides): Promise<[string]>;
+    nonces(
+      provider: string,
+      account: BytesLike,
+      overrides?: CallOverrides
+    ): Promise<[BigNumber]>;
+
+    spend(
+      provider: string,
+      account: BytesLike,
+      bills: BytesLike,
+      timeout: BigNumberish,
+      nonce: BigNumberish,
+      signature: BytesLike,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<ContractTransaction>;
   };
 
-  adaptor(overrides?: CallOverrides): Promise<string>;
+  balanceOf(provider: string, overrides?: CallOverrides): Promise<BigNumber>;
 
-  billsTypedHash(overrides?: CallOverrides): Promise<string>;
+  billingTypesHash(overrides?: CallOverrides): Promise<string>;
 
-  providers(overrides?: CallOverrides): Promise<string>;
+  nonces(
+    provider: string,
+    account: BytesLike,
+    overrides?: CallOverrides
+  ): Promise<BigNumber>;
+
+  spend(
+    provider: string,
+    account: BytesLike,
+    bills: BytesLike,
+    timeout: BigNumberish,
+    nonce: BigNumberish,
+    signature: BytesLike,
+    overrides?: Overrides & { from?: string | Promise<string> }
+  ): Promise<ContractTransaction>;
 
   callStatic: {
-    adaptor(overrides?: CallOverrides): Promise<string>;
+    balanceOf(provider: string, overrides?: CallOverrides): Promise<BigNumber>;
 
-    billsTypedHash(overrides?: CallOverrides): Promise<string>;
+    billingTypesHash(overrides?: CallOverrides): Promise<string>;
 
-    providers(overrides?: CallOverrides): Promise<string>;
+    nonces(
+      provider: string,
+      account: BytesLike,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
+
+    spend(
+      provider: string,
+      account: BytesLike,
+      bills: BytesLike,
+      timeout: BigNumberish,
+      nonce: BigNumberish,
+      signature: BytesLike,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
   };
 
   filters: {
-    "Billing(address,uint64,bytes32,bytes,uint256)"(
+    "Billing(address,bytes32,bytes,uint256,uint64)"(
       provider?: null,
-      nonce?: null,
       account?: null,
       bills?: null,
-      amount?: null
+      amount?: null,
+      nonce?: null
     ): TypedEventFilter<
-      [string, BigNumber, string, string, BigNumber],
+      [string, string, string, BigNumber, BigNumber],
       {
         provider: string;
-        nonce: BigNumber;
         account: string;
         bills: string;
         amount: BigNumber;
+        nonce: BigNumber;
       }
     >;
 
     Billing(
       provider?: null,
-      nonce?: null,
       account?: null,
       bills?: null,
-      amount?: null
+      amount?: null,
+      nonce?: null
     ): TypedEventFilter<
-      [string, BigNumber, string, string, BigNumber],
+      [string, string, string, BigNumber, BigNumber],
       {
         provider: string;
-        nonce: BigNumber;
         account: string;
         bills: string;
         amount: BigNumber;
+        nonce: BigNumber;
       }
     >;
 
-    "BillsTypedHashUpdated(bytes32)"(
+    "BillingTypesHashUpdated(bytes32)"(
       hash?: null
     ): TypedEventFilter<[string], { hash: string }>;
 
-    BillsTypedHashUpdated(
+    BillingTypesHashUpdated(
       hash?: null
     ): TypedEventFilter<[string], { hash: string }>;
-
-    "ProvidersUpdated(address)"(
-      providers?: null
-    ): TypedEventFilter<[string], { providers: string }>;
-
-    ProvidersUpdated(
-      providers?: null
-    ): TypedEventFilter<[string], { providers: string }>;
-
-    "ResourceAdaptorUpdated(address)"(
-      adaptor?: null
-    ): TypedEventFilter<[string], { adaptor: string }>;
-
-    ResourceAdaptorUpdated(
-      adaptor?: null
-    ): TypedEventFilter<[string], { adaptor: string }>;
   };
 
   estimateGas: {
-    adaptor(overrides?: CallOverrides): Promise<BigNumber>;
+    balanceOf(provider: string, overrides?: CallOverrides): Promise<BigNumber>;
 
-    billsTypedHash(overrides?: CallOverrides): Promise<BigNumber>;
+    billingTypesHash(overrides?: CallOverrides): Promise<BigNumber>;
 
-    providers(overrides?: CallOverrides): Promise<BigNumber>;
+    nonces(
+      provider: string,
+      account: BytesLike,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
+
+    spend(
+      provider: string,
+      account: BytesLike,
+      bills: BytesLike,
+      timeout: BigNumberish,
+      nonce: BigNumberish,
+      signature: BytesLike,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<BigNumber>;
   };
 
   populateTransaction: {
-    adaptor(overrides?: CallOverrides): Promise<PopulatedTransaction>;
+    balanceOf(
+      provider: string,
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
 
-    billsTypedHash(overrides?: CallOverrides): Promise<PopulatedTransaction>;
+    billingTypesHash(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
-    providers(overrides?: CallOverrides): Promise<PopulatedTransaction>;
+    nonces(
+      provider: string,
+      account: BytesLike,
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
+
+    spend(
+      provider: string,
+      account: BytesLike,
+      bills: BytesLike,
+      timeout: BigNumberish,
+      nonce: BigNumberish,
+      signature: BytesLike,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<PopulatedTransaction>;
   };
 }

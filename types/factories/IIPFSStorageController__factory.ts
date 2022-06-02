@@ -15,6 +15,12 @@ const _abi = [
     inputs: [
       {
         indexed: false,
+        internalType: "address",
+        name: "provider",
+        type: "address",
+      },
+      {
+        indexed: false,
         internalType: "bytes32",
         name: "account",
         type: "bytes32",
@@ -22,17 +28,17 @@ const _abi = [
       {
         indexed: false,
         internalType: "uint256",
-        name: "expandedStorageFee",
+        name: "amount",
         type: "uint256",
       },
       {
         indexed: false,
         internalType: "uint256",
-        name: "expandedExpirationFee",
+        name: "expiration",
         type: "uint256",
       },
     ],
-    name: "Expanded",
+    name: "AccountAllocated",
     type: "event",
   },
   {
@@ -40,12 +46,24 @@ const _abi = [
     inputs: [
       {
         indexed: false,
-        internalType: "contract IResourceAdaptor",
-        name: "adaptor",
+        internalType: "address",
+        name: "provider",
         type: "address",
       },
+      {
+        indexed: false,
+        internalType: "uint256",
+        name: "amount",
+        type: "uint256",
+      },
+      {
+        indexed: false,
+        internalType: "uint256",
+        name: "expiration",
+        type: "uint256",
+      },
     ],
-    name: "ResourceAdaptorUpdated",
+    name: "ProviderAllocated",
     type: "event",
   },
   {
@@ -53,29 +71,56 @@ const _abi = [
     inputs: [
       {
         indexed: false,
-        internalType: "enum ResourceData.ResourceType",
-        name: "resourceType",
-        type: "uint8",
+        internalType: "address",
+        name: "provider",
+        type: "address",
+      },
+      {
+        indexed: false,
+        internalType: "bytes32",
+        name: "account",
+        type: "bytes32",
+      },
+      {
+        indexed: false,
+        internalType: "uint256",
+        name: "amount",
+        type: "uint256",
       },
     ],
-    name: "ResourceTypeUpdated",
+    name: "ProviderRecovered",
     type: "event",
   },
   {
-    inputs: [],
-    name: "adaptor",
-    outputs: [
+    inputs: [
       {
-        internalType: "contract IResourceAdaptor",
-        name: "",
+        internalType: "address",
+        name: "provider",
         type: "address",
       },
+      {
+        internalType: "uint256",
+        name: "amount",
+        type: "uint256",
+      },
+      {
+        internalType: "uint256",
+        name: "expiration",
+        type: "uint256",
+      },
     ],
-    stateMutability: "view",
+    name: "allocateProvider",
+    outputs: [],
+    stateMutability: "nonpayable",
     type: "function",
   },
   {
     inputs: [
+      {
+        internalType: "address",
+        name: "provider",
+        type: "address",
+      },
       {
         internalType: "bytes32",
         name: "account",
@@ -96,6 +141,11 @@ const _abi = [
   {
     inputs: [
       {
+        internalType: "address",
+        name: "provider",
+        type: "address",
+      },
+      {
         internalType: "bytes32",
         name: "account",
         type: "bytes32",
@@ -115,22 +165,27 @@ const _abi = [
   {
     inputs: [
       {
+        internalType: "address",
+        name: "provider",
+        type: "address",
+      },
+      {
         internalType: "bytes32",
         name: "account",
         type: "bytes32",
       },
       {
         internalType: "uint256",
-        name: "expandedStorageFee",
+        name: "amount",
         type: "uint256",
       },
       {
         internalType: "uint256",
-        name: "expandedExpirationFee",
+        name: "expiration",
         type: "uint256",
       },
     ],
-    name: "expand",
+    name: "drip",
     outputs: [],
     stateMutability: "nonpayable",
     type: "function",
@@ -138,73 +193,10 @@ const _abi = [
   {
     inputs: [
       {
-        internalType: "bytes32",
-        name: "account",
-        type: "bytes32",
+        internalType: "address",
+        name: "provider",
+        type: "address",
       },
-      {
-        internalType: "uint256",
-        name: "expandedStorage",
-        type: "uint256",
-      },
-      {
-        internalType: "uint256",
-        name: "expandedExpiration",
-        type: "uint256",
-      },
-    ],
-    name: "expandedFee",
-    outputs: [
-      {
-        internalType: "uint256",
-        name: "expandedStorageFee",
-        type: "uint256",
-      },
-      {
-        internalType: "uint256",
-        name: "expandedExpirationFee",
-        type: "uint256",
-      },
-    ],
-    stateMutability: "view",
-    type: "function",
-  },
-  {
-    inputs: [
-      {
-        internalType: "bytes32",
-        name: "account",
-        type: "bytes32",
-      },
-      {
-        internalType: "uint256",
-        name: "expandedStorageFee",
-        type: "uint256",
-      },
-      {
-        internalType: "uint256",
-        name: "expandedExpirationFee",
-        type: "uint256",
-      },
-    ],
-    name: "expansions",
-    outputs: [
-      {
-        internalType: "uint256",
-        name: "expandedStorage",
-        type: "uint256",
-      },
-      {
-        internalType: "uint256",
-        name: "expandedExpiration",
-        type: "uint256",
-      },
-    ],
-    stateMutability: "view",
-    type: "function",
-  },
-  {
-    inputs: [
       {
         internalType: "bytes32",
         name: "account",
@@ -225,6 +217,11 @@ const _abi = [
   {
     inputs: [
       {
+        internalType: "address",
+        name: "provider",
+        type: "address",
+      },
+      {
         internalType: "bytes32",
         name: "account",
         type: "bytes32",
@@ -244,43 +241,10 @@ const _abi = [
   {
     inputs: [
       {
-        internalType: "uint256",
-        name: "value",
-        type: "uint256",
+        internalType: "address",
+        name: "provider",
+        type: "address",
       },
-    ],
-    name: "getAmountOf",
-    outputs: [
-      {
-        internalType: "uint256",
-        name: "",
-        type: "uint256",
-      },
-    ],
-    stateMutability: "view",
-    type: "function",
-  },
-  {
-    inputs: [
-      {
-        internalType: "uint256",
-        name: "amount",
-        type: "uint256",
-      },
-    ],
-    name: "getValueOf",
-    outputs: [
-      {
-        internalType: "uint256",
-        name: "",
-        type: "uint256",
-      },
-    ],
-    stateMutability: "view",
-    type: "function",
-  },
-  {
-    inputs: [
       {
         internalType: "bytes32",
         name: "account",
@@ -299,8 +263,61 @@ const _abi = [
     type: "function",
   },
   {
-    inputs: [],
-    name: "price",
+    inputs: [
+      {
+        internalType: "address",
+        name: "provider",
+        type: "address",
+      },
+    ],
+    name: "isProviderExpired",
+    outputs: [
+      {
+        internalType: "bool",
+        name: "",
+        type: "bool",
+      },
+    ],
+    stateMutability: "view",
+    type: "function",
+  },
+  {
+    inputs: [
+      {
+        internalType: "address",
+        name: "provider",
+        type: "address",
+      },
+      {
+        internalType: "bytes32",
+        name: "account",
+        type: "bytes32",
+      },
+      {
+        internalType: "uint256",
+        name: "amount",
+        type: "uint256",
+      },
+      {
+        internalType: "uint256",
+        name: "expiration",
+        type: "uint256",
+      },
+    ],
+    name: "paymentAllocate",
+    outputs: [],
+    stateMutability: "nonpayable",
+    type: "function",
+  },
+  {
+    inputs: [
+      {
+        internalType: "address",
+        name: "provider",
+        type: "address",
+      },
+    ],
+    name: "providerAvailableExpiration",
     outputs: [
       {
         internalType: "uint256",
@@ -312,13 +329,19 @@ const _abi = [
     type: "function",
   },
   {
-    inputs: [],
-    name: "resourceType",
+    inputs: [
+      {
+        internalType: "address",
+        name: "provider",
+        type: "address",
+      },
+    ],
+    name: "providerBalanceOf",
     outputs: [
       {
-        internalType: "enum ResourceData.ResourceType",
+        internalType: "uint256",
         name: "",
-        type: "uint8",
+        type: "uint256",
       },
     ],
     stateMutability: "view",
@@ -326,6 +349,86 @@ const _abi = [
   },
   {
     inputs: [
+      {
+        internalType: "address",
+        name: "provider",
+        type: "address",
+      },
+    ],
+    name: "providerExpiration",
+    outputs: [
+      {
+        internalType: "uint256",
+        name: "",
+        type: "uint256",
+      },
+    ],
+    stateMutability: "view",
+    type: "function",
+  },
+  {
+    inputs: [
+      {
+        internalType: "address",
+        name: "provider",
+        type: "address",
+      },
+    ],
+    name: "providerExpiredAt",
+    outputs: [
+      {
+        internalType: "uint256",
+        name: "",
+        type: "uint256",
+      },
+    ],
+    stateMutability: "view",
+    type: "function",
+  },
+  {
+    inputs: [
+      {
+        internalType: "address",
+        name: "provider",
+        type: "address",
+      },
+    ],
+    name: "providerStartTime",
+    outputs: [
+      {
+        internalType: "uint256",
+        name: "",
+        type: "uint256",
+      },
+    ],
+    stateMutability: "view",
+    type: "function",
+  },
+  {
+    inputs: [
+      {
+        internalType: "address",
+        name: "provider",
+        type: "address",
+      },
+      {
+        internalType: "bytes32",
+        name: "account",
+        type: "bytes32",
+      },
+    ],
+    name: "recoverStorage",
+    outputs: [],
+    stateMutability: "nonpayable",
+    type: "function",
+  },
+  {
+    inputs: [
+      {
+        internalType: "address",
+        name: "provider",
+        type: "address",
+      },
       {
         internalType: "bytes32",
         name: "account",

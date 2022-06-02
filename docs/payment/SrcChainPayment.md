@@ -35,7 +35,7 @@ function initialize(address owner,address pauser,contract IMessageSender _messag
 
 #### Declaration
 ```
-function pay(address provider,uint64 nonce,bytes32 account,struct ResourceData.Payload[] payloads,uint32 maxSlippage) external whenNotPaused nonReentrant returns (bytes32 transferId)
+function pay(address provider,uint64 nonce,bytes32 account,struct ResourceData.ValuePayload[] payloads,uint32 maxSlippage) external whenNotPaused nonReentrant returns (bytes32 transferId)
 ```
 
 #### Args:
@@ -44,7 +44,7 @@ function pay(address provider,uint64 nonce,bytes32 account,struct ResourceData.P
 |`provider` | address | provider address
 |`nonce` | uint64 | nonce
 |`account` | bytes32 | sender
-|`payloads` | struct ResourceData.Payload[] | payment payloads
+|`payloads` | struct ResourceData.ValuePayload[] | payment payloads
 |`maxSlippage` | uint32 | maxSlippage in cBridge
 
 #### Returns:
@@ -104,5 +104,5 @@ function setToken(contract IERC20Upgradeable _token) external onlyOwner
 |`provider` | address |  | provider address
 |`nonce` | uint64 |  | nonce
 |`account` | bytes32 |  | sender
-|`payloads` | struct ResourceData.Payload[] |  | payment payloads
+|`payloads` | struct ResourceData.ValuePayload[] |  | payment payloads
 |`maxSlippage` | uint32 |  | maxSlippage in cBridge

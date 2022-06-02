@@ -129,6 +129,26 @@ declare module "hardhat/types/runtime" {
       signerOrOptions?: ethers.Signer | FactoryOptions
     ): Promise<Contracts.Pauser__factory>;
     getContractFactory(
+      name: "Governance",
+      signerOrOptions?: ethers.Signer | FactoryOptions
+    ): Promise<Contracts.Governance__factory>;
+    getContractFactory(
+      name: "ProviderController",
+      signerOrOptions?: ethers.Signer | FactoryOptions
+    ): Promise<Contracts.ProviderController__factory>;
+    getContractFactory(
+      name: "ProviderRegistry",
+      signerOrOptions?: ethers.Signer | FactoryOptions
+    ): Promise<Contracts.ProviderRegistry__factory>;
+    getContractFactory(
+      name: "Router",
+      signerOrOptions?: ethers.Signer | FactoryOptions
+    ): Promise<Contracts.Router__factory>;
+    getContractFactory(
+      name: "RouterWrapper",
+      signerOrOptions?: ethers.Signer | FactoryOptions
+    ): Promise<Contracts.RouterWrapper__factory>;
+    getContractFactory(
       name: "IBilling",
       signerOrOptions?: ethers.Signer | FactoryOptions
     ): Promise<Contracts.IBilling__factory>;
@@ -137,21 +157,33 @@ declare module "hardhat/types/runtime" {
       signerOrOptions?: ethers.Signer | FactoryOptions
     ): Promise<Contracts.IDstChainPayment__factory>;
     getContractFactory(
-      name: "IFundWallet",
+      name: "IFundPool",
       signerOrOptions?: ethers.Signer | FactoryOptions
-    ): Promise<Contracts.IFundWallet__factory>;
+    ): Promise<Contracts.IFundPool__factory>;
+    getContractFactory(
+      name: "IGovernance",
+      signerOrOptions?: ethers.Signer | FactoryOptions
+    ): Promise<Contracts.IGovernance__factory>;
     getContractFactory(
       name: "IMessageSender",
       signerOrOptions?: ethers.Signer | FactoryOptions
     ): Promise<Contracts.IMessageSender__factory>;
     getContractFactory(
-      name: "IProviders",
+      name: "IProviderController",
       signerOrOptions?: ethers.Signer | FactoryOptions
-    ): Promise<Contracts.IProviders__factory>;
+    ): Promise<Contracts.IProviderController__factory>;
     getContractFactory(
-      name: "IProvidersWrapper",
+      name: "IProviderRegistry",
       signerOrOptions?: ethers.Signer | FactoryOptions
-    ): Promise<Contracts.IProvidersWrapper__factory>;
+    ): Promise<Contracts.IProviderRegistry__factory>;
+    getContractFactory(
+      name: "ResourcePayToken",
+      signerOrOptions?: ethers.Signer | FactoryOptions
+    ): Promise<Contracts.ResourcePayToken__factory>;
+    getContractFactory(
+      name: "IRouter",
+      signerOrOptions?: ethers.Signer | FactoryOptions
+    ): Promise<Contracts.IRouter__factory>;
     getContractFactory(
       name: "ContentTracer",
       signerOrOptions?: ethers.Signer | FactoryOptions
@@ -161,10 +193,6 @@ declare module "hardhat/types/runtime" {
       signerOrOptions?: ethers.Signer | FactoryOptions
     ): Promise<Contracts.MessageReceiver__factory>;
     getContractFactory(
-      name: "MessageReceiverWrapper",
-      signerOrOptions?: ethers.Signer | FactoryOptions
-    ): Promise<Contracts.MessageReceiverWrapper__factory>;
-    getContractFactory(
       name: "MessageSender",
       signerOrOptions?: ethers.Signer | FactoryOptions
     ): Promise<Contracts.MessageSender__factory>;
@@ -173,29 +201,9 @@ declare module "hardhat/types/runtime" {
       signerOrOptions?: ethers.Signer | FactoryOptions
     ): Promise<Contracts.DstChainPayment__factory>;
     getContractFactory(
-      name: "DstChainPaymentWrapper",
-      signerOrOptions?: ethers.Signer | FactoryOptions
-    ): Promise<Contracts.DstChainPaymentWrapper__factory>;
-    getContractFactory(
-      name: "ResourcePayTokenWrapper",
-      signerOrOptions?: ethers.Signer | FactoryOptions
-    ): Promise<Contracts.ResourcePayTokenWrapper__factory>;
-    getContractFactory(
-      name: "ResourPayloadTool",
-      signerOrOptions?: ethers.Signer | FactoryOptions
-    ): Promise<Contracts.ResourPayloadTool__factory>;
-    getContractFactory(
       name: "SrcChainPayment",
       signerOrOptions?: ethers.Signer | FactoryOptions
     ): Promise<Contracts.SrcChainPayment__factory>;
-    getContractFactory(
-      name: "Providers",
-      signerOrOptions?: ethers.Signer | FactoryOptions
-    ): Promise<Contracts.Providers__factory>;
-    getContractFactory(
-      name: "ProvidersWrapper",
-      signerOrOptions?: ethers.Signer | FactoryOptions
-    ): Promise<Contracts.ProvidersWrapper__factory>;
     getContractFactory(
       name: "Admin",
       signerOrOptions?: ethers.Signer | FactoryOptions
@@ -204,10 +212,6 @@ declare module "hardhat/types/runtime" {
       name: "ContractProxy",
       signerOrOptions?: ethers.Signer | FactoryOptions
     ): Promise<Contracts.ContractProxy__factory>;
-    getContractFactory(
-      name: "AdaptorWrapper",
-      signerOrOptions?: ethers.Signer | FactoryOptions
-    ): Promise<Contracts.AdaptorWrapper__factory>;
     getContractFactory(
       name: "IPFSStorageController",
       signerOrOptions?: ethers.Signer | FactoryOptions
@@ -229,14 +233,6 @@ declare module "hardhat/types/runtime" {
       signerOrOptions?: ethers.Signer | FactoryOptions
     ): Promise<Contracts.NormalResourceController__factory>;
     getContractFactory(
-      name: "ControllersWrapper",
-      signerOrOptions?: ethers.Signer | FactoryOptions
-    ): Promise<Contracts.ControllersWrapper__factory>;
-    getContractFactory(
-      name: "IAdaptorWrapper",
-      signerOrOptions?: ethers.Signer | FactoryOptions
-    ): Promise<Contracts.IAdaptorWrapper__factory>;
-    getContractFactory(
       name: "IIPFSStorageController",
       signerOrOptions?: ethers.Signer | FactoryOptions
     ): Promise<Contracts.IIPFSStorageController__factory>;
@@ -245,21 +241,25 @@ declare module "hardhat/types/runtime" {
       signerOrOptions?: ethers.Signer | FactoryOptions
     ): Promise<Contracts.INormalResourceController__factory>;
     getContractFactory(
-      name: "IResourceAdaptor",
+      name: "IResource",
       signerOrOptions?: ethers.Signer | FactoryOptions
-    ): Promise<Contracts.IResourceAdaptor__factory>;
+    ): Promise<Contracts.IResource__factory>;
     getContractFactory(
-      name: "ResourceAdaptor",
+      name: "IResourcePriceAdaptor",
       signerOrOptions?: ethers.Signer | FactoryOptions
-    ): Promise<Contracts.ResourceAdaptor__factory>;
+    ): Promise<Contracts.IResourcePriceAdaptor__factory>;
+    getContractFactory(
+      name: "ResourcePriceAdaptor",
+      signerOrOptions?: ethers.Signer | FactoryOptions
+    ): Promise<Contracts.ResourcePriceAdaptor__factory>;
     getContractFactory(
       name: "Billing",
       signerOrOptions?: ethers.Signer | FactoryOptions
     ): Promise<Contracts.Billing__factory>;
     getContractFactory(
-      name: "FundWallet",
+      name: "FundPool",
       signerOrOptions?: ethers.Signer | FactoryOptions
-    ): Promise<Contracts.FundWallet__factory>;
+    ): Promise<Contracts.FundPool__factory>;
     getContractFactory(
       name: "SafeWallet",
       signerOrOptions?: ethers.Signer | FactoryOptions
@@ -435,6 +435,31 @@ declare module "hardhat/types/runtime" {
       signer?: ethers.Signer
     ): Promise<Contracts.Pauser>;
     getContractAt(
+      name: "Governance",
+      address: string,
+      signer?: ethers.Signer
+    ): Promise<Contracts.Governance>;
+    getContractAt(
+      name: "ProviderController",
+      address: string,
+      signer?: ethers.Signer
+    ): Promise<Contracts.ProviderController>;
+    getContractAt(
+      name: "ProviderRegistry",
+      address: string,
+      signer?: ethers.Signer
+    ): Promise<Contracts.ProviderRegistry>;
+    getContractAt(
+      name: "Router",
+      address: string,
+      signer?: ethers.Signer
+    ): Promise<Contracts.Router>;
+    getContractAt(
+      name: "RouterWrapper",
+      address: string,
+      signer?: ethers.Signer
+    ): Promise<Contracts.RouterWrapper>;
+    getContractAt(
       name: "IBilling",
       address: string,
       signer?: ethers.Signer
@@ -445,25 +470,40 @@ declare module "hardhat/types/runtime" {
       signer?: ethers.Signer
     ): Promise<Contracts.IDstChainPayment>;
     getContractAt(
-      name: "IFundWallet",
+      name: "IFundPool",
       address: string,
       signer?: ethers.Signer
-    ): Promise<Contracts.IFundWallet>;
+    ): Promise<Contracts.IFundPool>;
+    getContractAt(
+      name: "IGovernance",
+      address: string,
+      signer?: ethers.Signer
+    ): Promise<Contracts.IGovernance>;
     getContractAt(
       name: "IMessageSender",
       address: string,
       signer?: ethers.Signer
     ): Promise<Contracts.IMessageSender>;
     getContractAt(
-      name: "IProviders",
+      name: "IProviderController",
       address: string,
       signer?: ethers.Signer
-    ): Promise<Contracts.IProviders>;
+    ): Promise<Contracts.IProviderController>;
     getContractAt(
-      name: "IProvidersWrapper",
+      name: "IProviderRegistry",
       address: string,
       signer?: ethers.Signer
-    ): Promise<Contracts.IProvidersWrapper>;
+    ): Promise<Contracts.IProviderRegistry>;
+    getContractAt(
+      name: "ResourcePayToken",
+      address: string,
+      signer?: ethers.Signer
+    ): Promise<Contracts.ResourcePayToken>;
+    getContractAt(
+      name: "IRouter",
+      address: string,
+      signer?: ethers.Signer
+    ): Promise<Contracts.IRouter>;
     getContractAt(
       name: "ContentTracer",
       address: string,
@@ -475,11 +515,6 @@ declare module "hardhat/types/runtime" {
       signer?: ethers.Signer
     ): Promise<Contracts.MessageReceiver>;
     getContractAt(
-      name: "MessageReceiverWrapper",
-      address: string,
-      signer?: ethers.Signer
-    ): Promise<Contracts.MessageReceiverWrapper>;
-    getContractAt(
       name: "MessageSender",
       address: string,
       signer?: ethers.Signer
@@ -490,35 +525,10 @@ declare module "hardhat/types/runtime" {
       signer?: ethers.Signer
     ): Promise<Contracts.DstChainPayment>;
     getContractAt(
-      name: "DstChainPaymentWrapper",
-      address: string,
-      signer?: ethers.Signer
-    ): Promise<Contracts.DstChainPaymentWrapper>;
-    getContractAt(
-      name: "ResourcePayTokenWrapper",
-      address: string,
-      signer?: ethers.Signer
-    ): Promise<Contracts.ResourcePayTokenWrapper>;
-    getContractAt(
-      name: "ResourPayloadTool",
-      address: string,
-      signer?: ethers.Signer
-    ): Promise<Contracts.ResourPayloadTool>;
-    getContractAt(
       name: "SrcChainPayment",
       address: string,
       signer?: ethers.Signer
     ): Promise<Contracts.SrcChainPayment>;
-    getContractAt(
-      name: "Providers",
-      address: string,
-      signer?: ethers.Signer
-    ): Promise<Contracts.Providers>;
-    getContractAt(
-      name: "ProvidersWrapper",
-      address: string,
-      signer?: ethers.Signer
-    ): Promise<Contracts.ProvidersWrapper>;
     getContractAt(
       name: "Admin",
       address: string,
@@ -529,11 +539,6 @@ declare module "hardhat/types/runtime" {
       address: string,
       signer?: ethers.Signer
     ): Promise<Contracts.ContractProxy>;
-    getContractAt(
-      name: "AdaptorWrapper",
-      address: string,
-      signer?: ethers.Signer
-    ): Promise<Contracts.AdaptorWrapper>;
     getContractAt(
       name: "IPFSStorageController",
       address: string,
@@ -560,16 +565,6 @@ declare module "hardhat/types/runtime" {
       signer?: ethers.Signer
     ): Promise<Contracts.NormalResourceController>;
     getContractAt(
-      name: "ControllersWrapper",
-      address: string,
-      signer?: ethers.Signer
-    ): Promise<Contracts.ControllersWrapper>;
-    getContractAt(
-      name: "IAdaptorWrapper",
-      address: string,
-      signer?: ethers.Signer
-    ): Promise<Contracts.IAdaptorWrapper>;
-    getContractAt(
       name: "IIPFSStorageController",
       address: string,
       signer?: ethers.Signer
@@ -580,25 +575,30 @@ declare module "hardhat/types/runtime" {
       signer?: ethers.Signer
     ): Promise<Contracts.INormalResourceController>;
     getContractAt(
-      name: "IResourceAdaptor",
+      name: "IResource",
       address: string,
       signer?: ethers.Signer
-    ): Promise<Contracts.IResourceAdaptor>;
+    ): Promise<Contracts.IResource>;
     getContractAt(
-      name: "ResourceAdaptor",
+      name: "IResourcePriceAdaptor",
       address: string,
       signer?: ethers.Signer
-    ): Promise<Contracts.ResourceAdaptor>;
+    ): Promise<Contracts.IResourcePriceAdaptor>;
+    getContractAt(
+      name: "ResourcePriceAdaptor",
+      address: string,
+      signer?: ethers.Signer
+    ): Promise<Contracts.ResourcePriceAdaptor>;
     getContractAt(
       name: "Billing",
       address: string,
       signer?: ethers.Signer
     ): Promise<Contracts.Billing>;
     getContractAt(
-      name: "FundWallet",
+      name: "FundPool",
       address: string,
       signer?: ethers.Signer
-    ): Promise<Contracts.FundWallet>;
+    ): Promise<Contracts.FundPool>;
     getContractAt(
       name: "SafeWallet",
       address: string,

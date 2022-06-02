@@ -40,7 +40,7 @@ abstract contract OwnerWithdrawable is OwnableUpgradeable {
 	/// @param value token value
 	function ownerWithdrawNative(address payable to, uint256 value) external onlyOwner {
 		bool success = to.send(value);
-		require(success, 'Payment: withdraw native token failed');
+		require(success, 'OwnerWithdrawable: withdraw native token failed');
 		emit NativeWithdrawal(to, value);
 	}
 }

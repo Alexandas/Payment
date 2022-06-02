@@ -10,34 +10,25 @@ import '@openzeppelin/contracts-upgradeable/utils/math/SafeMathUpgradeable.sol';
 import 'sgn-v2-contracts/contracts/message/libraries/MsgDataTypes.sol';
 
 import '../access/OwnerWithdrawable.sol';
-import '../libraries/ResourceData.sol';
 import '../interfaces/IDstChainPayment.sol';
+import '../govers/RouterWrapper.sol';
 
 /// @author Alexandas
 /// @dev dst chain message receiver
-contract MessageReceiver is OwnerWithdrawable {
+contract MessageReceiver is RouterWrapper, OwnerWithdrawable {
 	using SafeMathUpgradeable for uint256;
 	using SafeERC20Upgradeable for IERC20Upgradeable;
-	using ResourceData for ResourceData.Payload[];
-
 	enum ExecutionStatus {
 		Fail,
 		Success,
 		Retry
 	}
 
-	/// @dev dst chain payment contract address
-	IDstChainPayment public dstChainPayment;
-
 	/// @dev message bus in dst chain
 	address public messageBus;
 
 	/// @dev message executor
 	address public executor;
-
-	/// @dev emit when dst chain payment updated
-	/// @param _dstChainPayment dst chain payment contract address
-	event DstChainPaymentUpdated(IDstChainPayment _dstChainPayment);
 
 	/// @dev emit when message bus updated
 	/// @param messageBus dst chain messageBus in sgn
@@ -89,11 +80,13 @@ contract MessageReceiver is OwnerWithdrawable {
 	function initialize(
 		address owner,
 		address _messageBus,
-		address _executor
+		address _executor,
+		IRouter router
 	) external initializer {
 		_transferOwnership(owner);
 		_setMessageBus(_messageBus);
 		_setExecutor(_executor);
+		__Init_Router(router);
 	}
 
 	/// @dev execute message with transfer
@@ -112,6 +105,7 @@ contract MessageReceiver is OwnerWithdrawable {
 		address _executor
 	) external payable onlyMessageBus returns (ExecutionStatus) {
 		require(executor == _executor, 'MessageReceiver: invalid executor');
+		IDstChainPayment dstChainPayment = router.DstChainPayment();
 		token.safeApprove(address(dstChainPayment), amount);
 		try dstChainPayment.payFromSourceChain(token, amount, message) {
 			emit MessageWithTransferExecuted(sender, token, amount, srcChainId, message, _executor);
@@ -153,17 +147,6 @@ contract MessageReceiver is OwnerWithdrawable {
 	) public view returns (bytes32) {
 		return
 			keccak256(abi.encodePacked(MsgDataTypes.MsgType.MessageOnly, route.sender, route.receiver, route.srcChainId, route.srcTxHash, dstChainId, message));
-	}
-
-	/// @dev set dst chain payment address
-	/// @param _dstChainPayment dst chain payment address
-	function setDstChainPayment(IDstChainPayment _dstChainPayment) external onlyOwner {
-		_setDstChainPayment(_dstChainPayment);
-	}
-
-	function _setDstChainPayment(IDstChainPayment _dstChainPayment) internal {
-		dstChainPayment = _dstChainPayment;
-		emit DstChainPaymentUpdated(_dstChainPayment);
 	}
 
 	/// @dev set message bus

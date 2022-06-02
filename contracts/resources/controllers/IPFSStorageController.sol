@@ -1,143 +1,209 @@
 // SPDX-License-Identifier: UNLICENSE
 
 pragma solidity >=0.8.0;
+
+import '@openzeppelin/contracts-upgradeable/access/OwnableUpgradeable.sol';
 import '@openzeppelin/contracts-upgradeable/utils/math/SafeMathUpgradeable.sol';
-import '../AdaptorWrapper.sol';
+
 import '../interfaces/IIPFSStorageController.sol';
-import '../../payment/DstChainPaymentWrapper.sol';
+import '../../govers/RouterWrapper.sol';
 
 /// @author Alexandas
 /// @dev IPFS storage controller
-contract IPFSStorageController is IIPFSStorageController, DstChainPaymentWrapper, AdaptorWrapper {
+contract IPFSStorageController is IIPFSStorageController, RouterWrapper, OwnableUpgradeable {
 	using SafeMathUpgradeable for uint256;
 
+	/// @dev provider storage
+	mapping(address => Storage) internal providersStorage;
+
 	/// @dev ipfs storage for account
-	mapping(bytes32 => IPFSStorage) internal ipfsStorage;
+	mapping(address=> mapping(bytes32 => Storage)) internal storages;
 
 	constructor() initializer {}
 
 	/// @dev proxy initialize function
 	/// @param owner contract owner
-	/// @param dstChainPayment dst chain payment contract address
-	/// @param adaptor resource adaptor contract address
+	/// @param router router contract address
 	function initialize(
 		address owner,
-		address dstChainPayment,
-		IResourceAdaptor adaptor
+		IRouter router
 	) external initializer {
 		_transferOwnership(owner);
-		__Init_Dst_Chain_Payment(dstChainPayment);
-		__Init_Resource_Adaptor(adaptor);
-		__Init_Resource_Type(ResourceData.ResourceType.IPFSStorage);
+		__Init_Router(router);
 	}
 
-	/// @dev expand storage and expiration
-	/// @param account user account
-	/// @param expandedStorageFee storage fee
-	/// @param expandedExpirationFee expiration fee
-	function expand(
-		bytes32 account,
-		uint256 expandedStorageFee,
-		uint256 expandedExpirationFee
-	) external override onlyDstChainPayment {
-		(uint256 expandedStorage, uint256 expandedExpiration) = expansions(account, expandedStorageFee, expandedExpirationFee);
-		if (isExpired(account)) {
-			ipfsStorage[account].startTime = block.timestamp;
-			ipfsStorage[account].amount = expandedStorage;
-			ipfsStorage[account].expiration = expandedExpiration;
-		} else {
-			ipfsStorage[account].amount = ipfsStorage[account].amount.add(expandedStorage);
-			ipfsStorage[account].expiration = ipfsStorage[account].expiration.add(expandedExpiration);
-		}
+	/// @dev allocate user's normal resource balance
+	/// @param provider provider address
+	/// @param amount resource amount
+	/// @param expiration ipfs expiration
+	function allocateProvider(address provider, uint256 amount, uint256 expiration) external override onlyGovernance {
+		_allocateProivder(provider, amount, expiration);
+	}
 
-		emit Expanded(account, expandedStorageFee, expandedExpirationFee);
+	/// @dev provider drip resource to account directly
+	/// @param provider provider address
+	/// @param account user account
+	/// @param amount ipfs storage amount
+	/// @param expiration ipfs expiration
+	function drip(address provider, bytes32 account, uint256 amount, uint256 expiration) external override onlyProviderController {
+		_allocateAccount(provider, account, amount, expiration);
+	}
+
+	/// @dev allocate user's resource balance
+	/// @param provider provider address
+	/// @param account user account
+	/// @param amount ipfs storage amount
+	/// @param expiration ipfs expiration
+	function paymentAllocate(address provider, bytes32 account, uint256 amount, uint256 expiration) external override onlyDstChainPayment { 
+		_allocateAccount(provider, account, amount, expiration);
+	}
+
+	function _allocateAccount(address provider, bytes32 account, uint256 amount, uint256 expiration) internal {
+		require(!isProviderExpired(provider), 'IPFSStorageController: provider expired');
+		require(providerBalanceOf(provider) >= amount, 'IPFSStorageController: insufficient balance for the provider');
+		if (isExpired(provider, account)) {
+			if (storages[provider][account].amount > 0) {
+				_recoverStorage(provider, account);
+			}
+			storages[provider][account].startTime = block.timestamp;
+			storages[provider][account].amount = amount;
+			storages[provider][account].expiration = expiration;
+		} else {
+			storages[provider][account].amount = storages[provider][account].amount.add(amount);
+			storages[provider][account].expiration = storages[provider][account].expiration.add(expiration);
+		}
+		require(providerExpiredAt(provider) >= expiredAt(provider, account), 'IPFSStorageController: expiration overflows');
+		if(amount > 0) {
+			providersStorage[provider].amount = providersStorage[provider].amount.sub(amount);
+		}
+		emit AccountAllocated(provider, account, amount, expiration);
+	}
+
+	function _allocateProivder(address provider, uint256 amount, uint256 expiration) internal {
+		if (isProviderExpired(provider)) {
+			providersStorage[provider] = Storage({
+				startTime: block.timestamp,
+				amount: amount,
+				expiration: expiration
+			});
+		} else {
+			providersStorage[provider].amount = providersStorage[provider].amount.add(amount);
+			providersStorage[provider].expiration = providersStorage[provider].expiration.add(expiration);
+		}
+	
+		emit ProviderAllocated(provider, amount, expiration);
+	}
+
+	/// @dev recover provider storage
+	/// @param provider provider address
+	/// @param account user account
+	function recoverStorage(address provider, bytes32 account) external override {
+		_recoverStorage(provider, account);
+	}
+
+	function _recoverStorage(address provider, bytes32 account) internal {
+		require(!isProviderExpired(provider), 'IPFSStorageController: provider expired');
+		require(isExpired(provider, account), 'IPFSStorageController: account is not expired');
+		uint256 amount = storages[provider][account].amount;
+		require(amount > 0, 'IPFSStorageController: empty storage to recover');
+		providersStorage[provider].amount = providersStorage[provider].amount.add(amount);
+		storages[provider][account].amount = 0;
+
+		emit ProviderRecovered(provider, account, amount);
+	}
+
+	/// @dev return whether ipfs storage is expired for the provider
+	/// @param provider provider address
+	/// @return whether ipfs storage is expired for the provider
+	function isProviderExpired(address provider) public view override returns (bool) {
+		return block.timestamp > providerExpiredAt(provider);
+	}
+
+	/// @dev return ipfs storage start time for the provider
+	/// @param provider provider address
+	/// @return start time for the provider
+	function providerStartTime(address provider) public view override returns (uint256) {
+		return providersStorage[provider].startTime;
+	}
+
+	/// @dev return total expiration time for the provider
+	/// @param provider provider address
+	/// @return total expiration time for the provider
+	function providerExpiration(address provider) public view override returns (uint256) {
+		return providersStorage[provider].expiration;
+	}
+
+	/// @dev return available expiration time for the provider
+	/// @param provider provider address
+	/// @return available expiration time for the provider
+	function providerAvailableExpiration(address provider) public view override returns (uint256) {
+		require(!isProviderExpired(provider), 'IPFSStorageController: provider is expired.');
+		return providerExpiredAt(provider).sub(block.timestamp);
+	}
+
+	/// @dev return when the provider will expire
+	/// @param provider provider address
+	/// @return when the provider will expire
+	function providerExpiredAt(address provider) public view override returns (uint256) {
+		return providerStartTime(provider).add(providerExpiration(provider));
+	}
+
+	/// @dev return ipfs storage amount for the provider
+	/// @param provider provider address
+	/// @return ipfs storage amount for the provider
+	function providerBalanceOf(address provider) public view override returns (uint256) {
+		require(!isProviderExpired(provider), 'IPFSStorageController: provider is expired.');
+		return providersStorage[provider].amount;
 	}
 
 	/// @dev return whether ipfs storage is expired for the account
+	/// @param provider provider address
 	/// @param account user account
 	/// @return whether ipfs storage is expired for the account
-	function isExpired(bytes32 account) public view override returns (bool) {
-		return block.timestamp > expiredAt(account);
-	}
-
-	/// @dev return ipfs storage start time for the account
-	/// @param account user account
-	/// @return start time for the account
-	function startTime(bytes32 account) public view override returns (uint256) {
-		return ipfsStorage[account].startTime;
+	function isExpired(address provider, bytes32 account) public view override returns (bool) {
+		return block.timestamp > expiredAt(provider, account);
 	}
 
 	/// @dev return available expiration time for the account
+	/// @param provider provider address
 	/// @param account user account
 	/// @return available expiration time for the account
-	function availableExpiration(bytes32 account) public view override returns (uint256) {
-		require(!isExpired(account), 'IPFSStorageController: account is expired.');
-		return expiredAt(account).sub(block.timestamp);
-	}
-
-	/// @dev return total expiration time for the account
-	/// @param account user account
-	/// @return total expiration time for the account
-	function expiration(bytes32 account) public view override returns (uint256) {
-		return ipfsStorage[account].expiration;
+	function availableExpiration(address provider, bytes32 account) public view override returns (uint256) {
+		require(!isExpired(provider, account), 'IPFSStorageController: account is expired.');
+		return expiredAt(provider, account).sub(block.timestamp);
 	}
 
 	/// @dev return when the account will expire
+	/// @param provider provider address
 	/// @param account user account
 	/// @return when the account will expire
-	function expiredAt(bytes32 account) public view override returns (uint256) {
-		return startTime(account).add(expiration(account));
+	function expiredAt(address provider, bytes32 account) public view override returns (uint256) {
+		return startTime(provider, account).add(expiration(provider, account));
+	}
+
+	/// @dev return ipfs storage start time for the account
+	/// @param provider provider address
+	/// @param account user account
+	/// @return start time for the account
+	function startTime(address provider, bytes32 account) public view override returns (uint256) {
+		return storages[provider][account].startTime;
+	}
+
+	/// @dev return total expiration time for the account
+	/// @param provider provider address
+	/// @param account user account
+	/// @return total expiration time for the account
+	function expiration(address provider, bytes32 account) public view override returns (uint256) {
+		return storages[provider][account].expiration;
 	}
 
 	/// @dev return ipfs storage amount for the account
+	/// @param provider provider address
 	/// @param account user account
 	/// @return ipfs storage amount for the account
-	function balanceOf(bytes32 account) public view override returns (uint256) {
-		require(!isExpired(account), 'IPFSStorageController: account is expired.');
-		return ipfsStorage[account].amount;
+	function balanceOf(address provider, bytes32 account) public view override returns (uint256) {
+		require(!isExpired(provider, account), 'IPFSStorageController: account is expired.');
+		return storages[provider][account].amount;
 	}
 
-	/// @dev calculate fee for storage and expiration
-	/// @param account user account
-	/// @param expandedStorage storage amount
-	/// @param expandedExpiration  expiration(in seconds)
-	/// @return expandedStorageFee storage fee
-	/// @return expandedExpirationFee expiration fee
-	function expandedFee(
-		bytes32 account,
-		uint256 expandedStorage,
-		uint256 expandedExpiration
-	) public view override returns (uint256 expandedStorageFee, uint256 expandedExpirationFee) {
-		if (isExpired(account)) {
-			require(expandedStorage > 0 && expandedExpiration > 0, 'IPFSStorageController: invalid params with expired account');
-			expandedStorageFee = getValueOf(expandedStorage);
-			expandedExpirationFee = expandedStorage.mul(expandedExpiration);
-		} else {
-			require(expandedStorage > 0 || expandedExpiration > 0, 'IPFSStorageController: invalid params');
-			expandedStorageFee = expandedStorage.mul(getValueOf(availableExpiration(account)));
-			expandedExpirationFee = expandedExpiration.mul(getValueOf(balanceOf(account).add(expandedStorage)));
-		}
-	}
-
-	/// @dev calculate fee for storage and expiration
-	/// @param account user account
-	/// @param expandedStorageFee storage fee
-	/// @param expandedExpirationFee expiration fee
-	/// @return expandedStorage storage amount
-	/// @return expandedExpiration expiration(in seconds)
-	function expansions(
-		bytes32 account,
-		uint256 expandedStorageFee,
-		uint256 expandedExpirationFee
-	) public view override returns (uint256 expandedStorage, uint256 expandedExpiration) {
-		if (isExpired(account)) {
-			require(expandedStorageFee > 0 && expandedExpirationFee > 0, 'IPFSStorageController: invalid params with expired account');
-			expandedStorage = expandedStorageFee.div(price());
-			expandedExpiration = expandedExpirationFee.div(expandedStorageFee);
-		} else {
-			require(expandedStorageFee > 0 || expandedExpirationFee > 0, 'IPFSStorageController: invalid params');
-			expandedStorage = expandedStorageFee.div(getValueOf(availableExpiration(account)));
-			expandedExpiration = expandedExpirationFee.div(getValueOf(balanceOf(account).add(expandedStorage)));
-		}
-	}
 }

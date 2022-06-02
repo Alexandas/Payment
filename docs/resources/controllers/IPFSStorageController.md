@@ -17,7 +17,7 @@
 
 #### Declaration
 ```
-function initialize(address owner,address dstChainPayment,contract IResourceAdaptor adaptor) external initializer
+function initialize(address owner,address dstChainPayment,contract IResourcePriceAdaptor adaptor) external initializer
 ```
 
 #### Args:
@@ -25,7 +25,7 @@ function initialize(address owner,address dstChainPayment,contract IResourceAdap
 | --- | --- | --- |
 |`owner` | address | contract owner
 |`dstChainPayment` | address | dst chain payment contract address
-|`adaptor` | contract IResourceAdaptor | resource adaptor contract address
+|`adaptor` | contract IResourcePriceAdaptor | resource adaptor contract address
 
 ### expand
 

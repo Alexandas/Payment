@@ -19,7 +19,7 @@
 
 #### Declaration
 ```
-function initialize(address owner,address pauser,contract IResourceAdaptor adaptor,contract IProviders _providers,contract IERC20Upgradeable _token,string name,string version,string rechargeTypes,string billsTypes) external initializer
+function initialize(address owner,address pauser,contract IResourcePriceAdaptor adaptor,contract IProviders _providers,contract IERC20Upgradeable _token,string name,string version,string rechargeTypes,string billsTypes) external initializer
 ```
 
 #### Args:
@@ -27,7 +27,7 @@ function initialize(address owner,address pauser,contract IResourceAdaptor adapt
 | --- | --- | --- |
 |`owner` | address | contract owner
 |`pauser` | address | contract pauser
-|`adaptor` | contract IResourceAdaptor | resource adaptor contract address
+|`adaptor` | contract IResourcePriceAdaptor | resource adaptor contract address
 |`_providers` | contract IProviders | providers contract address
 |`_token` | contract IERC20Upgradeable | token address
 |`name` | string | EIP712 domain name

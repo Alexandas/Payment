@@ -15,6 +15,12 @@ const _abi = [
     inputs: [
       {
         indexed: false,
+        internalType: "address",
+        name: "provider",
+        type: "address",
+      },
+      {
+        indexed: false,
         internalType: "bytes32",
         name: "account",
         type: "bytes32",
@@ -22,11 +28,11 @@ const _abi = [
       {
         indexed: false,
         internalType: "uint256",
-        name: "value",
+        name: "amount",
         type: "uint256",
       },
     ],
-    name: "Expanded",
+    name: "AccountAllocated",
     type: "event",
   },
   {
@@ -34,42 +40,45 @@ const _abi = [
     inputs: [
       {
         indexed: false,
-        internalType: "contract IResourceAdaptor",
-        name: "adaptor",
+        internalType: "address",
+        name: "provider",
         type: "address",
       },
-    ],
-    name: "ResourceAdaptorUpdated",
-    type: "event",
-  },
-  {
-    anonymous: false,
-    inputs: [
       {
         indexed: false,
-        internalType: "enum ResourceData.ResourceType",
-        name: "resourceType",
-        type: "uint8",
+        internalType: "uint256",
+        name: "amount",
+        type: "uint256",
       },
     ],
-    name: "ResourceTypeUpdated",
+    name: "ProviderAllocated",
     type: "event",
   },
   {
-    inputs: [],
-    name: "adaptor",
-    outputs: [
+    inputs: [
       {
-        internalType: "contract IResourceAdaptor",
-        name: "",
+        internalType: "address",
+        name: "provider",
         type: "address",
       },
+      {
+        internalType: "uint256",
+        name: "amount",
+        type: "uint256",
+      },
     ],
-    stateMutability: "view",
+    name: "allocateProvider",
+    outputs: [],
+    stateMutability: "nonpayable",
     type: "function",
   },
   {
     inputs: [
+      {
+        internalType: "address",
+        name: "provider",
+        type: "address",
+      },
       {
         internalType: "bytes32",
         name: "account",
@@ -90,17 +99,22 @@ const _abi = [
   {
     inputs: [
       {
+        internalType: "address",
+        name: "provider",
+        type: "address",
+      },
+      {
         internalType: "bytes32",
         name: "account",
         type: "bytes32",
       },
       {
         internalType: "uint256",
-        name: "value",
+        name: "amount",
         type: "uint256",
       },
     ],
-    name: "expand",
+    name: "drip",
     outputs: [],
     stateMutability: "nonpayable",
     type: "function",
@@ -108,62 +122,40 @@ const _abi = [
   {
     inputs: [
       {
-        internalType: "uint256",
-        name: "value",
-        type: "uint256",
+        internalType: "address",
+        name: "provider",
+        type: "address",
       },
-    ],
-    name: "getAmountOf",
-    outputs: [
       {
-        internalType: "uint256",
-        name: "",
-        type: "uint256",
+        internalType: "bytes32",
+        name: "account",
+        type: "bytes32",
       },
-    ],
-    stateMutability: "view",
-    type: "function",
-  },
-  {
-    inputs: [
       {
         internalType: "uint256",
         name: "amount",
         type: "uint256",
       },
     ],
-    name: "getValueOf",
+    name: "paymentAllocate",
+    outputs: [],
+    stateMutability: "nonpayable",
+    type: "function",
+  },
+  {
+    inputs: [
+      {
+        internalType: "address",
+        name: "provider",
+        type: "address",
+      },
+    ],
+    name: "providerBalanceOf",
     outputs: [
       {
         internalType: "uint256",
         name: "",
         type: "uint256",
-      },
-    ],
-    stateMutability: "view",
-    type: "function",
-  },
-  {
-    inputs: [],
-    name: "price",
-    outputs: [
-      {
-        internalType: "uint256",
-        name: "",
-        type: "uint256",
-      },
-    ],
-    stateMutability: "view",
-    type: "function",
-  },
-  {
-    inputs: [],
-    name: "resourceType",
-    outputs: [
-      {
-        internalType: "enum ResourceData.ResourceType",
-        name: "",
-        type: "uint8",
       },
     ],
     stateMutability: "view",

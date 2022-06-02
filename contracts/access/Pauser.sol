@@ -6,7 +6,7 @@ import '@openzeppelin/contracts-upgradeable/access/OwnableUpgradeable.sol';
 import '@openzeppelin/contracts-upgradeable/security/PausableUpgradeable.sol';
 
 /// @author Alexandas
-/// @dev make contract pausable
+/// @dev Pauser contract
 abstract contract Pauser is OwnableUpgradeable, PausableUpgradeable {
 	/// @dev all pausers
 	mapping(address => bool) public pausers;

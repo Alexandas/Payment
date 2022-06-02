@@ -21,73 +21,68 @@ import type { TypedEventFilter, TypedEvent, TypedListener } from "./common";
 
 interface INormalResourceControllerInterface extends ethers.utils.Interface {
   functions: {
-    "adaptor()": FunctionFragment;
-    "balanceOf(bytes32)": FunctionFragment;
-    "expand(bytes32,uint256)": FunctionFragment;
-    "getAmountOf(uint256)": FunctionFragment;
-    "getValueOf(uint256)": FunctionFragment;
-    "price()": FunctionFragment;
-    "resourceType()": FunctionFragment;
+    "allocateProvider(address,uint256)": FunctionFragment;
+    "balanceOf(address,bytes32)": FunctionFragment;
+    "drip(address,bytes32,uint256)": FunctionFragment;
+    "paymentAllocate(address,bytes32,uint256)": FunctionFragment;
+    "providerBalanceOf(address)": FunctionFragment;
   };
 
-  encodeFunctionData(functionFragment: "adaptor", values?: undefined): string;
+  encodeFunctionData(
+    functionFragment: "allocateProvider",
+    values: [string, BigNumberish]
+  ): string;
   encodeFunctionData(
     functionFragment: "balanceOf",
-    values: [BytesLike]
+    values: [string, BytesLike]
   ): string;
   encodeFunctionData(
-    functionFragment: "expand",
-    values: [BytesLike, BigNumberish]
+    functionFragment: "drip",
+    values: [string, BytesLike, BigNumberish]
   ): string;
   encodeFunctionData(
-    functionFragment: "getAmountOf",
-    values: [BigNumberish]
+    functionFragment: "paymentAllocate",
+    values: [string, BytesLike, BigNumberish]
   ): string;
   encodeFunctionData(
-    functionFragment: "getValueOf",
-    values: [BigNumberish]
-  ): string;
-  encodeFunctionData(functionFragment: "price", values?: undefined): string;
-  encodeFunctionData(
-    functionFragment: "resourceType",
-    values?: undefined
+    functionFragment: "providerBalanceOf",
+    values: [string]
   ): string;
 
-  decodeFunctionResult(functionFragment: "adaptor", data: BytesLike): Result;
-  decodeFunctionResult(functionFragment: "balanceOf", data: BytesLike): Result;
-  decodeFunctionResult(functionFragment: "expand", data: BytesLike): Result;
   decodeFunctionResult(
-    functionFragment: "getAmountOf",
+    functionFragment: "allocateProvider",
     data: BytesLike
   ): Result;
-  decodeFunctionResult(functionFragment: "getValueOf", data: BytesLike): Result;
-  decodeFunctionResult(functionFragment: "price", data: BytesLike): Result;
+  decodeFunctionResult(functionFragment: "balanceOf", data: BytesLike): Result;
+  decodeFunctionResult(functionFragment: "drip", data: BytesLike): Result;
   decodeFunctionResult(
-    functionFragment: "resourceType",
+    functionFragment: "paymentAllocate",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "providerBalanceOf",
     data: BytesLike
   ): Result;
 
   events: {
-    "Expanded(bytes32,uint256)": EventFragment;
-    "ResourceAdaptorUpdated(address)": EventFragment;
-    "ResourceTypeUpdated(uint8)": EventFragment;
+    "AccountAllocated(address,bytes32,uint256)": EventFragment;
+    "ProviderAllocated(address,uint256)": EventFragment;
   };
 
-  getEvent(nameOrSignatureOrTopic: "Expanded"): EventFragment;
-  getEvent(nameOrSignatureOrTopic: "ResourceAdaptorUpdated"): EventFragment;
-  getEvent(nameOrSignatureOrTopic: "ResourceTypeUpdated"): EventFragment;
+  getEvent(nameOrSignatureOrTopic: "AccountAllocated"): EventFragment;
+  getEvent(nameOrSignatureOrTopic: "ProviderAllocated"): EventFragment;
 }
 
-export type ExpandedEvent = TypedEvent<
-  [string, BigNumber] & { account: string; value: BigNumber }
+export type AccountAllocatedEvent = TypedEvent<
+  [string, string, BigNumber] & {
+    provider: string;
+    account: string;
+    amount: BigNumber;
+  }
 >;
 
-export type ResourceAdaptorUpdatedEvent = TypedEvent<
-  [string] & { adaptor: string }
->;
-
-export type ResourceTypeUpdatedEvent = TypedEvent<
-  [number] & { resourceType: number }
+export type ProviderAllocatedEvent = TypedEvent<
+  [string, BigNumber] & { provider: string; amount: BigNumber }
 >;
 
 export class INormalResourceController extends BaseContract {
@@ -134,176 +129,201 @@ export class INormalResourceController extends BaseContract {
   interface: INormalResourceControllerInterface;
 
   functions: {
-    adaptor(overrides?: CallOverrides): Promise<[string]>;
-
-    balanceOf(
-      account: BytesLike,
-      overrides?: CallOverrides
-    ): Promise<[BigNumber]>;
-
-    expand(
-      account: BytesLike,
-      value: BigNumberish,
+    allocateProvider(
+      provider: string,
+      amount: BigNumberish,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<ContractTransaction>;
 
-    getAmountOf(
-      value: BigNumberish,
+    balanceOf(
+      provider: string,
+      account: BytesLike,
       overrides?: CallOverrides
     ): Promise<[BigNumber]>;
 
-    getValueOf(
+    drip(
+      provider: string,
+      account: BytesLike,
       amount: BigNumberish,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<ContractTransaction>;
+
+    paymentAllocate(
+      provider: string,
+      account: BytesLike,
+      amount: BigNumberish,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<ContractTransaction>;
+
+    providerBalanceOf(
+      provider: string,
       overrides?: CallOverrides
     ): Promise<[BigNumber]>;
-
-    price(overrides?: CallOverrides): Promise<[BigNumber]>;
-
-    resourceType(overrides?: CallOverrides): Promise<[number]>;
   };
 
-  adaptor(overrides?: CallOverrides): Promise<string>;
-
-  balanceOf(account: BytesLike, overrides?: CallOverrides): Promise<BigNumber>;
-
-  expand(
-    account: BytesLike,
-    value: BigNumberish,
+  allocateProvider(
+    provider: string,
+    amount: BigNumberish,
     overrides?: Overrides & { from?: string | Promise<string> }
   ): Promise<ContractTransaction>;
 
-  getAmountOf(
-    value: BigNumberish,
+  balanceOf(
+    provider: string,
+    account: BytesLike,
     overrides?: CallOverrides
   ): Promise<BigNumber>;
 
-  getValueOf(
+  drip(
+    provider: string,
+    account: BytesLike,
     amount: BigNumberish,
+    overrides?: Overrides & { from?: string | Promise<string> }
+  ): Promise<ContractTransaction>;
+
+  paymentAllocate(
+    provider: string,
+    account: BytesLike,
+    amount: BigNumberish,
+    overrides?: Overrides & { from?: string | Promise<string> }
+  ): Promise<ContractTransaction>;
+
+  providerBalanceOf(
+    provider: string,
     overrides?: CallOverrides
   ): Promise<BigNumber>;
-
-  price(overrides?: CallOverrides): Promise<BigNumber>;
-
-  resourceType(overrides?: CallOverrides): Promise<number>;
 
   callStatic: {
-    adaptor(overrides?: CallOverrides): Promise<string>;
-
-    balanceOf(
-      account: BytesLike,
-      overrides?: CallOverrides
-    ): Promise<BigNumber>;
-
-    expand(
-      account: BytesLike,
-      value: BigNumberish,
+    allocateProvider(
+      provider: string,
+      amount: BigNumberish,
       overrides?: CallOverrides
     ): Promise<void>;
 
-    getAmountOf(
-      value: BigNumberish,
+    balanceOf(
+      provider: string,
+      account: BytesLike,
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
-    getValueOf(
+    drip(
+      provider: string,
+      account: BytesLike,
       amount: BigNumberish,
       overrides?: CallOverrides
+    ): Promise<void>;
+
+    paymentAllocate(
+      provider: string,
+      account: BytesLike,
+      amount: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<void>;
+
+    providerBalanceOf(
+      provider: string,
+      overrides?: CallOverrides
     ): Promise<BigNumber>;
-
-    price(overrides?: CallOverrides): Promise<BigNumber>;
-
-    resourceType(overrides?: CallOverrides): Promise<number>;
   };
 
   filters: {
-    "Expanded(bytes32,uint256)"(
+    "AccountAllocated(address,bytes32,uint256)"(
+      provider?: null,
       account?: null,
-      value?: null
+      amount?: null
     ): TypedEventFilter<
-      [string, BigNumber],
-      { account: string; value: BigNumber }
+      [string, string, BigNumber],
+      { provider: string; account: string; amount: BigNumber }
     >;
 
-    Expanded(
+    AccountAllocated(
+      provider?: null,
       account?: null,
-      value?: null
+      amount?: null
     ): TypedEventFilter<
-      [string, BigNumber],
-      { account: string; value: BigNumber }
+      [string, string, BigNumber],
+      { provider: string; account: string; amount: BigNumber }
     >;
 
-    "ResourceAdaptorUpdated(address)"(
-      adaptor?: null
-    ): TypedEventFilter<[string], { adaptor: string }>;
+    "ProviderAllocated(address,uint256)"(
+      provider?: null,
+      amount?: null
+    ): TypedEventFilter<
+      [string, BigNumber],
+      { provider: string; amount: BigNumber }
+    >;
 
-    ResourceAdaptorUpdated(
-      adaptor?: null
-    ): TypedEventFilter<[string], { adaptor: string }>;
-
-    "ResourceTypeUpdated(uint8)"(
-      resourceType?: null
-    ): TypedEventFilter<[number], { resourceType: number }>;
-
-    ResourceTypeUpdated(
-      resourceType?: null
-    ): TypedEventFilter<[number], { resourceType: number }>;
+    ProviderAllocated(
+      provider?: null,
+      amount?: null
+    ): TypedEventFilter<
+      [string, BigNumber],
+      { provider: string; amount: BigNumber }
+    >;
   };
 
   estimateGas: {
-    adaptor(overrides?: CallOverrides): Promise<BigNumber>;
-
-    balanceOf(
-      account: BytesLike,
-      overrides?: CallOverrides
-    ): Promise<BigNumber>;
-
-    expand(
-      account: BytesLike,
-      value: BigNumberish,
+    allocateProvider(
+      provider: string,
+      amount: BigNumberish,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<BigNumber>;
 
-    getAmountOf(
-      value: BigNumberish,
+    balanceOf(
+      provider: string,
+      account: BytesLike,
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
-    getValueOf(
+    drip(
+      provider: string,
+      account: BytesLike,
       amount: BigNumberish,
-      overrides?: CallOverrides
+      overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<BigNumber>;
 
-    price(overrides?: CallOverrides): Promise<BigNumber>;
+    paymentAllocate(
+      provider: string,
+      account: BytesLike,
+      amount: BigNumberish,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<BigNumber>;
 
-    resourceType(overrides?: CallOverrides): Promise<BigNumber>;
+    providerBalanceOf(
+      provider: string,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
   };
 
   populateTransaction: {
-    adaptor(overrides?: CallOverrides): Promise<PopulatedTransaction>;
-
-    balanceOf(
-      account: BytesLike,
-      overrides?: CallOverrides
-    ): Promise<PopulatedTransaction>;
-
-    expand(
-      account: BytesLike,
-      value: BigNumberish,
+    allocateProvider(
+      provider: string,
+      amount: BigNumberish,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<PopulatedTransaction>;
 
-    getAmountOf(
-      value: BigNumberish,
+    balanceOf(
+      provider: string,
+      account: BytesLike,
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
-    getValueOf(
+    drip(
+      provider: string,
+      account: BytesLike,
       amount: BigNumberish,
-      overrides?: CallOverrides
+      overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<PopulatedTransaction>;
 
-    price(overrides?: CallOverrides): Promise<PopulatedTransaction>;
+    paymentAllocate(
+      provider: string,
+      account: BytesLike,
+      amount: BigNumberish,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<PopulatedTransaction>;
 
-    resourceType(overrides?: CallOverrides): Promise<PopulatedTransaction>;
+    providerBalanceOf(
+      provider: string,
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
   };
 }

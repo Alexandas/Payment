@@ -7,24 +7,24 @@
 ## Globals
 | Var | Type |
 | --- | --- |
-| adaptor | contract IResourceAdaptor |
+| adaptor | contract IResourcePriceAdaptor |
 | resourceType | enum ResourceData.ResourceType |
 
 ## Functions
-### setResourceAdaptor
+### setResourcePriceAdaptor
 
 > update resource adaptor contract
 
 
 #### Declaration
 ```
-function setResourceAdaptor(contract IResourceAdaptor _adaptor) external onlyOwner
+function setResourcePriceAdaptor(contract IResourcePriceAdaptor _adaptor) external onlyOwner
 ```
 
 #### Args:
 | Arg | Type | Description |
 | --- | --- | --- |
-|`_adaptor` | contract IResourceAdaptor | resource adaptor contract
+|`_adaptor` | contract IResourcePriceAdaptor | resource adaptor contract
 
 ### setResourceType
 

@@ -49,7 +49,7 @@ const _abi = [
                 type: "uint256[]",
               },
             ],
-            internalType: "struct ResourceData.Payload[]",
+            internalType: "struct ResourceData.ValuePayload[]",
             name: "payloads",
             type: "tuple[]",
           },
@@ -62,6 +62,149 @@ const _abi = [
     ],
     name: "Paid",
     type: "event",
+  },
+  {
+    inputs: [
+      {
+        internalType: "address",
+        name: "providerWallet",
+        type: "address",
+      },
+    ],
+    name: "balanceOf",
+    outputs: [
+      {
+        internalType: "uint256",
+        name: "",
+        type: "uint256",
+      },
+    ],
+    stateMutability: "view",
+    type: "function",
+  },
+  {
+    inputs: [
+      {
+        internalType: "bytes",
+        name: "message",
+        type: "bytes",
+      },
+    ],
+    name: "decodeSourceChainMessage",
+    outputs: [
+      {
+        internalType: "address",
+        name: "provider",
+        type: "address",
+      },
+      {
+        internalType: "uint64",
+        name: "nonce",
+        type: "uint64",
+      },
+      {
+        internalType: "bytes32",
+        name: "account",
+        type: "bytes32",
+      },
+      {
+        components: [
+          {
+            internalType: "enum ResourceData.ResourceType",
+            name: "resourceType",
+            type: "uint8",
+          },
+          {
+            internalType: "uint256[]",
+            name: "values",
+            type: "uint256[]",
+          },
+        ],
+        internalType: "struct ResourceData.ValuePayload[]",
+        name: "payloads",
+        type: "tuple[]",
+      },
+    ],
+    stateMutability: "view",
+    type: "function",
+  },
+  {
+    inputs: [
+      {
+        internalType: "address",
+        name: "provider",
+        type: "address",
+      },
+      {
+        internalType: "bytes32",
+        name: "account",
+        type: "bytes32",
+      },
+      {
+        internalType: "uint256",
+        name: "storageFee",
+        type: "uint256",
+      },
+      {
+        internalType: "uint256",
+        name: "expirationFee",
+        type: "uint256",
+      },
+    ],
+    name: "ipfsAllocations",
+    outputs: [
+      {
+        internalType: "uint256",
+        name: "amount",
+        type: "uint256",
+      },
+      {
+        internalType: "uint256",
+        name: "expiration",
+        type: "uint256",
+      },
+    ],
+    stateMutability: "view",
+    type: "function",
+  },
+  {
+    inputs: [
+      {
+        internalType: "address",
+        name: "provider",
+        type: "address",
+      },
+      {
+        internalType: "bytes32",
+        name: "account",
+        type: "bytes32",
+      },
+      {
+        internalType: "uint256",
+        name: "amount",
+        type: "uint256",
+      },
+      {
+        internalType: "uint256",
+        name: "expiration",
+        type: "uint256",
+      },
+    ],
+    name: "ipfsAlloctionsFee",
+    outputs: [
+      {
+        internalType: "uint256",
+        name: "storageFee",
+        type: "uint256",
+      },
+      {
+        internalType: "uint256",
+        name: "expirationFee",
+        type: "uint256",
+      },
+    ],
+    stateMutability: "view",
+    type: "function",
   },
   {
     inputs: [
@@ -95,7 +238,7 @@ const _abi = [
                 type: "uint256[]",
               },
             ],
-            internalType: "struct ResourceData.Payload[]",
+            internalType: "struct ResourceData.ValuePayload[]",
             name: "payloads",
             type: "tuple[]",
           },
@@ -120,12 +263,12 @@ const _abi = [
     inputs: [
       {
         internalType: "contract IERC20Upgradeable",
-        name: "token",
+        name: "_token",
         type: "address",
       },
       {
         internalType: "uint256",
-        name: "amount",
+        name: "dstAmount",
         type: "uint256",
       },
       {

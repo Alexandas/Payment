@@ -22,27 +22,22 @@ import type { TypedEventFilter, TypedEvent, TypedListener } from "./common";
 
 interface MessageReceiverInterface extends ethers.utils.Interface {
   functions: {
-    "dstChainPayment()": FunctionFragment;
     "executeMessageWithTransfer(address,address,uint256,uint64,bytes,address)": FunctionFragment;
     "executeMessageWithTransferFallback(address,address,uint256,uint64,bytes,address)": FunctionFragment;
     "executor()": FunctionFragment;
-    "initialize(address,address,address)": FunctionFragment;
+    "initialize(address,address,address,address)": FunctionFragment;
     "messageBus()": FunctionFragment;
     "messageId((address,address,uint64,bytes32),uint64,bytes)": FunctionFragment;
     "owner()": FunctionFragment;
     "ownerWithdrawERC20(address,address,uint256)": FunctionFragment;
     "ownerWithdrawNative(address,uint256)": FunctionFragment;
     "renounceOwnership()": FunctionFragment;
-    "setDstChainPayment(address)": FunctionFragment;
+    "router()": FunctionFragment;
     "setExecutor(address)": FunctionFragment;
     "setMessageBus(address)": FunctionFragment;
     "transferOwnership(address)": FunctionFragment;
   };
 
-  encodeFunctionData(
-    functionFragment: "dstChainPayment",
-    values?: undefined
-  ): string;
   encodeFunctionData(
     functionFragment: "executeMessageWithTransfer",
     values: [string, string, BigNumberish, BigNumberish, BytesLike, string]
@@ -54,7 +49,7 @@ interface MessageReceiverInterface extends ethers.utils.Interface {
   encodeFunctionData(functionFragment: "executor", values?: undefined): string;
   encodeFunctionData(
     functionFragment: "initialize",
-    values: [string, string, string]
+    values: [string, string, string, string]
   ): string;
   encodeFunctionData(
     functionFragment: "messageBus",
@@ -86,10 +81,7 @@ interface MessageReceiverInterface extends ethers.utils.Interface {
     functionFragment: "renounceOwnership",
     values?: undefined
   ): string;
-  encodeFunctionData(
-    functionFragment: "setDstChainPayment",
-    values: [string]
-  ): string;
+  encodeFunctionData(functionFragment: "router", values?: undefined): string;
   encodeFunctionData(functionFragment: "setExecutor", values: [string]): string;
   encodeFunctionData(
     functionFragment: "setMessageBus",
@@ -100,10 +92,6 @@ interface MessageReceiverInterface extends ethers.utils.Interface {
     values: [string]
   ): string;
 
-  decodeFunctionResult(
-    functionFragment: "dstChainPayment",
-    data: BytesLike
-  ): Result;
   decodeFunctionResult(
     functionFragment: "executeMessageWithTransfer",
     data: BytesLike
@@ -129,10 +117,7 @@ interface MessageReceiverInterface extends ethers.utils.Interface {
     functionFragment: "renounceOwnership",
     data: BytesLike
   ): Result;
-  decodeFunctionResult(
-    functionFragment: "setDstChainPayment",
-    data: BytesLike
-  ): Result;
+  decodeFunctionResult(functionFragment: "router", data: BytesLike): Result;
   decodeFunctionResult(
     functionFragment: "setExecutor",
     data: BytesLike
@@ -147,7 +132,6 @@ interface MessageReceiverInterface extends ethers.utils.Interface {
   ): Result;
 
   events: {
-    "DstChainPaymentUpdated(address)": EventFragment;
     "ExecutorUpdated(address)": EventFragment;
     "Initialized(uint8)": EventFragment;
     "MessageBusUpdated(address)": EventFragment;
@@ -156,10 +140,10 @@ interface MessageReceiverInterface extends ethers.utils.Interface {
     "MessageWithTransferFallback(address,address,uint256,uint64,bytes,address)": EventFragment;
     "NativeWithdrawal(address,uint256)": EventFragment;
     "OwnershipTransferred(address,address)": EventFragment;
+    "RouterUpdated(address)": EventFragment;
     "Withdrawal(address,address,uint256)": EventFragment;
   };
 
-  getEvent(nameOrSignatureOrTopic: "DstChainPaymentUpdated"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "ExecutorUpdated"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "Initialized"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "MessageBusUpdated"): EventFragment;
@@ -172,12 +156,9 @@ interface MessageReceiverInterface extends ethers.utils.Interface {
   ): EventFragment;
   getEvent(nameOrSignatureOrTopic: "NativeWithdrawal"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "OwnershipTransferred"): EventFragment;
+  getEvent(nameOrSignatureOrTopic: "RouterUpdated"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "Withdrawal"): EventFragment;
 }
-
-export type DstChainPaymentUpdatedEvent = TypedEvent<
-  [string] & { _dstChainPayment: string }
->;
 
 export type ExecutorUpdatedEvent = TypedEvent<[string] & { executor: string }>;
 
@@ -229,6 +210,8 @@ export type OwnershipTransferredEvent = TypedEvent<
   [string, string] & { previousOwner: string; newOwner: string }
 >;
 
+export type RouterUpdatedEvent = TypedEvent<[string] & { router: string }>;
+
 export type WithdrawalEvent = TypedEvent<
   [string, string, BigNumber] & { token: string; to: string; value: BigNumber }
 >;
@@ -277,8 +260,6 @@ export class MessageReceiver extends BaseContract {
   interface: MessageReceiverInterface;
 
   functions: {
-    dstChainPayment(overrides?: CallOverrides): Promise<[string]>;
-
     executeMessageWithTransfer(
       sender: string,
       token: string,
@@ -305,6 +286,7 @@ export class MessageReceiver extends BaseContract {
       owner: string,
       _messageBus: string,
       _executor: string,
+      router: string,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<ContractTransaction>;
 
@@ -341,10 +323,7 @@ export class MessageReceiver extends BaseContract {
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<ContractTransaction>;
 
-    setDstChainPayment(
-      _dstChainPayment: string,
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<ContractTransaction>;
+    router(overrides?: CallOverrides): Promise<[string]>;
 
     setExecutor(
       _executor: string,
@@ -361,8 +340,6 @@ export class MessageReceiver extends BaseContract {
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<ContractTransaction>;
   };
-
-  dstChainPayment(overrides?: CallOverrides): Promise<string>;
 
   executeMessageWithTransfer(
     sender: string,
@@ -390,6 +367,7 @@ export class MessageReceiver extends BaseContract {
     owner: string,
     _messageBus: string,
     _executor: string,
+    router: string,
     overrides?: Overrides & { from?: string | Promise<string> }
   ): Promise<ContractTransaction>;
 
@@ -426,10 +404,7 @@ export class MessageReceiver extends BaseContract {
     overrides?: Overrides & { from?: string | Promise<string> }
   ): Promise<ContractTransaction>;
 
-  setDstChainPayment(
-    _dstChainPayment: string,
-    overrides?: Overrides & { from?: string | Promise<string> }
-  ): Promise<ContractTransaction>;
+  router(overrides?: CallOverrides): Promise<string>;
 
   setExecutor(
     _executor: string,
@@ -447,8 +422,6 @@ export class MessageReceiver extends BaseContract {
   ): Promise<ContractTransaction>;
 
   callStatic: {
-    dstChainPayment(overrides?: CallOverrides): Promise<string>;
-
     executeMessageWithTransfer(
       sender: string,
       token: string,
@@ -475,6 +448,7 @@ export class MessageReceiver extends BaseContract {
       owner: string,
       _messageBus: string,
       _executor: string,
+      router: string,
       overrides?: CallOverrides
     ): Promise<void>;
 
@@ -509,10 +483,7 @@ export class MessageReceiver extends BaseContract {
 
     renounceOwnership(overrides?: CallOverrides): Promise<void>;
 
-    setDstChainPayment(
-      _dstChainPayment: string,
-      overrides?: CallOverrides
-    ): Promise<void>;
+    router(overrides?: CallOverrides): Promise<string>;
 
     setExecutor(_executor: string, overrides?: CallOverrides): Promise<void>;
 
@@ -525,14 +496,6 @@ export class MessageReceiver extends BaseContract {
   };
 
   filters: {
-    "DstChainPaymentUpdated(address)"(
-      _dstChainPayment?: null
-    ): TypedEventFilter<[string], { _dstChainPayment: string }>;
-
-    DstChainPaymentUpdated(
-      _dstChainPayment?: null
-    ): TypedEventFilter<[string], { _dstChainPayment: string }>;
-
     "ExecutorUpdated(address)"(
       executor?: null
     ): TypedEventFilter<[string], { executor: string }>;
@@ -701,6 +664,14 @@ export class MessageReceiver extends BaseContract {
       { previousOwner: string; newOwner: string }
     >;
 
+    "RouterUpdated(address)"(
+      router?: null
+    ): TypedEventFilter<[string], { router: string }>;
+
+    RouterUpdated(
+      router?: null
+    ): TypedEventFilter<[string], { router: string }>;
+
     "Withdrawal(address,address,uint256)"(
       token?: null,
       to?: null,
@@ -721,8 +692,6 @@ export class MessageReceiver extends BaseContract {
   };
 
   estimateGas: {
-    dstChainPayment(overrides?: CallOverrides): Promise<BigNumber>;
-
     executeMessageWithTransfer(
       sender: string,
       token: string,
@@ -749,6 +718,7 @@ export class MessageReceiver extends BaseContract {
       owner: string,
       _messageBus: string,
       _executor: string,
+      router: string,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<BigNumber>;
 
@@ -785,10 +755,7 @@ export class MessageReceiver extends BaseContract {
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<BigNumber>;
 
-    setDstChainPayment(
-      _dstChainPayment: string,
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<BigNumber>;
+    router(overrides?: CallOverrides): Promise<BigNumber>;
 
     setExecutor(
       _executor: string,
@@ -807,8 +774,6 @@ export class MessageReceiver extends BaseContract {
   };
 
   populateTransaction: {
-    dstChainPayment(overrides?: CallOverrides): Promise<PopulatedTransaction>;
-
     executeMessageWithTransfer(
       sender: string,
       token: string,
@@ -835,6 +800,7 @@ export class MessageReceiver extends BaseContract {
       owner: string,
       _messageBus: string,
       _executor: string,
+      router: string,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<PopulatedTransaction>;
 
@@ -871,10 +837,7 @@ export class MessageReceiver extends BaseContract {
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<PopulatedTransaction>;
 
-    setDstChainPayment(
-      _dstChainPayment: string,
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<PopulatedTransaction>;
+    router(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
     setExecutor(
       _executor: string,

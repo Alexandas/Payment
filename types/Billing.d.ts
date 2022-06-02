@@ -11,6 +11,7 @@ import {
   PopulatedTransaction,
   BaseContract,
   ContractTransaction,
+  Overrides,
   CallOverrides,
 } from "ethers";
 import { BytesLike } from "@ethersproject/bytes";
@@ -20,150 +21,155 @@ import type { TypedEventFilter, TypedEvent, TypedListener } from "./common";
 
 interface BillingInterface extends ethers.utils.Interface {
   functions: {
-    "adaptor()": FunctionFragment;
-    "balanceOf(address,bytes32)": FunctionFragment;
-    "billsHash(address,uint64,bytes32,bytes,uint256)": FunctionFragment;
-    "billsTypedHash()": FunctionFragment;
-    "decodeBills(bytes)": FunctionFragment;
-    "encodeBills(tuple[])": FunctionFragment;
-    "hashTypedDataV4ForBills(address,uint64,bytes32,bytes,uint256)": FunctionFragment;
-    "matchResourceToToken(uint256)": FunctionFragment;
-    "matchTokenToResource(uint256)": FunctionFragment;
-    "providers()": FunctionFragment;
-    "resourceDecimals()": FunctionFragment;
-    "token()": FunctionFragment;
-    "tokenDecimals()": FunctionFragment;
+    "balanceOf(address)": FunctionFragment;
+    "billingTypesHash()": FunctionFragment;
+    "hashBillingTypes(address,bytes32,bytes,uint256,uint64)": FunctionFragment;
+    "hashTypedDataV4ForBills(address,bytes32,bytes,uint256,uint64)": FunctionFragment;
+    "initialize(address,string,string,string,address)": FunctionFragment;
+    "nonces(address,bytes32)": FunctionFragment;
+    "owner()": FunctionFragment;
+    "ownerWithdrawERC20(address,address,uint256)": FunctionFragment;
+    "ownerWithdrawNative(address,uint256)": FunctionFragment;
+    "renounceOwnership()": FunctionFragment;
+    "router()": FunctionFragment;
+    "spend(address,bytes32,bytes,uint256,uint64,bytes)": FunctionFragment;
+    "transferOwnership(address)": FunctionFragment;
   };
 
-  encodeFunctionData(functionFragment: "adaptor", values?: undefined): string;
+  encodeFunctionData(functionFragment: "balanceOf", values: [string]): string;
   encodeFunctionData(
-    functionFragment: "balanceOf",
-    values: [string, BytesLike]
-  ): string;
-  encodeFunctionData(
-    functionFragment: "billsHash",
-    values: [string, BigNumberish, BytesLike, BytesLike, BigNumberish]
-  ): string;
-  encodeFunctionData(
-    functionFragment: "billsTypedHash",
+    functionFragment: "billingTypesHash",
     values?: undefined
   ): string;
   encodeFunctionData(
-    functionFragment: "decodeBills",
-    values: [BytesLike]
+    functionFragment: "hashBillingTypes",
+    values: [string, BytesLike, BytesLike, BigNumberish, BigNumberish]
   ): string;
   encodeFunctionData(
-    functionFragment: "encodeBills",
+    functionFragment: "hashTypedDataV4ForBills",
+    values: [string, BytesLike, BytesLike, BigNumberish, BigNumberish]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "initialize",
+    values: [string, string, string, string, string]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "nonces",
+    values: [string, BytesLike]
+  ): string;
+  encodeFunctionData(functionFragment: "owner", values?: undefined): string;
+  encodeFunctionData(
+    functionFragment: "ownerWithdrawERC20",
+    values: [string, string, BigNumberish]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "ownerWithdrawNative",
+    values: [string, BigNumberish]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "renounceOwnership",
+    values?: undefined
+  ): string;
+  encodeFunctionData(functionFragment: "router", values?: undefined): string;
+  encodeFunctionData(
+    functionFragment: "spend",
     values: [
-      {
-        indexBlock: BigNumberish;
-        entries: { resourceType: BigNumberish; amount: BigNumberish }[];
-      }[]
+      string,
+      BytesLike,
+      BytesLike,
+      BigNumberish,
+      BigNumberish,
+      BytesLike
     ]
   ): string;
   encodeFunctionData(
-    functionFragment: "hashTypedDataV4ForBills",
-    values: [string, BigNumberish, BytesLike, BytesLike, BigNumberish]
-  ): string;
-  encodeFunctionData(
-    functionFragment: "matchResourceToToken",
-    values: [BigNumberish]
-  ): string;
-  encodeFunctionData(
-    functionFragment: "matchTokenToResource",
-    values: [BigNumberish]
-  ): string;
-  encodeFunctionData(functionFragment: "providers", values?: undefined): string;
-  encodeFunctionData(
-    functionFragment: "resourceDecimals",
-    values?: undefined
-  ): string;
-  encodeFunctionData(functionFragment: "token", values?: undefined): string;
-  encodeFunctionData(
-    functionFragment: "tokenDecimals",
-    values?: undefined
+    functionFragment: "transferOwnership",
+    values: [string]
   ): string;
 
-  decodeFunctionResult(functionFragment: "adaptor", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "balanceOf", data: BytesLike): Result;
-  decodeFunctionResult(functionFragment: "billsHash", data: BytesLike): Result;
   decodeFunctionResult(
-    functionFragment: "billsTypedHash",
+    functionFragment: "billingTypesHash",
     data: BytesLike
   ): Result;
   decodeFunctionResult(
-    functionFragment: "decodeBills",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(
-    functionFragment: "encodeBills",
+    functionFragment: "hashBillingTypes",
     data: BytesLike
   ): Result;
   decodeFunctionResult(
     functionFragment: "hashTypedDataV4ForBills",
     data: BytesLike
   ): Result;
+  decodeFunctionResult(functionFragment: "initialize", data: BytesLike): Result;
+  decodeFunctionResult(functionFragment: "nonces", data: BytesLike): Result;
+  decodeFunctionResult(functionFragment: "owner", data: BytesLike): Result;
   decodeFunctionResult(
-    functionFragment: "matchResourceToToken",
+    functionFragment: "ownerWithdrawERC20",
     data: BytesLike
   ): Result;
   decodeFunctionResult(
-    functionFragment: "matchTokenToResource",
+    functionFragment: "ownerWithdrawNative",
     data: BytesLike
   ): Result;
-  decodeFunctionResult(functionFragment: "providers", data: BytesLike): Result;
   decodeFunctionResult(
-    functionFragment: "resourceDecimals",
+    functionFragment: "renounceOwnership",
     data: BytesLike
   ): Result;
-  decodeFunctionResult(functionFragment: "token", data: BytesLike): Result;
+  decodeFunctionResult(functionFragment: "router", data: BytesLike): Result;
+  decodeFunctionResult(functionFragment: "spend", data: BytesLike): Result;
   decodeFunctionResult(
-    functionFragment: "tokenDecimals",
+    functionFragment: "transferOwnership",
     data: BytesLike
   ): Result;
 
   events: {
-    "Billing(address,uint64,bytes32,bytes,uint256)": EventFragment;
-    "BillsTypedHashUpdated(bytes32)": EventFragment;
+    "Billing(address,bytes32,bytes,uint256,uint64)": EventFragment;
+    "BillingTypesHashUpdated(bytes32)": EventFragment;
     "Initialized(uint8)": EventFragment;
-    "ProvidersUpdated(address)": EventFragment;
-    "ResourceAdaptorUpdated(address)": EventFragment;
-    "TokenUpdated(address)": EventFragment;
+    "NativeWithdrawal(address,uint256)": EventFragment;
+    "OwnershipTransferred(address,address)": EventFragment;
+    "RouterUpdated(address)": EventFragment;
+    "Withdrawal(address,address,uint256)": EventFragment;
   };
 
   getEvent(nameOrSignatureOrTopic: "Billing"): EventFragment;
-  getEvent(nameOrSignatureOrTopic: "BillsTypedHashUpdated"): EventFragment;
+  getEvent(nameOrSignatureOrTopic: "BillingTypesHashUpdated"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "Initialized"): EventFragment;
-  getEvent(nameOrSignatureOrTopic: "ProvidersUpdated"): EventFragment;
-  getEvent(nameOrSignatureOrTopic: "ResourceAdaptorUpdated"): EventFragment;
-  getEvent(nameOrSignatureOrTopic: "TokenUpdated"): EventFragment;
+  getEvent(nameOrSignatureOrTopic: "NativeWithdrawal"): EventFragment;
+  getEvent(nameOrSignatureOrTopic: "OwnershipTransferred"): EventFragment;
+  getEvent(nameOrSignatureOrTopic: "RouterUpdated"): EventFragment;
+  getEvent(nameOrSignatureOrTopic: "Withdrawal"): EventFragment;
 }
 
 export type BillingEvent = TypedEvent<
-  [string, BigNumber, string, string, BigNumber] & {
+  [string, string, string, BigNumber, BigNumber] & {
     provider: string;
-    nonce: BigNumber;
     account: string;
     bills: string;
     amount: BigNumber;
+    nonce: BigNumber;
   }
 >;
 
-export type BillsTypedHashUpdatedEvent = TypedEvent<
+export type BillingTypesHashUpdatedEvent = TypedEvent<
   [string] & { hash: string }
 >;
 
 export type InitializedEvent = TypedEvent<[number] & { version: number }>;
 
-export type ProvidersUpdatedEvent = TypedEvent<
-  [string] & { providers: string }
+export type NativeWithdrawalEvent = TypedEvent<
+  [string, BigNumber] & { to: string; value: BigNumber }
 >;
 
-export type ResourceAdaptorUpdatedEvent = TypedEvent<
-  [string] & { adaptor: string }
+export type OwnershipTransferredEvent = TypedEvent<
+  [string, string] & { previousOwner: string; newOwner: string }
 >;
 
-export type TokenUpdatedEvent = TypedEvent<[string] & { token: string }>;
+export type RouterUpdatedEvent = TypedEvent<[string] & { router: string }>;
+
+export type WithdrawalEvent = TypedEvent<
+  [string, string, BigNumber] & { token: string; to: string; value: BigNumber }
+>;
 
 export class Billing extends BaseContract {
   connect(signerOrProvider: Signer | Provider | string): this;
@@ -209,261 +215,269 @@ export class Billing extends BaseContract {
   interface: BillingInterface;
 
   functions: {
-    adaptor(overrides?: CallOverrides): Promise<[string]>;
-
     balanceOf(
       provider: string,
-      account: BytesLike,
       overrides?: CallOverrides
     ): Promise<[BigNumber]>;
 
-    billsHash(
+    billingTypesHash(overrides?: CallOverrides): Promise<[string]>;
+
+    hashBillingTypes(
       provider: string,
-      nonce: BigNumberish,
       account: BytesLike,
       bills: BytesLike,
-      expiration: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<[string]>;
-
-    billsTypedHash(overrides?: CallOverrides): Promise<[string]>;
-
-    decodeBills(
-      data: BytesLike,
-      overrides?: CallOverrides
-    ): Promise<
-      [
-        ([
-          BigNumber,
-          ([number, BigNumber] & { resourceType: number; amount: BigNumber })[]
-        ] & {
-          indexBlock: BigNumber;
-          entries: ([number, BigNumber] & {
-            resourceType: number;
-            amount: BigNumber;
-          })[];
-        })[]
-      ]
-    >;
-
-    encodeBills(
-      bills: {
-        indexBlock: BigNumberish;
-        entries: { resourceType: BigNumberish; amount: BigNumberish }[];
-      }[],
+      timeout: BigNumberish,
+      nonce: BigNumberish,
       overrides?: CallOverrides
     ): Promise<[string]>;
 
     hashTypedDataV4ForBills(
       provider: string,
-      nonce: BigNumberish,
       account: BytesLike,
       bills: BytesLike,
-      expiration: BigNumberish,
+      timeout: BigNumberish,
+      nonce: BigNumberish,
       overrides?: CallOverrides
     ): Promise<[string]>;
 
-    matchResourceToToken(
-      value: BigNumberish,
+    initialize(
+      owner: string,
+      name: string,
+      version: string,
+      billingTypes: string,
+      router: string,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<ContractTransaction>;
+
+    nonces(
+      arg0: string,
+      arg1: BytesLike,
       overrides?: CallOverrides
     ): Promise<[BigNumber]>;
 
-    matchTokenToResource(
+    owner(overrides?: CallOverrides): Promise<[string]>;
+
+    ownerWithdrawERC20(
+      token: string,
+      to: string,
       value: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<[BigNumber]>;
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<ContractTransaction>;
 
-    providers(overrides?: CallOverrides): Promise<[string]>;
+    ownerWithdrawNative(
+      to: string,
+      value: BigNumberish,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<ContractTransaction>;
 
-    resourceDecimals(overrides?: CallOverrides): Promise<[BigNumber]>;
+    renounceOwnership(
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<ContractTransaction>;
 
-    token(overrides?: CallOverrides): Promise<[string]>;
+    router(overrides?: CallOverrides): Promise<[string]>;
 
-    tokenDecimals(overrides?: CallOverrides): Promise<[BigNumber]>;
+    spend(
+      provider: string,
+      account: BytesLike,
+      bills: BytesLike,
+      timeout: BigNumberish,
+      nonce: BigNumberish,
+      signature: BytesLike,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<ContractTransaction>;
+
+    transferOwnership(
+      newOwner: string,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<ContractTransaction>;
   };
 
-  adaptor(overrides?: CallOverrides): Promise<string>;
+  balanceOf(provider: string, overrides?: CallOverrides): Promise<BigNumber>;
 
-  balanceOf(
-    provider: string,
-    account: BytesLike,
-    overrides?: CallOverrides
-  ): Promise<BigNumber>;
+  billingTypesHash(overrides?: CallOverrides): Promise<string>;
 
-  billsHash(
+  hashBillingTypes(
     provider: string,
-    nonce: BigNumberish,
     account: BytesLike,
     bills: BytesLike,
-    expiration: BigNumberish,
-    overrides?: CallOverrides
-  ): Promise<string>;
-
-  billsTypedHash(overrides?: CallOverrides): Promise<string>;
-
-  decodeBills(
-    data: BytesLike,
-    overrides?: CallOverrides
-  ): Promise<
-    ([
-      BigNumber,
-      ([number, BigNumber] & { resourceType: number; amount: BigNumber })[]
-    ] & {
-      indexBlock: BigNumber;
-      entries: ([number, BigNumber] & {
-        resourceType: number;
-        amount: BigNumber;
-      })[];
-    })[]
-  >;
-
-  encodeBills(
-    bills: {
-      indexBlock: BigNumberish;
-      entries: { resourceType: BigNumberish; amount: BigNumberish }[];
-    }[],
+    timeout: BigNumberish,
+    nonce: BigNumberish,
     overrides?: CallOverrides
   ): Promise<string>;
 
   hashTypedDataV4ForBills(
     provider: string,
-    nonce: BigNumberish,
     account: BytesLike,
     bills: BytesLike,
-    expiration: BigNumberish,
+    timeout: BigNumberish,
+    nonce: BigNumberish,
     overrides?: CallOverrides
   ): Promise<string>;
 
-  matchResourceToToken(
-    value: BigNumberish,
+  initialize(
+    owner: string,
+    name: string,
+    version: string,
+    billingTypes: string,
+    router: string,
+    overrides?: Overrides & { from?: string | Promise<string> }
+  ): Promise<ContractTransaction>;
+
+  nonces(
+    arg0: string,
+    arg1: BytesLike,
     overrides?: CallOverrides
   ): Promise<BigNumber>;
 
-  matchTokenToResource(
+  owner(overrides?: CallOverrides): Promise<string>;
+
+  ownerWithdrawERC20(
+    token: string,
+    to: string,
     value: BigNumberish,
-    overrides?: CallOverrides
-  ): Promise<BigNumber>;
+    overrides?: Overrides & { from?: string | Promise<string> }
+  ): Promise<ContractTransaction>;
 
-  providers(overrides?: CallOverrides): Promise<string>;
+  ownerWithdrawNative(
+    to: string,
+    value: BigNumberish,
+    overrides?: Overrides & { from?: string | Promise<string> }
+  ): Promise<ContractTransaction>;
 
-  resourceDecimals(overrides?: CallOverrides): Promise<BigNumber>;
+  renounceOwnership(
+    overrides?: Overrides & { from?: string | Promise<string> }
+  ): Promise<ContractTransaction>;
 
-  token(overrides?: CallOverrides): Promise<string>;
+  router(overrides?: CallOverrides): Promise<string>;
 
-  tokenDecimals(overrides?: CallOverrides): Promise<BigNumber>;
+  spend(
+    provider: string,
+    account: BytesLike,
+    bills: BytesLike,
+    timeout: BigNumberish,
+    nonce: BigNumberish,
+    signature: BytesLike,
+    overrides?: Overrides & { from?: string | Promise<string> }
+  ): Promise<ContractTransaction>;
+
+  transferOwnership(
+    newOwner: string,
+    overrides?: Overrides & { from?: string | Promise<string> }
+  ): Promise<ContractTransaction>;
 
   callStatic: {
-    adaptor(overrides?: CallOverrides): Promise<string>;
+    balanceOf(provider: string, overrides?: CallOverrides): Promise<BigNumber>;
 
-    balanceOf(
-      provider: string,
-      account: BytesLike,
-      overrides?: CallOverrides
-    ): Promise<BigNumber>;
+    billingTypesHash(overrides?: CallOverrides): Promise<string>;
 
-    billsHash(
+    hashBillingTypes(
       provider: string,
-      nonce: BigNumberish,
       account: BytesLike,
       bills: BytesLike,
-      expiration: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<string>;
-
-    billsTypedHash(overrides?: CallOverrides): Promise<string>;
-
-    decodeBills(
-      data: BytesLike,
-      overrides?: CallOverrides
-    ): Promise<
-      ([
-        BigNumber,
-        ([number, BigNumber] & { resourceType: number; amount: BigNumber })[]
-      ] & {
-        indexBlock: BigNumber;
-        entries: ([number, BigNumber] & {
-          resourceType: number;
-          amount: BigNumber;
-        })[];
-      })[]
-    >;
-
-    encodeBills(
-      bills: {
-        indexBlock: BigNumberish;
-        entries: { resourceType: BigNumberish; amount: BigNumberish }[];
-      }[],
+      timeout: BigNumberish,
+      nonce: BigNumberish,
       overrides?: CallOverrides
     ): Promise<string>;
 
     hashTypedDataV4ForBills(
       provider: string,
-      nonce: BigNumberish,
       account: BytesLike,
       bills: BytesLike,
-      expiration: BigNumberish,
+      timeout: BigNumberish,
+      nonce: BigNumberish,
       overrides?: CallOverrides
     ): Promise<string>;
 
-    matchResourceToToken(
-      value: BigNumberish,
+    initialize(
+      owner: string,
+      name: string,
+      version: string,
+      billingTypes: string,
+      router: string,
+      overrides?: CallOverrides
+    ): Promise<void>;
+
+    nonces(
+      arg0: string,
+      arg1: BytesLike,
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
-    matchTokenToResource(
+    owner(overrides?: CallOverrides): Promise<string>;
+
+    ownerWithdrawERC20(
+      token: string,
+      to: string,
       value: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<void>;
+
+    ownerWithdrawNative(
+      to: string,
+      value: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<void>;
+
+    renounceOwnership(overrides?: CallOverrides): Promise<void>;
+
+    router(overrides?: CallOverrides): Promise<string>;
+
+    spend(
+      provider: string,
+      account: BytesLike,
+      bills: BytesLike,
+      timeout: BigNumberish,
+      nonce: BigNumberish,
+      signature: BytesLike,
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
-    providers(overrides?: CallOverrides): Promise<string>;
-
-    resourceDecimals(overrides?: CallOverrides): Promise<BigNumber>;
-
-    token(overrides?: CallOverrides): Promise<string>;
-
-    tokenDecimals(overrides?: CallOverrides): Promise<BigNumber>;
+    transferOwnership(
+      newOwner: string,
+      overrides?: CallOverrides
+    ): Promise<void>;
   };
 
   filters: {
-    "Billing(address,uint64,bytes32,bytes,uint256)"(
+    "Billing(address,bytes32,bytes,uint256,uint64)"(
       provider?: null,
-      nonce?: null,
       account?: null,
       bills?: null,
-      amount?: null
+      amount?: null,
+      nonce?: null
     ): TypedEventFilter<
-      [string, BigNumber, string, string, BigNumber],
+      [string, string, string, BigNumber, BigNumber],
       {
         provider: string;
-        nonce: BigNumber;
         account: string;
         bills: string;
         amount: BigNumber;
+        nonce: BigNumber;
       }
     >;
 
     Billing(
       provider?: null,
-      nonce?: null,
       account?: null,
       bills?: null,
-      amount?: null
+      amount?: null,
+      nonce?: null
     ): TypedEventFilter<
-      [string, BigNumber, string, string, BigNumber],
+      [string, string, string, BigNumber, BigNumber],
       {
         provider: string;
-        nonce: BigNumber;
         account: string;
         bills: string;
         amount: BigNumber;
+        nonce: BigNumber;
       }
     >;
 
-    "BillsTypedHashUpdated(bytes32)"(
+    "BillingTypesHashUpdated(bytes32)"(
       hash?: null
     ): TypedEventFilter<[string], { hash: string }>;
 
-    BillsTypedHashUpdated(
+    BillingTypesHashUpdated(
       hash?: null
     ): TypedEventFilter<[string], { hash: string }>;
 
@@ -475,145 +489,209 @@ export class Billing extends BaseContract {
       version?: null
     ): TypedEventFilter<[number], { version: number }>;
 
-    "ProvidersUpdated(address)"(
-      providers?: null
-    ): TypedEventFilter<[string], { providers: string }>;
+    "NativeWithdrawal(address,uint256)"(
+      to?: null,
+      value?: null
+    ): TypedEventFilter<[string, BigNumber], { to: string; value: BigNumber }>;
 
-    ProvidersUpdated(
-      providers?: null
-    ): TypedEventFilter<[string], { providers: string }>;
+    NativeWithdrawal(
+      to?: null,
+      value?: null
+    ): TypedEventFilter<[string, BigNumber], { to: string; value: BigNumber }>;
 
-    "ResourceAdaptorUpdated(address)"(
-      adaptor?: null
-    ): TypedEventFilter<[string], { adaptor: string }>;
+    "OwnershipTransferred(address,address)"(
+      previousOwner?: string | null,
+      newOwner?: string | null
+    ): TypedEventFilter<
+      [string, string],
+      { previousOwner: string; newOwner: string }
+    >;
 
-    ResourceAdaptorUpdated(
-      adaptor?: null
-    ): TypedEventFilter<[string], { adaptor: string }>;
+    OwnershipTransferred(
+      previousOwner?: string | null,
+      newOwner?: string | null
+    ): TypedEventFilter<
+      [string, string],
+      { previousOwner: string; newOwner: string }
+    >;
 
-    "TokenUpdated(address)"(
-      token?: null
-    ): TypedEventFilter<[string], { token: string }>;
+    "RouterUpdated(address)"(
+      router?: null
+    ): TypedEventFilter<[string], { router: string }>;
 
-    TokenUpdated(token?: null): TypedEventFilter<[string], { token: string }>;
+    RouterUpdated(
+      router?: null
+    ): TypedEventFilter<[string], { router: string }>;
+
+    "Withdrawal(address,address,uint256)"(
+      token?: null,
+      to?: null,
+      value?: null
+    ): TypedEventFilter<
+      [string, string, BigNumber],
+      { token: string; to: string; value: BigNumber }
+    >;
+
+    Withdrawal(
+      token?: null,
+      to?: null,
+      value?: null
+    ): TypedEventFilter<
+      [string, string, BigNumber],
+      { token: string; to: string; value: BigNumber }
+    >;
   };
 
   estimateGas: {
-    adaptor(overrides?: CallOverrides): Promise<BigNumber>;
+    balanceOf(provider: string, overrides?: CallOverrides): Promise<BigNumber>;
 
-    balanceOf(
-      provider: string,
-      account: BytesLike,
-      overrides?: CallOverrides
-    ): Promise<BigNumber>;
+    billingTypesHash(overrides?: CallOverrides): Promise<BigNumber>;
 
-    billsHash(
+    hashBillingTypes(
       provider: string,
-      nonce: BigNumberish,
       account: BytesLike,
       bills: BytesLike,
-      expiration: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<BigNumber>;
-
-    billsTypedHash(overrides?: CallOverrides): Promise<BigNumber>;
-
-    decodeBills(data: BytesLike, overrides?: CallOverrides): Promise<BigNumber>;
-
-    encodeBills(
-      bills: {
-        indexBlock: BigNumberish;
-        entries: { resourceType: BigNumberish; amount: BigNumberish }[];
-      }[],
+      timeout: BigNumberish,
+      nonce: BigNumberish,
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
     hashTypedDataV4ForBills(
       provider: string,
-      nonce: BigNumberish,
       account: BytesLike,
       bills: BytesLike,
-      expiration: BigNumberish,
+      timeout: BigNumberish,
+      nonce: BigNumberish,
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
-    matchResourceToToken(
+    initialize(
+      owner: string,
+      name: string,
+      version: string,
+      billingTypes: string,
+      router: string,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<BigNumber>;
+
+    nonces(
+      arg0: string,
+      arg1: BytesLike,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
+
+    owner(overrides?: CallOverrides): Promise<BigNumber>;
+
+    ownerWithdrawERC20(
+      token: string,
+      to: string,
       value: BigNumberish,
-      overrides?: CallOverrides
+      overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<BigNumber>;
 
-    matchTokenToResource(
+    ownerWithdrawNative(
+      to: string,
       value: BigNumberish,
-      overrides?: CallOverrides
+      overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<BigNumber>;
 
-    providers(overrides?: CallOverrides): Promise<BigNumber>;
+    renounceOwnership(
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<BigNumber>;
 
-    resourceDecimals(overrides?: CallOverrides): Promise<BigNumber>;
+    router(overrides?: CallOverrides): Promise<BigNumber>;
 
-    token(overrides?: CallOverrides): Promise<BigNumber>;
+    spend(
+      provider: string,
+      account: BytesLike,
+      bills: BytesLike,
+      timeout: BigNumberish,
+      nonce: BigNumberish,
+      signature: BytesLike,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<BigNumber>;
 
-    tokenDecimals(overrides?: CallOverrides): Promise<BigNumber>;
+    transferOwnership(
+      newOwner: string,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<BigNumber>;
   };
 
   populateTransaction: {
-    adaptor(overrides?: CallOverrides): Promise<PopulatedTransaction>;
-
     balanceOf(
       provider: string,
-      account: BytesLike,
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
-    billsHash(
+    billingTypesHash(overrides?: CallOverrides): Promise<PopulatedTransaction>;
+
+    hashBillingTypes(
       provider: string,
-      nonce: BigNumberish,
       account: BytesLike,
       bills: BytesLike,
-      expiration: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<PopulatedTransaction>;
-
-    billsTypedHash(overrides?: CallOverrides): Promise<PopulatedTransaction>;
-
-    decodeBills(
-      data: BytesLike,
-      overrides?: CallOverrides
-    ): Promise<PopulatedTransaction>;
-
-    encodeBills(
-      bills: {
-        indexBlock: BigNumberish;
-        entries: { resourceType: BigNumberish; amount: BigNumberish }[];
-      }[],
+      timeout: BigNumberish,
+      nonce: BigNumberish,
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
     hashTypedDataV4ForBills(
       provider: string,
-      nonce: BigNumberish,
       account: BytesLike,
       bills: BytesLike,
-      expiration: BigNumberish,
+      timeout: BigNumberish,
+      nonce: BigNumberish,
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
-    matchResourceToToken(
+    initialize(
+      owner: string,
+      name: string,
+      version: string,
+      billingTypes: string,
+      router: string,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<PopulatedTransaction>;
+
+    nonces(
+      arg0: string,
+      arg1: BytesLike,
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
+
+    owner(overrides?: CallOverrides): Promise<PopulatedTransaction>;
+
+    ownerWithdrawERC20(
+      token: string,
+      to: string,
       value: BigNumberish,
-      overrides?: CallOverrides
+      overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<PopulatedTransaction>;
 
-    matchTokenToResource(
+    ownerWithdrawNative(
+      to: string,
       value: BigNumberish,
-      overrides?: CallOverrides
+      overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<PopulatedTransaction>;
 
-    providers(overrides?: CallOverrides): Promise<PopulatedTransaction>;
+    renounceOwnership(
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<PopulatedTransaction>;
 
-    resourceDecimals(overrides?: CallOverrides): Promise<PopulatedTransaction>;
+    router(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
-    token(overrides?: CallOverrides): Promise<PopulatedTransaction>;
+    spend(
+      provider: string,
+      account: BytesLike,
+      bills: BytesLike,
+      timeout: BigNumberish,
+      nonce: BigNumberish,
+      signature: BytesLike,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<PopulatedTransaction>;
 
-    tokenDecimals(overrides?: CallOverrides): Promise<PopulatedTransaction>;
+    transferOwnership(
+      newOwner: string,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<PopulatedTransaction>;
   };
 }

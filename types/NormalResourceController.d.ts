@@ -21,132 +21,94 @@ import type { TypedEventFilter, TypedEvent, TypedListener } from "./common";
 
 interface NormalResourceControllerInterface extends ethers.utils.Interface {
   functions: {
-    "adaptor()": FunctionFragment;
-    "balanceOf(bytes32)": FunctionFragment;
-    "dstChainPayment()": FunctionFragment;
-    "expand(bytes32,uint256)": FunctionFragment;
-    "getAmountOf(uint256)": FunctionFragment;
-    "getValueOf(uint256)": FunctionFragment;
+    "allocateProvider(address,uint256)": FunctionFragment;
+    "balanceOf(address,bytes32)": FunctionFragment;
+    "drip(address,bytes32,uint256)": FunctionFragment;
     "owner()": FunctionFragment;
-    "price()": FunctionFragment;
+    "paymentAllocate(address,bytes32,uint256)": FunctionFragment;
+    "providerBalanceOf(address)": FunctionFragment;
     "renounceOwnership()": FunctionFragment;
-    "resourceType()": FunctionFragment;
-    "setDstChainPayment(address)": FunctionFragment;
-    "setResourceAdaptor(address)": FunctionFragment;
-    "setResourceType(uint8)": FunctionFragment;
+    "router()": FunctionFragment;
     "transferOwnership(address)": FunctionFragment;
   };
 
-  encodeFunctionData(functionFragment: "adaptor", values?: undefined): string;
+  encodeFunctionData(
+    functionFragment: "allocateProvider",
+    values: [string, BigNumberish]
+  ): string;
   encodeFunctionData(
     functionFragment: "balanceOf",
-    values: [BytesLike]
+    values: [string, BytesLike]
   ): string;
   encodeFunctionData(
-    functionFragment: "dstChainPayment",
-    values?: undefined
-  ): string;
-  encodeFunctionData(
-    functionFragment: "expand",
-    values: [BytesLike, BigNumberish]
-  ): string;
-  encodeFunctionData(
-    functionFragment: "getAmountOf",
-    values: [BigNumberish]
-  ): string;
-  encodeFunctionData(
-    functionFragment: "getValueOf",
-    values: [BigNumberish]
+    functionFragment: "drip",
+    values: [string, BytesLike, BigNumberish]
   ): string;
   encodeFunctionData(functionFragment: "owner", values?: undefined): string;
-  encodeFunctionData(functionFragment: "price", values?: undefined): string;
+  encodeFunctionData(
+    functionFragment: "paymentAllocate",
+    values: [string, BytesLike, BigNumberish]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "providerBalanceOf",
+    values: [string]
+  ): string;
   encodeFunctionData(
     functionFragment: "renounceOwnership",
     values?: undefined
   ): string;
-  encodeFunctionData(
-    functionFragment: "resourceType",
-    values?: undefined
-  ): string;
-  encodeFunctionData(
-    functionFragment: "setDstChainPayment",
-    values: [string]
-  ): string;
-  encodeFunctionData(
-    functionFragment: "setResourceAdaptor",
-    values: [string]
-  ): string;
-  encodeFunctionData(
-    functionFragment: "setResourceType",
-    values: [BigNumberish]
-  ): string;
+  encodeFunctionData(functionFragment: "router", values?: undefined): string;
   encodeFunctionData(
     functionFragment: "transferOwnership",
     values: [string]
   ): string;
 
-  decodeFunctionResult(functionFragment: "adaptor", data: BytesLike): Result;
+  decodeFunctionResult(
+    functionFragment: "allocateProvider",
+    data: BytesLike
+  ): Result;
   decodeFunctionResult(functionFragment: "balanceOf", data: BytesLike): Result;
-  decodeFunctionResult(
-    functionFragment: "dstChainPayment",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(functionFragment: "expand", data: BytesLike): Result;
-  decodeFunctionResult(
-    functionFragment: "getAmountOf",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(functionFragment: "getValueOf", data: BytesLike): Result;
+  decodeFunctionResult(functionFragment: "drip", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "owner", data: BytesLike): Result;
-  decodeFunctionResult(functionFragment: "price", data: BytesLike): Result;
+  decodeFunctionResult(
+    functionFragment: "paymentAllocate",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "providerBalanceOf",
+    data: BytesLike
+  ): Result;
   decodeFunctionResult(
     functionFragment: "renounceOwnership",
     data: BytesLike
   ): Result;
-  decodeFunctionResult(
-    functionFragment: "resourceType",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(
-    functionFragment: "setDstChainPayment",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(
-    functionFragment: "setResourceAdaptor",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(
-    functionFragment: "setResourceType",
-    data: BytesLike
-  ): Result;
+  decodeFunctionResult(functionFragment: "router", data: BytesLike): Result;
   decodeFunctionResult(
     functionFragment: "transferOwnership",
     data: BytesLike
   ): Result;
 
   events: {
-    "DstChainPaymentUpdated(address)": EventFragment;
-    "Expanded(bytes32,uint256)": EventFragment;
+    "AccountAllocated(address,bytes32,uint256)": EventFragment;
     "Initialized(uint8)": EventFragment;
     "OwnershipTransferred(address,address)": EventFragment;
-    "ResourceAdaptorUpdated(address)": EventFragment;
-    "ResourceTypeUpdated(uint8)": EventFragment;
+    "ProviderAllocated(address,uint256)": EventFragment;
+    "RouterUpdated(address)": EventFragment;
   };
 
-  getEvent(nameOrSignatureOrTopic: "DstChainPaymentUpdated"): EventFragment;
-  getEvent(nameOrSignatureOrTopic: "Expanded"): EventFragment;
+  getEvent(nameOrSignatureOrTopic: "AccountAllocated"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "Initialized"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "OwnershipTransferred"): EventFragment;
-  getEvent(nameOrSignatureOrTopic: "ResourceAdaptorUpdated"): EventFragment;
-  getEvent(nameOrSignatureOrTopic: "ResourceTypeUpdated"): EventFragment;
+  getEvent(nameOrSignatureOrTopic: "ProviderAllocated"): EventFragment;
+  getEvent(nameOrSignatureOrTopic: "RouterUpdated"): EventFragment;
 }
 
-export type DstChainPaymentUpdatedEvent = TypedEvent<
-  [string] & { dstChainPayment: string }
->;
-
-export type ExpandedEvent = TypedEvent<
-  [string, BigNumber] & { account: string; value: BigNumber }
+export type AccountAllocatedEvent = TypedEvent<
+  [string, string, BigNumber] & {
+    provider: string;
+    account: string;
+    amount: BigNumber;
+  }
 >;
 
 export type InitializedEvent = TypedEvent<[number] & { version: number }>;
@@ -155,13 +117,11 @@ export type OwnershipTransferredEvent = TypedEvent<
   [string, string] & { previousOwner: string; newOwner: string }
 >;
 
-export type ResourceAdaptorUpdatedEvent = TypedEvent<
-  [string] & { adaptor: string }
+export type ProviderAllocatedEvent = TypedEvent<
+  [string, BigNumber] & { provider: string; amount: BigNumber }
 >;
 
-export type ResourceTypeUpdatedEvent = TypedEvent<
-  [number] & { resourceType: number }
->;
+export type RouterUpdatedEvent = TypedEvent<[string] & { router: string }>;
 
 export class NormalResourceController extends BaseContract {
   connect(signerOrProvider: Signer | Provider | string): this;
@@ -207,55 +167,44 @@ export class NormalResourceController extends BaseContract {
   interface: NormalResourceControllerInterface;
 
   functions: {
-    adaptor(overrides?: CallOverrides): Promise<[string]>;
-
-    balanceOf(
-      account: BytesLike,
-      overrides?: CallOverrides
-    ): Promise<[BigNumber]>;
-
-    dstChainPayment(overrides?: CallOverrides): Promise<[string]>;
-
-    expand(
-      account: BytesLike,
-      value: BigNumberish,
+    allocateProvider(
+      provider: string,
+      amount: BigNumberish,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<ContractTransaction>;
 
-    getAmountOf(
-      value: BigNumberish,
+    balanceOf(
+      provider: string,
+      account: BytesLike,
       overrides?: CallOverrides
     ): Promise<[BigNumber]>;
 
-    getValueOf(
+    drip(
+      provider: string,
+      account: BytesLike,
       amount: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<[BigNumber]>;
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<ContractTransaction>;
 
     owner(overrides?: CallOverrides): Promise<[string]>;
 
-    price(overrides?: CallOverrides): Promise<[BigNumber]>;
+    paymentAllocate(
+      provider: string,
+      account: BytesLike,
+      amount: BigNumberish,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<ContractTransaction>;
+
+    providerBalanceOf(
+      provider: string,
+      overrides?: CallOverrides
+    ): Promise<[BigNumber]>;
 
     renounceOwnership(
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<ContractTransaction>;
 
-    resourceType(overrides?: CallOverrides): Promise<[number]>;
-
-    setDstChainPayment(
-      _dstChainPayment: string,
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<ContractTransaction>;
-
-    setResourceAdaptor(
-      _adaptor: string,
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<ContractTransaction>;
-
-    setResourceType(
-      _resourceType: BigNumberish,
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<ContractTransaction>;
+    router(overrides?: CallOverrides): Promise<[string]>;
 
     transferOwnership(
       newOwner: string,
@@ -263,52 +212,44 @@ export class NormalResourceController extends BaseContract {
     ): Promise<ContractTransaction>;
   };
 
-  adaptor(overrides?: CallOverrides): Promise<string>;
-
-  balanceOf(account: BytesLike, overrides?: CallOverrides): Promise<BigNumber>;
-
-  dstChainPayment(overrides?: CallOverrides): Promise<string>;
-
-  expand(
-    account: BytesLike,
-    value: BigNumberish,
+  allocateProvider(
+    provider: string,
+    amount: BigNumberish,
     overrides?: Overrides & { from?: string | Promise<string> }
   ): Promise<ContractTransaction>;
 
-  getAmountOf(
-    value: BigNumberish,
+  balanceOf(
+    provider: string,
+    account: BytesLike,
     overrides?: CallOverrides
   ): Promise<BigNumber>;
 
-  getValueOf(
+  drip(
+    provider: string,
+    account: BytesLike,
     amount: BigNumberish,
-    overrides?: CallOverrides
-  ): Promise<BigNumber>;
+    overrides?: Overrides & { from?: string | Promise<string> }
+  ): Promise<ContractTransaction>;
 
   owner(overrides?: CallOverrides): Promise<string>;
 
-  price(overrides?: CallOverrides): Promise<BigNumber>;
+  paymentAllocate(
+    provider: string,
+    account: BytesLike,
+    amount: BigNumberish,
+    overrides?: Overrides & { from?: string | Promise<string> }
+  ): Promise<ContractTransaction>;
+
+  providerBalanceOf(
+    provider: string,
+    overrides?: CallOverrides
+  ): Promise<BigNumber>;
 
   renounceOwnership(
     overrides?: Overrides & { from?: string | Promise<string> }
   ): Promise<ContractTransaction>;
 
-  resourceType(overrides?: CallOverrides): Promise<number>;
-
-  setDstChainPayment(
-    _dstChainPayment: string,
-    overrides?: Overrides & { from?: string | Promise<string> }
-  ): Promise<ContractTransaction>;
-
-  setResourceAdaptor(
-    _adaptor: string,
-    overrides?: Overrides & { from?: string | Promise<string> }
-  ): Promise<ContractTransaction>;
-
-  setResourceType(
-    _resourceType: BigNumberish,
-    overrides?: Overrides & { from?: string | Promise<string> }
-  ): Promise<ContractTransaction>;
+  router(overrides?: CallOverrides): Promise<string>;
 
   transferOwnership(
     newOwner: string,
@@ -316,53 +257,42 @@ export class NormalResourceController extends BaseContract {
   ): Promise<ContractTransaction>;
 
   callStatic: {
-    adaptor(overrides?: CallOverrides): Promise<string>;
-
-    balanceOf(
-      account: BytesLike,
-      overrides?: CallOverrides
-    ): Promise<BigNumber>;
-
-    dstChainPayment(overrides?: CallOverrides): Promise<string>;
-
-    expand(
-      account: BytesLike,
-      value: BigNumberish,
+    allocateProvider(
+      provider: string,
+      amount: BigNumberish,
       overrides?: CallOverrides
     ): Promise<void>;
 
-    getAmountOf(
-      value: BigNumberish,
+    balanceOf(
+      provider: string,
+      account: BytesLike,
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
-    getValueOf(
+    drip(
+      provider: string,
+      account: BytesLike,
       amount: BigNumberish,
       overrides?: CallOverrides
-    ): Promise<BigNumber>;
+    ): Promise<void>;
 
     owner(overrides?: CallOverrides): Promise<string>;
 
-    price(overrides?: CallOverrides): Promise<BigNumber>;
+    paymentAllocate(
+      provider: string,
+      account: BytesLike,
+      amount: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<void>;
+
+    providerBalanceOf(
+      provider: string,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
 
     renounceOwnership(overrides?: CallOverrides): Promise<void>;
 
-    resourceType(overrides?: CallOverrides): Promise<number>;
-
-    setDstChainPayment(
-      _dstChainPayment: string,
-      overrides?: CallOverrides
-    ): Promise<void>;
-
-    setResourceAdaptor(
-      _adaptor: string,
-      overrides?: CallOverrides
-    ): Promise<void>;
-
-    setResourceType(
-      _resourceType: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<void>;
+    router(overrides?: CallOverrides): Promise<string>;
 
     transferOwnership(
       newOwner: string,
@@ -371,28 +301,22 @@ export class NormalResourceController extends BaseContract {
   };
 
   filters: {
-    "DstChainPaymentUpdated(address)"(
-      dstChainPayment?: null
-    ): TypedEventFilter<[string], { dstChainPayment: string }>;
-
-    DstChainPaymentUpdated(
-      dstChainPayment?: null
-    ): TypedEventFilter<[string], { dstChainPayment: string }>;
-
-    "Expanded(bytes32,uint256)"(
+    "AccountAllocated(address,bytes32,uint256)"(
+      provider?: null,
       account?: null,
-      value?: null
+      amount?: null
     ): TypedEventFilter<
-      [string, BigNumber],
-      { account: string; value: BigNumber }
+      [string, string, BigNumber],
+      { provider: string; account: string; amount: BigNumber }
     >;
 
-    Expanded(
+    AccountAllocated(
+      provider?: null,
       account?: null,
-      value?: null
+      amount?: null
     ): TypedEventFilter<
-      [string, BigNumber],
-      { account: string; value: BigNumber }
+      [string, string, BigNumber],
+      { provider: string; account: string; amount: BigNumber }
     >;
 
     "Initialized(uint8)"(
@@ -419,73 +343,70 @@ export class NormalResourceController extends BaseContract {
       { previousOwner: string; newOwner: string }
     >;
 
-    "ResourceAdaptorUpdated(address)"(
-      adaptor?: null
-    ): TypedEventFilter<[string], { adaptor: string }>;
+    "ProviderAllocated(address,uint256)"(
+      provider?: null,
+      amount?: null
+    ): TypedEventFilter<
+      [string, BigNumber],
+      { provider: string; amount: BigNumber }
+    >;
 
-    ResourceAdaptorUpdated(
-      adaptor?: null
-    ): TypedEventFilter<[string], { adaptor: string }>;
+    ProviderAllocated(
+      provider?: null,
+      amount?: null
+    ): TypedEventFilter<
+      [string, BigNumber],
+      { provider: string; amount: BigNumber }
+    >;
 
-    "ResourceTypeUpdated(uint8)"(
-      resourceType?: null
-    ): TypedEventFilter<[number], { resourceType: number }>;
+    "RouterUpdated(address)"(
+      router?: null
+    ): TypedEventFilter<[string], { router: string }>;
 
-    ResourceTypeUpdated(
-      resourceType?: null
-    ): TypedEventFilter<[number], { resourceType: number }>;
+    RouterUpdated(
+      router?: null
+    ): TypedEventFilter<[string], { router: string }>;
   };
 
   estimateGas: {
-    adaptor(overrides?: CallOverrides): Promise<BigNumber>;
-
-    balanceOf(
-      account: BytesLike,
-      overrides?: CallOverrides
-    ): Promise<BigNumber>;
-
-    dstChainPayment(overrides?: CallOverrides): Promise<BigNumber>;
-
-    expand(
-      account: BytesLike,
-      value: BigNumberish,
+    allocateProvider(
+      provider: string,
+      amount: BigNumberish,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<BigNumber>;
 
-    getAmountOf(
-      value: BigNumberish,
+    balanceOf(
+      provider: string,
+      account: BytesLike,
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
-    getValueOf(
+    drip(
+      provider: string,
+      account: BytesLike,
       amount: BigNumberish,
-      overrides?: CallOverrides
+      overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<BigNumber>;
 
     owner(overrides?: CallOverrides): Promise<BigNumber>;
 
-    price(overrides?: CallOverrides): Promise<BigNumber>;
+    paymentAllocate(
+      provider: string,
+      account: BytesLike,
+      amount: BigNumberish,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<BigNumber>;
+
+    providerBalanceOf(
+      provider: string,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
 
     renounceOwnership(
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<BigNumber>;
 
-    resourceType(overrides?: CallOverrides): Promise<BigNumber>;
-
-    setDstChainPayment(
-      _dstChainPayment: string,
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<BigNumber>;
-
-    setResourceAdaptor(
-      _adaptor: string,
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<BigNumber>;
-
-    setResourceType(
-      _resourceType: BigNumberish,
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<BigNumber>;
+    router(overrides?: CallOverrides): Promise<BigNumber>;
 
     transferOwnership(
       newOwner: string,
@@ -494,55 +415,44 @@ export class NormalResourceController extends BaseContract {
   };
 
   populateTransaction: {
-    adaptor(overrides?: CallOverrides): Promise<PopulatedTransaction>;
-
-    balanceOf(
-      account: BytesLike,
-      overrides?: CallOverrides
-    ): Promise<PopulatedTransaction>;
-
-    dstChainPayment(overrides?: CallOverrides): Promise<PopulatedTransaction>;
-
-    expand(
-      account: BytesLike,
-      value: BigNumberish,
+    allocateProvider(
+      provider: string,
+      amount: BigNumberish,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<PopulatedTransaction>;
 
-    getAmountOf(
-      value: BigNumberish,
+    balanceOf(
+      provider: string,
+      account: BytesLike,
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
-    getValueOf(
+    drip(
+      provider: string,
+      account: BytesLike,
       amount: BigNumberish,
-      overrides?: CallOverrides
+      overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<PopulatedTransaction>;
 
     owner(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
-    price(overrides?: CallOverrides): Promise<PopulatedTransaction>;
+    paymentAllocate(
+      provider: string,
+      account: BytesLike,
+      amount: BigNumberish,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<PopulatedTransaction>;
+
+    providerBalanceOf(
+      provider: string,
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
 
     renounceOwnership(
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<PopulatedTransaction>;
 
-    resourceType(overrides?: CallOverrides): Promise<PopulatedTransaction>;
-
-    setDstChainPayment(
-      _dstChainPayment: string,
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<PopulatedTransaction>;
-
-    setResourceAdaptor(
-      _adaptor: string,
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<PopulatedTransaction>;
-
-    setResourceType(
-      _resourceType: BigNumberish,
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<PopulatedTransaction>;
+    router(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
     transferOwnership(
       newOwner: string,

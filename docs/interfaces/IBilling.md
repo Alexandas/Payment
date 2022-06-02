@@ -28,7 +28,7 @@ function billsTypedHash() external returns (bytes32)
 
 #### Declaration
 ```
-function adaptor() external returns (contract IResourceAdaptor)
+function adaptor() external returns (contract IResourcePriceAdaptor)
 ```
 
 
@@ -48,7 +48,7 @@ function adaptor() external returns (contract IResourceAdaptor)
 | Param | Type | Indexed | Description |
 | --- | --- | :---: | --- |
 |`hash` | bytes32 |  | BillTypedHash
-### ResourceAdaptorUpdated
+### ResourcePriceAdaptorUpdated
 
 > emit when resource adaptor updated
 
@@ -56,7 +56,7 @@ function adaptor() external returns (contract IResourceAdaptor)
 #### Params:
 | Param | Type | Indexed | Description |
 | --- | --- | :---: | --- |
-|`adaptor` | contract IResourceAdaptor |  | resource adaptor address
+|`adaptor` | contract IResourcePriceAdaptor |  | resource adaptor address
 ### Billing
 
 > emit when bills finalized

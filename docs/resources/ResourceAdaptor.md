@@ -1,4 +1,4 @@
-# ResourceAdaptor
+# ResourcePriceAdaptor
 
 
 
@@ -18,14 +18,14 @@
 
 #### Declaration
 ```
-function initialize(address owner,struct IResourceAdaptor.PriceAdaptor[] adaptors) external initializer
+function initialize(address owner,struct IResourcePriceAdaptor.PriceAdaptor[] adaptors) external initializer
 ```
 
 #### Args:
 | Arg | Type | Description |
 | --- | --- | --- |
 |`owner` | address | contract owner
-|`adaptors` | struct IResourceAdaptor.PriceAdaptor[] | price adaptors
+|`adaptors` | struct IResourcePriceAdaptor.PriceAdaptor[] | price adaptors
 
 ### setPriceAdaptors
 
@@ -34,12 +34,12 @@ function initialize(address owner,struct IResourceAdaptor.PriceAdaptor[] adaptor
 
 #### Declaration
 ```
-function setPriceAdaptors(struct IResourceAdaptor.PriceAdaptor[] adaptors) external onlyOwner
+function setPriceAdaptors(struct IResourcePriceAdaptor.PriceAdaptor[] adaptors) external onlyOwner
 ```
 
 #### Args:
 | Arg | Type | Description |
 | --- | --- | --- |
-|`adaptors` | struct IResourceAdaptor.PriceAdaptor[] | price adaptors
+|`adaptors` | struct IResourcePriceAdaptor.PriceAdaptor[] | price adaptors
 
 

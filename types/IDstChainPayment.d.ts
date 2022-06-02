@@ -21,10 +21,27 @@ import type { TypedEventFilter, TypedEvent, TypedListener } from "./common";
 
 interface IDstChainPaymentInterface extends ethers.utils.Interface {
   functions: {
+    "balanceOf(address)": FunctionFragment;
+    "decodeSourceChainMessage(bytes)": FunctionFragment;
+    "ipfsAllocations(address,bytes32,uint256,uint256)": FunctionFragment;
+    "ipfsAlloctionsFee(address,bytes32,uint256,uint256)": FunctionFragment;
     "pay((address,uint64,bytes32,tuple[]))": FunctionFragment;
     "payFromSourceChain(address,uint256,bytes)": FunctionFragment;
   };
 
+  encodeFunctionData(functionFragment: "balanceOf", values: [string]): string;
+  encodeFunctionData(
+    functionFragment: "decodeSourceChainMessage",
+    values: [BytesLike]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "ipfsAllocations",
+    values: [string, BytesLike, BigNumberish, BigNumberish]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "ipfsAlloctionsFee",
+    values: [string, BytesLike, BigNumberish, BigNumberish]
+  ): string;
   encodeFunctionData(
     functionFragment: "pay",
     values: [
@@ -41,6 +58,19 @@ interface IDstChainPaymentInterface extends ethers.utils.Interface {
     values: [string, BigNumberish, BytesLike]
   ): string;
 
+  decodeFunctionResult(functionFragment: "balanceOf", data: BytesLike): Result;
+  decodeFunctionResult(
+    functionFragment: "decodeSourceChainMessage",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "ipfsAllocations",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "ipfsAlloctionsFee",
+    data: BytesLike
+  ): Result;
   decodeFunctionResult(functionFragment: "pay", data: BytesLike): Result;
   decodeFunctionResult(
     functionFragment: "payFromSourceChain",
@@ -134,6 +164,57 @@ export class IDstChainPayment extends BaseContract {
   interface: IDstChainPaymentInterface;
 
   functions: {
+    balanceOf(
+      providerWallet: string,
+      overrides?: CallOverrides
+    ): Promise<[BigNumber]>;
+
+    decodeSourceChainMessage(
+      message: BytesLike,
+      overrides?: CallOverrides
+    ): Promise<
+      [
+        string,
+        BigNumber,
+        string,
+        ([number, BigNumber[]] & {
+          resourceType: number;
+          values: BigNumber[];
+        })[]
+      ] & {
+        provider: string;
+        nonce: BigNumber;
+        account: string;
+        payloads: ([number, BigNumber[]] & {
+          resourceType: number;
+          values: BigNumber[];
+        })[];
+      }
+    >;
+
+    ipfsAllocations(
+      provider: string,
+      account: BytesLike,
+      storageFee: BigNumberish,
+      expirationFee: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<
+      [BigNumber, BigNumber] & { amount: BigNumber; expiration: BigNumber }
+    >;
+
+    ipfsAlloctionsFee(
+      provider: string,
+      account: BytesLike,
+      amount: BigNumberish,
+      expiration: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<
+      [BigNumber, BigNumber] & {
+        storageFee: BigNumber;
+        expirationFee: BigNumber;
+      }
+    >;
+
     pay(
       payload: {
         provider: string;
@@ -145,12 +226,57 @@ export class IDstChainPayment extends BaseContract {
     ): Promise<ContractTransaction>;
 
     payFromSourceChain(
-      token: string,
-      amount: BigNumberish,
+      _token: string,
+      dstAmount: BigNumberish,
       message: BytesLike,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<ContractTransaction>;
   };
+
+  balanceOf(
+    providerWallet: string,
+    overrides?: CallOverrides
+  ): Promise<BigNumber>;
+
+  decodeSourceChainMessage(
+    message: BytesLike,
+    overrides?: CallOverrides
+  ): Promise<
+    [
+      string,
+      BigNumber,
+      string,
+      ([number, BigNumber[]] & { resourceType: number; values: BigNumber[] })[]
+    ] & {
+      provider: string;
+      nonce: BigNumber;
+      account: string;
+      payloads: ([number, BigNumber[]] & {
+        resourceType: number;
+        values: BigNumber[];
+      })[];
+    }
+  >;
+
+  ipfsAllocations(
+    provider: string,
+    account: BytesLike,
+    storageFee: BigNumberish,
+    expirationFee: BigNumberish,
+    overrides?: CallOverrides
+  ): Promise<
+    [BigNumber, BigNumber] & { amount: BigNumber; expiration: BigNumber }
+  >;
+
+  ipfsAlloctionsFee(
+    provider: string,
+    account: BytesLike,
+    amount: BigNumberish,
+    expiration: BigNumberish,
+    overrides?: CallOverrides
+  ): Promise<
+    [BigNumber, BigNumber] & { storageFee: BigNumber; expirationFee: BigNumber }
+  >;
 
   pay(
     payload: {
@@ -163,13 +289,64 @@ export class IDstChainPayment extends BaseContract {
   ): Promise<ContractTransaction>;
 
   payFromSourceChain(
-    token: string,
-    amount: BigNumberish,
+    _token: string,
+    dstAmount: BigNumberish,
     message: BytesLike,
     overrides?: Overrides & { from?: string | Promise<string> }
   ): Promise<ContractTransaction>;
 
   callStatic: {
+    balanceOf(
+      providerWallet: string,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
+
+    decodeSourceChainMessage(
+      message: BytesLike,
+      overrides?: CallOverrides
+    ): Promise<
+      [
+        string,
+        BigNumber,
+        string,
+        ([number, BigNumber[]] & {
+          resourceType: number;
+          values: BigNumber[];
+        })[]
+      ] & {
+        provider: string;
+        nonce: BigNumber;
+        account: string;
+        payloads: ([number, BigNumber[]] & {
+          resourceType: number;
+          values: BigNumber[];
+        })[];
+      }
+    >;
+
+    ipfsAllocations(
+      provider: string,
+      account: BytesLike,
+      storageFee: BigNumberish,
+      expirationFee: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<
+      [BigNumber, BigNumber] & { amount: BigNumber; expiration: BigNumber }
+    >;
+
+    ipfsAlloctionsFee(
+      provider: string,
+      account: BytesLike,
+      amount: BigNumberish,
+      expiration: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<
+      [BigNumber, BigNumber] & {
+        storageFee: BigNumber;
+        expirationFee: BigNumber;
+      }
+    >;
+
     pay(
       payload: {
         provider: string;
@@ -181,8 +358,8 @@ export class IDstChainPayment extends BaseContract {
     ): Promise<BigNumber>;
 
     payFromSourceChain(
-      token: string,
-      amount: BigNumberish,
+      _token: string,
+      dstAmount: BigNumberish,
       message: BytesLike,
       overrides?: CallOverrides
     ): Promise<void>;
@@ -283,6 +460,32 @@ export class IDstChainPayment extends BaseContract {
   };
 
   estimateGas: {
+    balanceOf(
+      providerWallet: string,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
+
+    decodeSourceChainMessage(
+      message: BytesLike,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
+
+    ipfsAllocations(
+      provider: string,
+      account: BytesLike,
+      storageFee: BigNumberish,
+      expirationFee: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
+
+    ipfsAlloctionsFee(
+      provider: string,
+      account: BytesLike,
+      amount: BigNumberish,
+      expiration: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
+
     pay(
       payload: {
         provider: string;
@@ -294,14 +497,40 @@ export class IDstChainPayment extends BaseContract {
     ): Promise<BigNumber>;
 
     payFromSourceChain(
-      token: string,
-      amount: BigNumberish,
+      _token: string,
+      dstAmount: BigNumberish,
       message: BytesLike,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<BigNumber>;
   };
 
   populateTransaction: {
+    balanceOf(
+      providerWallet: string,
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
+
+    decodeSourceChainMessage(
+      message: BytesLike,
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
+
+    ipfsAllocations(
+      provider: string,
+      account: BytesLike,
+      storageFee: BigNumberish,
+      expirationFee: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
+
+    ipfsAlloctionsFee(
+      provider: string,
+      account: BytesLike,
+      amount: BigNumberish,
+      expiration: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
+
     pay(
       payload: {
         provider: string;
@@ -313,8 +542,8 @@ export class IDstChainPayment extends BaseContract {
     ): Promise<PopulatedTransaction>;
 
     payFromSourceChain(
-      token: string,
-      amount: BigNumberish,
+      _token: string,
+      dstAmount: BigNumberish,
       message: BytesLike,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<PopulatedTransaction>;

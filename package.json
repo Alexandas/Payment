@@ -1,7 +1,7 @@
 {
 	"name": "4everland-contracts",
-	"version": "0.1.1",
-	"description": "4everland payment and ipfs content tracer contracts",
+	"version": "0.1.2",
+	"description": "4everland contracts",
 	"main": "./types/index.js",
 	"types": "./types/index.ts",
 	"engines": {
@@ -14,7 +14,7 @@
 		"smart-contracts",
 		"hardhat",
 		"solidity",
-		"cross chain payments"
+		"cross chain contracts"
 	],
 	"devDependencies": {
 		"@gnosis.pm/safe-contracts": "^1.3.0",

@@ -18,12 +18,6 @@ const _abi = [
       },
       {
         indexed: false,
-        internalType: "uint64",
-        name: "nonce",
-        type: "uint64",
-      },
-      {
-        indexed: false,
         internalType: "bytes32",
         name: "account",
         type: "bytes32",
@@ -40,6 +34,12 @@ const _abi = [
         name: "amount",
         type: "uint256",
       },
+      {
+        indexed: false,
+        internalType: "uint64",
+        name: "nonce",
+        type: "uint64",
+      },
     ],
     name: "Billing",
     type: "event",
@@ -54,43 +54,23 @@ const _abi = [
         type: "bytes32",
       },
     ],
-    name: "BillsTypedHashUpdated",
+    name: "BillingTypesHashUpdated",
     type: "event",
   },
   {
-    anonymous: false,
     inputs: [
       {
-        indexed: false,
-        internalType: "contract IProviders",
-        name: "providers",
+        internalType: "address",
+        name: "provider",
         type: "address",
       },
     ],
-    name: "ProvidersUpdated",
-    type: "event",
-  },
-  {
-    anonymous: false,
-    inputs: [
-      {
-        indexed: false,
-        internalType: "contract IResourceAdaptor",
-        name: "adaptor",
-        type: "address",
-      },
-    ],
-    name: "ResourceAdaptorUpdated",
-    type: "event",
-  },
-  {
-    inputs: [],
-    name: "adaptor",
+    name: "balanceOf",
     outputs: [
       {
-        internalType: "contract IResourceAdaptor",
+        internalType: "uint256",
         name: "",
-        type: "address",
+        type: "uint256",
       },
     ],
     stateMutability: "view",
@@ -98,7 +78,7 @@ const _abi = [
   },
   {
     inputs: [],
-    name: "billsTypedHash",
+    name: "billingTypesHash",
     outputs: [
       {
         internalType: "bytes32",
@@ -110,16 +90,71 @@ const _abi = [
     type: "function",
   },
   {
-    inputs: [],
-    name: "providers",
+    inputs: [
+      {
+        internalType: "address",
+        name: "provider",
+        type: "address",
+      },
+      {
+        internalType: "bytes32",
+        name: "account",
+        type: "bytes32",
+      },
+    ],
+    name: "nonces",
     outputs: [
       {
-        internalType: "contract IProviders",
+        internalType: "uint64",
         name: "",
-        type: "address",
+        type: "uint64",
       },
     ],
     stateMutability: "view",
+    type: "function",
+  },
+  {
+    inputs: [
+      {
+        internalType: "address",
+        name: "provider",
+        type: "address",
+      },
+      {
+        internalType: "bytes32",
+        name: "account",
+        type: "bytes32",
+      },
+      {
+        internalType: "bytes",
+        name: "bills",
+        type: "bytes",
+      },
+      {
+        internalType: "uint256",
+        name: "timeout",
+        type: "uint256",
+      },
+      {
+        internalType: "uint64",
+        name: "nonce",
+        type: "uint64",
+      },
+      {
+        internalType: "bytes",
+        name: "signature",
+        type: "bytes",
+      },
+    ],
+    name: "spend",
+    outputs: [
+      {
+        internalType: "uint256",
+        name: "fee",
+        type: "uint256",
+      },
+    ],
+    stateMutability: "nonpayable",
     type: "function",
   },
 ];

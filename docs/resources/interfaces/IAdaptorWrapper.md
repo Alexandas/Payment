@@ -12,7 +12,7 @@
 
 #### Declaration
 ```
-function adaptor() external returns (contract IResourceAdaptor)
+function adaptor() external returns (contract IResourcePriceAdaptor)
 ```
 
 
@@ -64,7 +64,7 @@ function getAmountOf() external returns (uint256)
 
 ## Events
 
-### ResourceAdaptorUpdated
+### ResourcePriceAdaptorUpdated
 
 > emit when resource adaptor updated
 
@@ -72,7 +72,7 @@ function getAmountOf() external returns (uint256)
 #### Params:
 | Param | Type | Indexed | Description |
 | --- | --- | :---: | --- |
-|`adaptor` | contract IResourceAdaptor |  | resource adaptor contract address
+|`adaptor` | contract IResourcePriceAdaptor |  | resource adaptor contract address
 ### ResourceTypeUpdated
 
 > emit when resource type updated

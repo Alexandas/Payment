@@ -4,16 +4,12 @@ pragma solidity >=0.8.0;
 
 import '@openzeppelin/contracts-upgradeable/access/OwnableUpgradeable.sol';
 import '@openzeppelin/contracts-upgradeable/utils/math/SafeMathUpgradeable.sol';
-import '../providers/ProvidersWrapper.sol';
-import '../resources/interfaces/IIPFSStorageController.sol';
+import '../govers/RouterWrapper.sol';
 
 /// @author Alexandas
 /// @dev IPFS content tracer
-contract ContentTracer is ProvidersWrapper, OwnableUpgradeable {
+contract ContentTracer is RouterWrapper, OwnableUpgradeable {
 	using SafeMathUpgradeable for uint256;
-
-	/// @dev ipfs storage controller
-	IIPFSStorageController public controller;
 
 	struct ContentMeta {
 		uint256 size;
@@ -22,10 +18,6 @@ contract ContentTracer is ProvidersWrapper, OwnableUpgradeable {
 
 	/// @dev ipfs content content meta
 	mapping(address => mapping(bytes32 => mapping(string => ContentMeta))) public metas;
-
-	/// @dev emit when ipfs storage controller updated
-	/// @param controller ipfs storage controller
-	event ControllerUpdated(IIPFSStorageController controller);
 
 	/// @dev emit when ipfs content inserted
 	/// @param provider provider address
@@ -44,11 +36,6 @@ contract ContentTracer is ProvidersWrapper, OwnableUpgradeable {
 	/// @param count ipfs content count
 	event Remove(address provider, bytes32 account, string content, uint256 size, uint256 count);
 
-	modifier onlyProvider() {
-		require(providers.isProvider(msg.sender), 'ContentTracer: caller is not the provider');
-		_;
-	}
-
 	modifier nonSize(uint256 size) {
 		require(size > 0, 'ContentTracer: zero size.');
 		_;
@@ -56,27 +43,13 @@ contract ContentTracer is ProvidersWrapper, OwnableUpgradeable {
 
 	/// @dev proxy initialize function
 	/// @param owner contract owner
-	/// @param providers providers contract address
-	/// @param controller ipfs storage controller
+	/// @param router router contract address
 	function initialize(
 		address owner,
-		IProviders providers,
-		IIPFSStorageController controller
+		IRouter router
 	) external initializer {
 		_transferOwnership(owner);
-		__Init_Providers(providers);
-		_setController(controller);
-	}
-
-	/// @dev update ipfs storage controller
-	/// @param _controller ipfs storage controller
-	function setController(IIPFSStorageController _controller) external onlyOwner {
-		_setController(_controller);
-	}
-
-	function _setController(IIPFSStorageController _controller) internal {
-		controller = _controller;
-		emit ControllerUpdated(_controller);
+		__Init_Router(router);
 	}
 
 	/// @dev insert multiple ipfs content for accounts
@@ -103,6 +76,7 @@ contract ContentTracer is ProvidersWrapper, OwnableUpgradeable {
 	/// @param account user account
 	/// @param content ipfs content
 	/// @param size ipfs account size
+	/// @param count array of ipfs content count
 	function insert(
 		bytes32 account,
 		string memory content,
@@ -116,14 +90,15 @@ contract ContentTracer is ProvidersWrapper, OwnableUpgradeable {
 		address provider,
 		bytes32 account,
 		string memory content,
-		uint256 size, 
+		uint256 size,
 		uint256 count
 	) internal nonSize(size) {
+		IIPFSStorageController controller = router.IPFSStorageController();
 		require(!exists(provider, account, content), 'ContentTracer: content exists');
-		require(!controller.isExpired(account), 'ContentTracer: account expired');
+		require(!controller.isExpired(provider, account), 'ContentTracer: account expired');
 		metas[provider][account][content] = ContentMeta(size, count);
 
-		emit Insert(provider, account, content, size, count, controller.expiredAt(account));
+		emit Insert(provider, account, content, size, count, controller.expiredAt(provider, account));
 	}
 
 	/// @dev remove ipfs content
@@ -178,7 +153,7 @@ contract ContentTracer is ProvidersWrapper, OwnableUpgradeable {
 		bytes32 account,
 		string memory content
 	) public view returns (uint256) {
-		require(providers.isProvider(provider), 'ContentTracer: nonexistent provider');
+		require(router.ProviderRegistry().isProvider(provider), 'ContentTracer: nonexistent provider');
 		require(exists(provider, account, content), 'ContentTracer: nonexistent content');
 		return metas[provider][account][content].size;
 	}

@@ -22,17 +22,14 @@ import type { TypedEventFilter, TypedEvent, TypedListener } from "./common";
 interface DstChainPaymentInterface extends ethers.utils.Interface {
   functions: {
     "addPauser(address)": FunctionFragment;
-    "arStorageController()": FunctionFragment;
-    "bandwidthController()": FunctionFragment;
-    "buildingTimeController()": FunctionFragment;
-    "convertSourceChainPayloads(uint256,tuple[])": FunctionFragment;
+    "balanceOf(address)": FunctionFragment;
     "decodeSourceChainMessage(bytes)": FunctionFragment;
-    "initialize(address,address,address,address,address)": FunctionFragment;
-    "ipfsStorageController()": FunctionFragment;
+    "getAmountOf(address,uint8,uint256)": FunctionFragment;
+    "getValueOf(address,uint8,uint256)": FunctionFragment;
+    "initialize(address,address,address)": FunctionFragment;
+    "ipfsAllocations(address,bytes32,uint256,uint256)": FunctionFragment;
+    "ipfsAlloctionsFee(address,bytes32,uint256,uint256)": FunctionFragment;
     "isPauser(address)": FunctionFragment;
-    "matchResourceToToken(uint256)": FunctionFragment;
-    "matchTokenToResource(uint256)": FunctionFragment;
-    "messageReceiver()": FunctionFragment;
     "owner()": FunctionFragment;
     "ownerWithdrawERC20(address,address,uint256)": FunctionFragment;
     "ownerWithdrawNative(address,uint256)": FunctionFragment;
@@ -41,69 +38,42 @@ interface DstChainPaymentInterface extends ethers.utils.Interface {
     "pausers(address)": FunctionFragment;
     "pay((address,uint64,bytes32,tuple[]))": FunctionFragment;
     "payFromSourceChain(address,uint256,bytes)": FunctionFragment;
-    "providers()": FunctionFragment;
+    "priceOf(address,uint8)": FunctionFragment;
     "removePauser(address)": FunctionFragment;
     "renounceOwnership()": FunctionFragment;
     "renouncePauser()": FunctionFragment;
-    "resourceDecimals()": FunctionFragment;
-    "setARStorageController(address)": FunctionFragment;
-    "setBandwidthController(address)": FunctionFragment;
-    "setBuildingTimeController(address)": FunctionFragment;
-    "setIPFSStorageController(address)": FunctionFragment;
-    "setMessageReceiver(address)": FunctionFragment;
-    "setToken(address)": FunctionFragment;
-    "token()": FunctionFragment;
-    "tokenDecimals()": FunctionFragment;
-    "totalValue(tuple[])": FunctionFragment;
+    "router()": FunctionFragment;
     "transferOwnership(address)": FunctionFragment;
     "unpause()": FunctionFragment;
   };
 
   encodeFunctionData(functionFragment: "addPauser", values: [string]): string;
-  encodeFunctionData(
-    functionFragment: "arStorageController",
-    values?: undefined
-  ): string;
-  encodeFunctionData(
-    functionFragment: "bandwidthController",
-    values?: undefined
-  ): string;
-  encodeFunctionData(
-    functionFragment: "buildingTimeController",
-    values?: undefined
-  ): string;
-  encodeFunctionData(
-    functionFragment: "convertSourceChainPayloads",
-    values: [
-      BigNumberish,
-      { resourceType: BigNumberish; values: BigNumberish[] }[]
-    ]
-  ): string;
+  encodeFunctionData(functionFragment: "balanceOf", values: [string]): string;
   encodeFunctionData(
     functionFragment: "decodeSourceChainMessage",
     values: [BytesLike]
   ): string;
   encodeFunctionData(
-    functionFragment: "initialize",
-    values: [string, string, string, string, string]
+    functionFragment: "getAmountOf",
+    values: [string, BigNumberish, BigNumberish]
   ): string;
   encodeFunctionData(
-    functionFragment: "ipfsStorageController",
-    values?: undefined
+    functionFragment: "getValueOf",
+    values: [string, BigNumberish, BigNumberish]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "initialize",
+    values: [string, string, string]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "ipfsAllocations",
+    values: [string, BytesLike, BigNumberish, BigNumberish]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "ipfsAlloctionsFee",
+    values: [string, BytesLike, BigNumberish, BigNumberish]
   ): string;
   encodeFunctionData(functionFragment: "isPauser", values: [string]): string;
-  encodeFunctionData(
-    functionFragment: "matchResourceToToken",
-    values: [BigNumberish]
-  ): string;
-  encodeFunctionData(
-    functionFragment: "matchTokenToResource",
-    values: [BigNumberish]
-  ): string;
-  encodeFunctionData(
-    functionFragment: "messageReceiver",
-    values?: undefined
-  ): string;
   encodeFunctionData(functionFragment: "owner", values?: undefined): string;
   encodeFunctionData(
     functionFragment: "ownerWithdrawERC20",
@@ -131,7 +101,10 @@ interface DstChainPaymentInterface extends ethers.utils.Interface {
     functionFragment: "payFromSourceChain",
     values: [string, BigNumberish, BytesLike]
   ): string;
-  encodeFunctionData(functionFragment: "providers", values?: undefined): string;
+  encodeFunctionData(
+    functionFragment: "priceOf",
+    values: [string, BigNumberish]
+  ): string;
   encodeFunctionData(
     functionFragment: "removePauser",
     values: [string]
@@ -144,40 +117,7 @@ interface DstChainPaymentInterface extends ethers.utils.Interface {
     functionFragment: "renouncePauser",
     values?: undefined
   ): string;
-  encodeFunctionData(
-    functionFragment: "resourceDecimals",
-    values?: undefined
-  ): string;
-  encodeFunctionData(
-    functionFragment: "setARStorageController",
-    values: [string]
-  ): string;
-  encodeFunctionData(
-    functionFragment: "setBandwidthController",
-    values: [string]
-  ): string;
-  encodeFunctionData(
-    functionFragment: "setBuildingTimeController",
-    values: [string]
-  ): string;
-  encodeFunctionData(
-    functionFragment: "setIPFSStorageController",
-    values: [string]
-  ): string;
-  encodeFunctionData(
-    functionFragment: "setMessageReceiver",
-    values: [string]
-  ): string;
-  encodeFunctionData(functionFragment: "setToken", values: [string]): string;
-  encodeFunctionData(functionFragment: "token", values?: undefined): string;
-  encodeFunctionData(
-    functionFragment: "tokenDecimals",
-    values?: undefined
-  ): string;
-  encodeFunctionData(
-    functionFragment: "totalValue",
-    values: [{ resourceType: BigNumberish; values: BigNumberish[] }[]]
-  ): string;
+  encodeFunctionData(functionFragment: "router", values?: undefined): string;
   encodeFunctionData(
     functionFragment: "transferOwnership",
     values: [string]
@@ -185,44 +125,26 @@ interface DstChainPaymentInterface extends ethers.utils.Interface {
   encodeFunctionData(functionFragment: "unpause", values?: undefined): string;
 
   decodeFunctionResult(functionFragment: "addPauser", data: BytesLike): Result;
-  decodeFunctionResult(
-    functionFragment: "arStorageController",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(
-    functionFragment: "bandwidthController",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(
-    functionFragment: "buildingTimeController",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(
-    functionFragment: "convertSourceChainPayloads",
-    data: BytesLike
-  ): Result;
+  decodeFunctionResult(functionFragment: "balanceOf", data: BytesLike): Result;
   decodeFunctionResult(
     functionFragment: "decodeSourceChainMessage",
     data: BytesLike
   ): Result;
+  decodeFunctionResult(
+    functionFragment: "getAmountOf",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(functionFragment: "getValueOf", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "initialize", data: BytesLike): Result;
   decodeFunctionResult(
-    functionFragment: "ipfsStorageController",
+    functionFragment: "ipfsAllocations",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "ipfsAlloctionsFee",
     data: BytesLike
   ): Result;
   decodeFunctionResult(functionFragment: "isPauser", data: BytesLike): Result;
-  decodeFunctionResult(
-    functionFragment: "matchResourceToToken",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(
-    functionFragment: "matchTokenToResource",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(
-    functionFragment: "messageReceiver",
-    data: BytesLike
-  ): Result;
   decodeFunctionResult(functionFragment: "owner", data: BytesLike): Result;
   decodeFunctionResult(
     functionFragment: "ownerWithdrawERC20",
@@ -240,7 +162,7 @@ interface DstChainPaymentInterface extends ethers.utils.Interface {
     functionFragment: "payFromSourceChain",
     data: BytesLike
   ): Result;
-  decodeFunctionResult(functionFragment: "providers", data: BytesLike): Result;
+  decodeFunctionResult(functionFragment: "priceOf", data: BytesLike): Result;
   decodeFunctionResult(
     functionFragment: "removePauser",
     data: BytesLike
@@ -253,37 +175,7 @@ interface DstChainPaymentInterface extends ethers.utils.Interface {
     functionFragment: "renouncePauser",
     data: BytesLike
   ): Result;
-  decodeFunctionResult(
-    functionFragment: "resourceDecimals",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(
-    functionFragment: "setARStorageController",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(
-    functionFragment: "setBandwidthController",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(
-    functionFragment: "setBuildingTimeController",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(
-    functionFragment: "setIPFSStorageController",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(
-    functionFragment: "setMessageReceiver",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(functionFragment: "setToken", data: BytesLike): Result;
-  decodeFunctionResult(functionFragment: "token", data: BytesLike): Result;
-  decodeFunctionResult(
-    functionFragment: "tokenDecimals",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(functionFragment: "totalValue", data: BytesLike): Result;
+  decodeFunctionResult(functionFragment: "router", data: BytesLike): Result;
   decodeFunctionResult(
     functionFragment: "transferOwnership",
     data: BytesLike
@@ -291,67 +183,31 @@ interface DstChainPaymentInterface extends ethers.utils.Interface {
   decodeFunctionResult(functionFragment: "unpause", data: BytesLike): Result;
 
   events: {
-    "ARStorageControllerUpdated(address)": EventFragment;
-    "BandwidthControllerUpdated(address)": EventFragment;
-    "BuildingTimeControllerUpdated(address)": EventFragment;
-    "IPFSStorageControllerUpdated(address)": EventFragment;
     "Initialized(uint8)": EventFragment;
-    "MessageReceiverUpdated(address)": EventFragment;
     "NativeWithdrawal(address,uint256)": EventFragment;
     "OwnershipTransferred(address,address)": EventFragment;
     "Paid(address,tuple)": EventFragment;
     "Paused(address)": EventFragment;
     "PauserAdded(address)": EventFragment;
     "PauserRemoved(address)": EventFragment;
-    "ProvidersUpdated(address)": EventFragment;
-    "TokenUpdated(address)": EventFragment;
+    "RouterUpdated(address)": EventFragment;
     "Unpaused(address)": EventFragment;
     "Withdrawal(address,address,uint256)": EventFragment;
   };
 
-  getEvent(nameOrSignatureOrTopic: "ARStorageControllerUpdated"): EventFragment;
-  getEvent(nameOrSignatureOrTopic: "BandwidthControllerUpdated"): EventFragment;
-  getEvent(
-    nameOrSignatureOrTopic: "BuildingTimeControllerUpdated"
-  ): EventFragment;
-  getEvent(
-    nameOrSignatureOrTopic: "IPFSStorageControllerUpdated"
-  ): EventFragment;
   getEvent(nameOrSignatureOrTopic: "Initialized"): EventFragment;
-  getEvent(nameOrSignatureOrTopic: "MessageReceiverUpdated"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "NativeWithdrawal"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "OwnershipTransferred"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "Paid"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "Paused"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "PauserAdded"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "PauserRemoved"): EventFragment;
-  getEvent(nameOrSignatureOrTopic: "ProvidersUpdated"): EventFragment;
-  getEvent(nameOrSignatureOrTopic: "TokenUpdated"): EventFragment;
+  getEvent(nameOrSignatureOrTopic: "RouterUpdated"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "Unpaused"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "Withdrawal"): EventFragment;
 }
 
-export type ARStorageControllerUpdatedEvent = TypedEvent<
-  [string] & { _arStorageController: string }
->;
-
-export type BandwidthControllerUpdatedEvent = TypedEvent<
-  [string] & { _bandwidthController: string }
->;
-
-export type BuildingTimeControllerUpdatedEvent = TypedEvent<
-  [string] & { _buildingTimeController: string }
->;
-
-export type IPFSStorageControllerUpdatedEvent = TypedEvent<
-  [string] & { _ipfsStorageController: string }
->;
-
 export type InitializedEvent = TypedEvent<[number] & { version: number }>;
-
-export type MessageReceiverUpdatedEvent = TypedEvent<
-  [string] & { messageReceiver: string }
->;
 
 export type NativeWithdrawalEvent = TypedEvent<
   [string, BigNumber] & { to: string; value: BigNumber }
@@ -403,11 +259,7 @@ export type PauserAddedEvent = TypedEvent<[string] & { account: string }>;
 
 export type PauserRemovedEvent = TypedEvent<[string] & { account: string }>;
 
-export type ProvidersUpdatedEvent = TypedEvent<
-  [string] & { providers: string }
->;
-
-export type TokenUpdatedEvent = TypedEvent<[string] & { token: string }>;
+export type RouterUpdatedEvent = TypedEvent<[string] & { router: string }>;
 
 export type UnpausedEvent = TypedEvent<[string] & { account: string }>;
 
@@ -464,24 +316,10 @@ export class DstChainPayment extends BaseContract {
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<ContractTransaction>;
 
-    arStorageController(overrides?: CallOverrides): Promise<[string]>;
-
-    bandwidthController(overrides?: CallOverrides): Promise<[string]>;
-
-    buildingTimeController(overrides?: CallOverrides): Promise<[string]>;
-
-    convertSourceChainPayloads(
-      amount: BigNumberish,
-      payloads: { resourceType: BigNumberish; values: BigNumberish[] }[],
+    balanceOf(
+      provider: string,
       overrides?: CallOverrides
-    ): Promise<
-      [
-        ([number, BigNumber[]] & {
-          resourceType: number;
-          values: BigNumber[];
-        })[]
-      ]
-    >;
+    ): Promise<[BigNumber]>;
 
     decodeSourceChainMessage(
       message: BytesLike,
@@ -506,30 +344,51 @@ export class DstChainPayment extends BaseContract {
       }
     >;
 
+    getAmountOf(
+      provider: string,
+      resourceType: BigNumberish,
+      value: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<[BigNumber]>;
+
+    getValueOf(
+      provider: string,
+      resourceType: BigNumberish,
+      amount: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<[BigNumber]>;
+
     initialize(
       owner: string,
       pauser: string,
-      providers: string,
-      messageReceiver: string,
-      token: string,
+      router: string,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<ContractTransaction>;
 
-    ipfsStorageController(overrides?: CallOverrides): Promise<[string]>;
+    ipfsAllocations(
+      provider: string,
+      account: BytesLike,
+      storageFee: BigNumberish,
+      expirationFee: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<
+      [BigNumber, BigNumber] & { amount: BigNumber; expiration: BigNumber }
+    >;
+
+    ipfsAlloctionsFee(
+      provider: string,
+      account: BytesLike,
+      amount: BigNumberish,
+      expiration: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<
+      [BigNumber, BigNumber] & {
+        storageFee: BigNumber;
+        expirationFee: BigNumber;
+      }
+    >;
 
     isPauser(account: string, overrides?: CallOverrides): Promise<[boolean]>;
-
-    matchResourceToToken(
-      value: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<[BigNumber]>;
-
-    matchTokenToResource(
-      value: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<[BigNumber]>;
-
-    messageReceiver(overrides?: CallOverrides): Promise<[string]>;
 
     owner(overrides?: CallOverrides): Promise<[string]>;
 
@@ -571,7 +430,11 @@ export class DstChainPayment extends BaseContract {
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<ContractTransaction>;
 
-    providers(overrides?: CallOverrides): Promise<[string]>;
+    priceOf(
+      provider: string,
+      resourceType: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<[BigNumber]>;
 
     removePauser(
       account: string,
@@ -586,46 +449,7 @@ export class DstChainPayment extends BaseContract {
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<ContractTransaction>;
 
-    resourceDecimals(overrides?: CallOverrides): Promise<[BigNumber]>;
-
-    setARStorageController(
-      _arStorageController: string,
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<ContractTransaction>;
-
-    setBandwidthController(
-      _bandwidthController: string,
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<ContractTransaction>;
-
-    setBuildingTimeController(
-      _buildingTimeController: string,
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<ContractTransaction>;
-
-    setIPFSStorageController(
-      _ipfsStorageController: string,
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<ContractTransaction>;
-
-    setMessageReceiver(
-      _messageReceiver: string,
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<ContractTransaction>;
-
-    setToken(
-      _token: string,
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<ContractTransaction>;
-
-    token(overrides?: CallOverrides): Promise<[string]>;
-
-    tokenDecimals(overrides?: CallOverrides): Promise<[BigNumber]>;
-
-    totalValue(
-      payloads: { resourceType: BigNumberish; values: BigNumberish[] }[],
-      overrides?: CallOverrides
-    ): Promise<[BigNumber] & { value: BigNumber }>;
+    router(overrides?: CallOverrides): Promise<[string]>;
 
     transferOwnership(
       newOwner: string,
@@ -642,19 +466,7 @@ export class DstChainPayment extends BaseContract {
     overrides?: Overrides & { from?: string | Promise<string> }
   ): Promise<ContractTransaction>;
 
-  arStorageController(overrides?: CallOverrides): Promise<string>;
-
-  bandwidthController(overrides?: CallOverrides): Promise<string>;
-
-  buildingTimeController(overrides?: CallOverrides): Promise<string>;
-
-  convertSourceChainPayloads(
-    amount: BigNumberish,
-    payloads: { resourceType: BigNumberish; values: BigNumberish[] }[],
-    overrides?: CallOverrides
-  ): Promise<
-    ([number, BigNumber[]] & { resourceType: number; values: BigNumber[] })[]
-  >;
+  balanceOf(provider: string, overrides?: CallOverrides): Promise<BigNumber>;
 
   decodeSourceChainMessage(
     message: BytesLike,
@@ -676,30 +488,48 @@ export class DstChainPayment extends BaseContract {
     }
   >;
 
+  getAmountOf(
+    provider: string,
+    resourceType: BigNumberish,
+    value: BigNumberish,
+    overrides?: CallOverrides
+  ): Promise<BigNumber>;
+
+  getValueOf(
+    provider: string,
+    resourceType: BigNumberish,
+    amount: BigNumberish,
+    overrides?: CallOverrides
+  ): Promise<BigNumber>;
+
   initialize(
     owner: string,
     pauser: string,
-    providers: string,
-    messageReceiver: string,
-    token: string,
+    router: string,
     overrides?: Overrides & { from?: string | Promise<string> }
   ): Promise<ContractTransaction>;
 
-  ipfsStorageController(overrides?: CallOverrides): Promise<string>;
+  ipfsAllocations(
+    provider: string,
+    account: BytesLike,
+    storageFee: BigNumberish,
+    expirationFee: BigNumberish,
+    overrides?: CallOverrides
+  ): Promise<
+    [BigNumber, BigNumber] & { amount: BigNumber; expiration: BigNumber }
+  >;
+
+  ipfsAlloctionsFee(
+    provider: string,
+    account: BytesLike,
+    amount: BigNumberish,
+    expiration: BigNumberish,
+    overrides?: CallOverrides
+  ): Promise<
+    [BigNumber, BigNumber] & { storageFee: BigNumber; expirationFee: BigNumber }
+  >;
 
   isPauser(account: string, overrides?: CallOverrides): Promise<boolean>;
-
-  matchResourceToToken(
-    value: BigNumberish,
-    overrides?: CallOverrides
-  ): Promise<BigNumber>;
-
-  matchTokenToResource(
-    value: BigNumberish,
-    overrides?: CallOverrides
-  ): Promise<BigNumber>;
-
-  messageReceiver(overrides?: CallOverrides): Promise<string>;
 
   owner(overrides?: CallOverrides): Promise<string>;
 
@@ -741,7 +571,11 @@ export class DstChainPayment extends BaseContract {
     overrides?: Overrides & { from?: string | Promise<string> }
   ): Promise<ContractTransaction>;
 
-  providers(overrides?: CallOverrides): Promise<string>;
+  priceOf(
+    provider: string,
+    resourceType: BigNumberish,
+    overrides?: CallOverrides
+  ): Promise<BigNumber>;
 
   removePauser(
     account: string,
@@ -756,46 +590,7 @@ export class DstChainPayment extends BaseContract {
     overrides?: Overrides & { from?: string | Promise<string> }
   ): Promise<ContractTransaction>;
 
-  resourceDecimals(overrides?: CallOverrides): Promise<BigNumber>;
-
-  setARStorageController(
-    _arStorageController: string,
-    overrides?: Overrides & { from?: string | Promise<string> }
-  ): Promise<ContractTransaction>;
-
-  setBandwidthController(
-    _bandwidthController: string,
-    overrides?: Overrides & { from?: string | Promise<string> }
-  ): Promise<ContractTransaction>;
-
-  setBuildingTimeController(
-    _buildingTimeController: string,
-    overrides?: Overrides & { from?: string | Promise<string> }
-  ): Promise<ContractTransaction>;
-
-  setIPFSStorageController(
-    _ipfsStorageController: string,
-    overrides?: Overrides & { from?: string | Promise<string> }
-  ): Promise<ContractTransaction>;
-
-  setMessageReceiver(
-    _messageReceiver: string,
-    overrides?: Overrides & { from?: string | Promise<string> }
-  ): Promise<ContractTransaction>;
-
-  setToken(
-    _token: string,
-    overrides?: Overrides & { from?: string | Promise<string> }
-  ): Promise<ContractTransaction>;
-
-  token(overrides?: CallOverrides): Promise<string>;
-
-  tokenDecimals(overrides?: CallOverrides): Promise<BigNumber>;
-
-  totalValue(
-    payloads: { resourceType: BigNumberish; values: BigNumberish[] }[],
-    overrides?: CallOverrides
-  ): Promise<BigNumber>;
+  router(overrides?: CallOverrides): Promise<string>;
 
   transferOwnership(
     newOwner: string,
@@ -809,19 +604,7 @@ export class DstChainPayment extends BaseContract {
   callStatic: {
     addPauser(account: string, overrides?: CallOverrides): Promise<void>;
 
-    arStorageController(overrides?: CallOverrides): Promise<string>;
-
-    bandwidthController(overrides?: CallOverrides): Promise<string>;
-
-    buildingTimeController(overrides?: CallOverrides): Promise<string>;
-
-    convertSourceChainPayloads(
-      amount: BigNumberish,
-      payloads: { resourceType: BigNumberish; values: BigNumberish[] }[],
-      overrides?: CallOverrides
-    ): Promise<
-      ([number, BigNumber[]] & { resourceType: number; values: BigNumber[] })[]
-    >;
+    balanceOf(provider: string, overrides?: CallOverrides): Promise<BigNumber>;
 
     decodeSourceChainMessage(
       message: BytesLike,
@@ -846,30 +629,51 @@ export class DstChainPayment extends BaseContract {
       }
     >;
 
+    getAmountOf(
+      provider: string,
+      resourceType: BigNumberish,
+      value: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
+
+    getValueOf(
+      provider: string,
+      resourceType: BigNumberish,
+      amount: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
+
     initialize(
       owner: string,
       pauser: string,
-      providers: string,
-      messageReceiver: string,
-      token: string,
+      router: string,
       overrides?: CallOverrides
     ): Promise<void>;
 
-    ipfsStorageController(overrides?: CallOverrides): Promise<string>;
+    ipfsAllocations(
+      provider: string,
+      account: BytesLike,
+      storageFee: BigNumberish,
+      expirationFee: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<
+      [BigNumber, BigNumber] & { amount: BigNumber; expiration: BigNumber }
+    >;
+
+    ipfsAlloctionsFee(
+      provider: string,
+      account: BytesLike,
+      amount: BigNumberish,
+      expiration: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<
+      [BigNumber, BigNumber] & {
+        storageFee: BigNumber;
+        expirationFee: BigNumber;
+      }
+    >;
 
     isPauser(account: string, overrides?: CallOverrides): Promise<boolean>;
-
-    matchResourceToToken(
-      value: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<BigNumber>;
-
-    matchTokenToResource(
-      value: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<BigNumber>;
-
-    messageReceiver(overrides?: CallOverrides): Promise<string>;
 
     owner(overrides?: CallOverrides): Promise<string>;
 
@@ -909,7 +713,11 @@ export class DstChainPayment extends BaseContract {
       overrides?: CallOverrides
     ): Promise<void>;
 
-    providers(overrides?: CallOverrides): Promise<string>;
+    priceOf(
+      provider: string,
+      resourceType: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
 
     removePauser(account: string, overrides?: CallOverrides): Promise<void>;
 
@@ -917,43 +725,7 @@ export class DstChainPayment extends BaseContract {
 
     renouncePauser(overrides?: CallOverrides): Promise<void>;
 
-    resourceDecimals(overrides?: CallOverrides): Promise<BigNumber>;
-
-    setARStorageController(
-      _arStorageController: string,
-      overrides?: CallOverrides
-    ): Promise<void>;
-
-    setBandwidthController(
-      _bandwidthController: string,
-      overrides?: CallOverrides
-    ): Promise<void>;
-
-    setBuildingTimeController(
-      _buildingTimeController: string,
-      overrides?: CallOverrides
-    ): Promise<void>;
-
-    setIPFSStorageController(
-      _ipfsStorageController: string,
-      overrides?: CallOverrides
-    ): Promise<void>;
-
-    setMessageReceiver(
-      _messageReceiver: string,
-      overrides?: CallOverrides
-    ): Promise<void>;
-
-    setToken(_token: string, overrides?: CallOverrides): Promise<void>;
-
-    token(overrides?: CallOverrides): Promise<string>;
-
-    tokenDecimals(overrides?: CallOverrides): Promise<BigNumber>;
-
-    totalValue(
-      payloads: { resourceType: BigNumberish; values: BigNumberish[] }[],
-      overrides?: CallOverrides
-    ): Promise<BigNumber>;
+    router(overrides?: CallOverrides): Promise<string>;
 
     transferOwnership(
       newOwner: string,
@@ -964,38 +736,6 @@ export class DstChainPayment extends BaseContract {
   };
 
   filters: {
-    "ARStorageControllerUpdated(address)"(
-      _arStorageController?: null
-    ): TypedEventFilter<[string], { _arStorageController: string }>;
-
-    ARStorageControllerUpdated(
-      _arStorageController?: null
-    ): TypedEventFilter<[string], { _arStorageController: string }>;
-
-    "BandwidthControllerUpdated(address)"(
-      _bandwidthController?: null
-    ): TypedEventFilter<[string], { _bandwidthController: string }>;
-
-    BandwidthControllerUpdated(
-      _bandwidthController?: null
-    ): TypedEventFilter<[string], { _bandwidthController: string }>;
-
-    "BuildingTimeControllerUpdated(address)"(
-      _buildingTimeController?: null
-    ): TypedEventFilter<[string], { _buildingTimeController: string }>;
-
-    BuildingTimeControllerUpdated(
-      _buildingTimeController?: null
-    ): TypedEventFilter<[string], { _buildingTimeController: string }>;
-
-    "IPFSStorageControllerUpdated(address)"(
-      _ipfsStorageController?: null
-    ): TypedEventFilter<[string], { _ipfsStorageController: string }>;
-
-    IPFSStorageControllerUpdated(
-      _ipfsStorageController?: null
-    ): TypedEventFilter<[string], { _ipfsStorageController: string }>;
-
     "Initialized(uint8)"(
       version?: null
     ): TypedEventFilter<[number], { version: number }>;
@@ -1003,14 +743,6 @@ export class DstChainPayment extends BaseContract {
     Initialized(
       version?: null
     ): TypedEventFilter<[number], { version: number }>;
-
-    "MessageReceiverUpdated(address)"(
-      messageReceiver?: null
-    ): TypedEventFilter<[string], { messageReceiver: string }>;
-
-    MessageReceiverUpdated(
-      messageReceiver?: null
-    ): TypedEventFilter<[string], { messageReceiver: string }>;
 
     "NativeWithdrawal(address,uint256)"(
       to?: null,
@@ -1152,19 +884,13 @@ export class DstChainPayment extends BaseContract {
       account?: null
     ): TypedEventFilter<[string], { account: string }>;
 
-    "ProvidersUpdated(address)"(
-      providers?: null
-    ): TypedEventFilter<[string], { providers: string }>;
+    "RouterUpdated(address)"(
+      router?: null
+    ): TypedEventFilter<[string], { router: string }>;
 
-    ProvidersUpdated(
-      providers?: null
-    ): TypedEventFilter<[string], { providers: string }>;
-
-    "TokenUpdated(address)"(
-      token?: null
-    ): TypedEventFilter<[string], { token: string }>;
-
-    TokenUpdated(token?: null): TypedEventFilter<[string], { token: string }>;
+    RouterUpdated(
+      router?: null
+    ): TypedEventFilter<[string], { router: string }>;
 
     "Unpaused(address)"(
       account?: null
@@ -1197,47 +923,51 @@ export class DstChainPayment extends BaseContract {
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<BigNumber>;
 
-    arStorageController(overrides?: CallOverrides): Promise<BigNumber>;
-
-    bandwidthController(overrides?: CallOverrides): Promise<BigNumber>;
-
-    buildingTimeController(overrides?: CallOverrides): Promise<BigNumber>;
-
-    convertSourceChainPayloads(
-      amount: BigNumberish,
-      payloads: { resourceType: BigNumberish; values: BigNumberish[] }[],
-      overrides?: CallOverrides
-    ): Promise<BigNumber>;
+    balanceOf(provider: string, overrides?: CallOverrides): Promise<BigNumber>;
 
     decodeSourceChainMessage(
       message: BytesLike,
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
+    getAmountOf(
+      provider: string,
+      resourceType: BigNumberish,
+      value: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
+
+    getValueOf(
+      provider: string,
+      resourceType: BigNumberish,
+      amount: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
+
     initialize(
       owner: string,
       pauser: string,
-      providers: string,
-      messageReceiver: string,
-      token: string,
+      router: string,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<BigNumber>;
 
-    ipfsStorageController(overrides?: CallOverrides): Promise<BigNumber>;
+    ipfsAllocations(
+      provider: string,
+      account: BytesLike,
+      storageFee: BigNumberish,
+      expirationFee: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
+
+    ipfsAlloctionsFee(
+      provider: string,
+      account: BytesLike,
+      amount: BigNumberish,
+      expiration: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
 
     isPauser(account: string, overrides?: CallOverrides): Promise<BigNumber>;
-
-    matchResourceToToken(
-      value: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<BigNumber>;
-
-    matchTokenToResource(
-      value: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<BigNumber>;
-
-    messageReceiver(overrides?: CallOverrides): Promise<BigNumber>;
 
     owner(overrides?: CallOverrides): Promise<BigNumber>;
 
@@ -1279,7 +1009,11 @@ export class DstChainPayment extends BaseContract {
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<BigNumber>;
 
-    providers(overrides?: CallOverrides): Promise<BigNumber>;
+    priceOf(
+      provider: string,
+      resourceType: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
 
     removePauser(
       account: string,
@@ -1294,46 +1028,7 @@ export class DstChainPayment extends BaseContract {
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<BigNumber>;
 
-    resourceDecimals(overrides?: CallOverrides): Promise<BigNumber>;
-
-    setARStorageController(
-      _arStorageController: string,
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<BigNumber>;
-
-    setBandwidthController(
-      _bandwidthController: string,
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<BigNumber>;
-
-    setBuildingTimeController(
-      _buildingTimeController: string,
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<BigNumber>;
-
-    setIPFSStorageController(
-      _ipfsStorageController: string,
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<BigNumber>;
-
-    setMessageReceiver(
-      _messageReceiver: string,
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<BigNumber>;
-
-    setToken(
-      _token: string,
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<BigNumber>;
-
-    token(overrides?: CallOverrides): Promise<BigNumber>;
-
-    tokenDecimals(overrides?: CallOverrides): Promise<BigNumber>;
-
-    totalValue(
-      payloads: { resourceType: BigNumberish; values: BigNumberish[] }[],
-      overrides?: CallOverrides
-    ): Promise<BigNumber>;
+    router(overrides?: CallOverrides): Promise<BigNumber>;
 
     transferOwnership(
       newOwner: string,
@@ -1351,21 +1046,8 @@ export class DstChainPayment extends BaseContract {
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<PopulatedTransaction>;
 
-    arStorageController(
-      overrides?: CallOverrides
-    ): Promise<PopulatedTransaction>;
-
-    bandwidthController(
-      overrides?: CallOverrides
-    ): Promise<PopulatedTransaction>;
-
-    buildingTimeController(
-      overrides?: CallOverrides
-    ): Promise<PopulatedTransaction>;
-
-    convertSourceChainPayloads(
-      amount: BigNumberish,
-      payloads: { resourceType: BigNumberish; values: BigNumberish[] }[],
+    balanceOf(
+      provider: string,
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
@@ -1374,16 +1056,40 @@ export class DstChainPayment extends BaseContract {
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
+    getAmountOf(
+      provider: string,
+      resourceType: BigNumberish,
+      value: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
+
+    getValueOf(
+      provider: string,
+      resourceType: BigNumberish,
+      amount: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
+
     initialize(
       owner: string,
       pauser: string,
-      providers: string,
-      messageReceiver: string,
-      token: string,
+      router: string,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<PopulatedTransaction>;
 
-    ipfsStorageController(
+    ipfsAllocations(
+      provider: string,
+      account: BytesLike,
+      storageFee: BigNumberish,
+      expirationFee: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
+
+    ipfsAlloctionsFee(
+      provider: string,
+      account: BytesLike,
+      amount: BigNumberish,
+      expiration: BigNumberish,
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
@@ -1391,18 +1097,6 @@ export class DstChainPayment extends BaseContract {
       account: string,
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
-
-    matchResourceToToken(
-      value: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<PopulatedTransaction>;
-
-    matchTokenToResource(
-      value: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<PopulatedTransaction>;
-
-    messageReceiver(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
     owner(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
@@ -1447,7 +1141,11 @@ export class DstChainPayment extends BaseContract {
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<PopulatedTransaction>;
 
-    providers(overrides?: CallOverrides): Promise<PopulatedTransaction>;
+    priceOf(
+      provider: string,
+      resourceType: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
 
     removePauser(
       account: string,
@@ -1462,46 +1160,7 @@ export class DstChainPayment extends BaseContract {
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<PopulatedTransaction>;
 
-    resourceDecimals(overrides?: CallOverrides): Promise<PopulatedTransaction>;
-
-    setARStorageController(
-      _arStorageController: string,
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<PopulatedTransaction>;
-
-    setBandwidthController(
-      _bandwidthController: string,
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<PopulatedTransaction>;
-
-    setBuildingTimeController(
-      _buildingTimeController: string,
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<PopulatedTransaction>;
-
-    setIPFSStorageController(
-      _ipfsStorageController: string,
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<PopulatedTransaction>;
-
-    setMessageReceiver(
-      _messageReceiver: string,
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<PopulatedTransaction>;
-
-    setToken(
-      _token: string,
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<PopulatedTransaction>;
-
-    token(overrides?: CallOverrides): Promise<PopulatedTransaction>;
-
-    tokenDecimals(overrides?: CallOverrides): Promise<PopulatedTransaction>;
-
-    totalValue(
-      payloads: { resourceType: BigNumberish; values: BigNumberish[] }[],
-      overrides?: CallOverrides
-    ): Promise<PopulatedTransaction>;
+    router(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
     transferOwnership(
       newOwner: string,

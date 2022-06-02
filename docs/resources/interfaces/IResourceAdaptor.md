@@ -1,4 +1,4 @@
-# IResourceAdaptor
+# IResourcePriceAdaptor
 
 
 
@@ -138,4 +138,4 @@ function getAmountOf(enum ResourceData.ResourceType resourceType,uint256 value) 
 #### Params:
 | Param | Type | Indexed | Description |
 | --- | --- | :---: | --- |
-|`adaptors` | struct IResourceAdaptor.PriceAdaptor[] |  | price adaptors
+|`adaptors` | struct IResourcePriceAdaptor.PriceAdaptor[] |  | price adaptors
