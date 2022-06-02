@@ -177,10 +177,6 @@ declare module "hardhat/types/runtime" {
       signerOrOptions?: ethers.Signer | FactoryOptions
     ): Promise<Contracts.IProviderRegistry__factory>;
     getContractFactory(
-      name: "ResourcePayToken",
-      signerOrOptions?: ethers.Signer | FactoryOptions
-    ): Promise<Contracts.ResourcePayToken__factory>;
-    getContractFactory(
       name: "IRouter",
       signerOrOptions?: ethers.Signer | FactoryOptions
     ): Promise<Contracts.IRouter__factory>;
@@ -494,11 +490,6 @@ declare module "hardhat/types/runtime" {
       address: string,
       signer?: ethers.Signer
     ): Promise<Contracts.IProviderRegistry>;
-    getContractAt(
-      name: "ResourcePayToken",
-      address: string,
-      signer?: ethers.Signer
-    ): Promise<Contracts.ResourcePayToken>;
     getContractAt(
       name: "IRouter",
       address: string,
