@@ -6,21 +6,55 @@
 
 
 ## Functions
-### expand
+### allocateProvider
 
-> expand user's normal resource balance
+> allocate resource for the provider
 
 
 #### Declaration
 ```
-function expand(bytes32 account,uint256 value) external
+function allocateProvider(address provider,uint256 amount) external
 ```
 
 #### Args:
 | Arg | Type | Description |
 | --- | --- | --- |
+|`provider` | address | provider address
+|`amount` | uint256 | resource amount
+
+### paymentAllocate
+
+> allocate user's resource balance
+
+
+#### Declaration
+```
+function paymentAllocate(address provider,bytes32 account,uint256 amount) external
+```
+
+#### Args:
+| Arg | Type | Description |
+| --- | --- | --- |
+|`provider` | address | provider address
 |`account` | bytes32 | user account
-|`value` | uint256 | token value in resource decimals(18)
+|`amount` | uint256 | resource amount
+
+### drip
+
+> provider drip resource to account directly
+
+
+#### Declaration
+```
+function drip(address provider,bytes32 account,uint256 amount) external
+```
+
+#### Args:
+| Arg | Type | Description |
+| --- | --- | --- |
+|`provider` | address | provider address
+|`account` | bytes32 | user account
+|`amount` | uint256 | resource amount
 
 ### balanceOf
 
@@ -29,13 +63,33 @@ function expand(bytes32 account,uint256 value) external
 
 #### Declaration
 ```
-function balanceOf(bytes32 account) external returns (uint256)
+function balanceOf(address provider,bytes32 account) external returns (uint256)
 ```
 
 #### Args:
 | Arg | Type | Description |
 | --- | --- | --- |
+|`provider` | address | provider address
 |`account` | bytes32 | user account
+
+#### Returns:
+| Type | Description |
+| --- | --- |
+|`balance` | of the account
+### providerBalanceOf
+
+> resource balance
+
+
+#### Declaration
+```
+function providerBalanceOf(address provider) external returns (uint256)
+```
+
+#### Args:
+| Arg | Type | Description |
+| --- | --- | --- |
+|`provider` | address | provider address
 
 #### Returns:
 | Type | Description |
@@ -44,13 +98,24 @@ function balanceOf(bytes32 account) external returns (uint256)
 
 ## Events
 
-### Expanded
+### ProviderAllocated
 
-> emit when resource expanded
+> emit when resource allocated for the provider
 
   
 #### Params:
 | Param | Type | Indexed | Description |
 | --- | --- | :---: | --- |
+|`provider` | address |  | provider address
+|`amount` | uint256 |  | ipfs storage amount
+### AccountAllocated
+
+> emit when resource allocated for the account
+
+  
+#### Params:
+| Param | Type | Indexed | Description |
+| --- | --- | :---: | --- |
+|`provider` | address |  | provider address
 |`account` | bytes32 |  | user account
-|`value` | uint256 |  | token value for resource decimals
+|`amount` | uint256 |  | ipfs storage amount

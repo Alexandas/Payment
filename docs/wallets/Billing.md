@@ -7,46 +7,51 @@
 ## Globals
 | Var | Type |
 | --- | --- |
-| billsTypedHash | bytes32 |
-| adaptor | contract IResourcePriceAdaptor |
+| billingTypesHash | bytes32 |
+| nonces | mapping(address => mapping(bytes32 => uint64)) |
+| balances | mapping(address => uint256) |
 
 ## Functions
-### encodeBills
+### initialize
 
-> encode bill to bytes
+> proxy initialize function
 
 
 #### Declaration
 ```
-function encodeBills(struct IBilling.Bill[] bills) external returns (bytes)
+function initialize(address owner,string name,string version,string router) external initializer
 ```
 
 #### Args:
 | Arg | Type | Description |
 | --- | --- | --- |
-|`bills` | struct IBilling.Bill[] | user bills
+|`owner` | address | contract owner
+|`name` | string | EIP712 name
+|`version` | string | EIP712 version
+|`router` | string | router contract address
 
-#### Returns:
-| Type | Description |
-| --- | --- |
-|`bills` | bytes
-### decodeBills
+### spend
 
-> decode bill bytes to user bill
+> spend bills
 
 
 #### Declaration
 ```
-function decodeBills(bytes data) external returns (struct IBilling.Bill[])
+function spend(address provider,bytes32 account,bytes bills,uint256 timeout,uint64 nonce,bytes signature) external nonReentrant onlyFundPool returns (uint256 fee)
 ```
 
 #### Args:
 | Arg | Type | Description |
 | --- | --- | --- |
-|`data` | bytes | bill bytes
+|`provider` | address | provider address
+|`account` | bytes32 | user account
+|`bills` | bytes | billing data
+|`timeout` | uint256 | tx timeout
+|`nonce` | uint64 | billing nonce
+|`signature` | bytes | billing signature
 
 #### Returns:
 | Type | Description |
 | --- | --- |
-|`user` | bills
+|`fee` | billing fee
 

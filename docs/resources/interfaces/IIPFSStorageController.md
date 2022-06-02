@@ -6,61 +6,209 @@
 
 
 ## Functions
-### expand
+### allocateProvider
 
-> expand ipfs resource
+> allocate user's normal resource balance
 
 
 #### Declaration
 ```
-function expand(bytes32 account,uint256 expandedStorageFee,uint256 expandedExpirationFee) external
+function allocateProvider(address provider,uint256 amount,uint256 expiration) external
 ```
 
 #### Args:
 | Arg | Type | Description |
 | --- | --- | --- |
-|`account` | bytes32 | user account
-|`expandedStorageFee` | uint256 | storage fee
-|`expandedExpirationFee` | uint256 | expiration fee
+|`provider` | address | provider address
+|`amount` | uint256 | resource amount
+|`expiration` | uint256 | ipfs expiration
 
+### drip
+
+> provider drip resource to account directly
+
+
+#### Declaration
+```
+function drip(address provider,bytes32 account,uint256 amount,uint256 expiration) external
+```
+
+#### Args:
+| Arg | Type | Description |
+| --- | --- | --- |
+|`provider` | address | provider address
+|`account` | bytes32 | user account
+|`amount` | uint256 | ipfs storage amount
+|`expiration` | uint256 | ipfs expiration
+
+### paymentAllocate
+
+> allocate user's resource balance
+
+
+#### Declaration
+```
+function paymentAllocate(address provider,bytes32 account,uint256 amount,uint256 expiration) external
+```
+
+#### Args:
+| Arg | Type | Description |
+| --- | --- | --- |
+|`provider` | address | provider address
+|`account` | bytes32 | user account
+|`amount` | uint256 | ipfs storage amount
+|`expiration` | uint256 | ipfs expiration
+
+### recoverStorage
+
+> recover provider storage
+
+
+#### Declaration
+```
+function recoverStorage(address provider,bytes32 account) external
+```
+
+#### Args:
+| Arg | Type | Description |
+| --- | --- | --- |
+|`provider` | address | provider address
+|`account` | bytes32 | user account
+
+### isProviderExpired
+
+> return whether ipfs storage is expired for the provider
+
+
+#### Declaration
+```
+function isProviderExpired(address provider) external returns (bool)
+```
+
+#### Args:
+| Arg | Type | Description |
+| --- | --- | --- |
+|`provider` | address | provider address
+
+#### Returns:
+| Type | Description |
+| --- | --- |
+|`whether` | ipfs storage is expired for the provider
+### providerStartTime
+
+> return ipfs storage start time for the provider
+
+
+#### Declaration
+```
+function providerStartTime(address provider) external returns (uint256)
+```
+
+#### Args:
+| Arg | Type | Description |
+| --- | --- | --- |
+|`provider` | address | provider address
+
+#### Returns:
+| Type | Description |
+| --- | --- |
+|`start` | time for the provider
+### providerExpiration
+
+> return total expiration time for the provider
+
+
+#### Declaration
+```
+function providerExpiration(address provider) external returns (uint256)
+```
+
+#### Args:
+| Arg | Type | Description |
+| --- | --- | --- |
+|`provider` | address | provider address
+
+#### Returns:
+| Type | Description |
+| --- | --- |
+|`total` | expiration time for the provider
+### providerAvailableExpiration
+
+> return available expiration time for the provider
+
+
+#### Declaration
+```
+function providerAvailableExpiration(address provider) external returns (uint256)
+```
+
+#### Args:
+| Arg | Type | Description |
+| --- | --- | --- |
+|`provider` | address | provider address
+
+#### Returns:
+| Type | Description |
+| --- | --- |
+|`available` | expiration time for the provider
+### providerExpiredAt
+
+> return when the provider will expire
+
+
+#### Declaration
+```
+function providerExpiredAt(address provider) external returns (uint256)
+```
+
+#### Args:
+| Arg | Type | Description |
+| --- | --- | --- |
+|`provider` | address | provider address
+
+#### Returns:
+| Type | Description |
+| --- | --- |
+|`when` | the provider will expire
+### providerBalanceOf
+
+> return ipfs storage amount for the provider
+
+
+#### Declaration
+```
+function providerBalanceOf(address provider) external returns (uint256)
+```
+
+#### Args:
+| Arg | Type | Description |
+| --- | --- | --- |
+|`provider` | address | provider address
+
+#### Returns:
+| Type | Description |
+| --- | --- |
+|`ipfs` | storage amount for the provider
 ### isExpired
 
-> return whether the account is expired
+> return whether ipfs storage is expired for the account
 
 
 #### Declaration
 ```
-function isExpired(bytes32 account) external returns (bool)
+function isExpired(address provider,bytes32 account) external returns (bool)
 ```
 
 #### Args:
 | Arg | Type | Description |
 | --- | --- | --- |
+|`provider` | address | provider address
 |`account` | bytes32 | user account
 
 #### Returns:
 | Type | Description |
 | --- | --- |
-|`whether` | the account is expired
-### startTime
-
-> ipfs resource start time
-
-
-#### Declaration
-```
-function startTime(bytes32 account) external returns (uint256)
-```
-
-#### Args:
-| Arg | Type | Description |
-| --- | --- | --- |
-|`account` | bytes32 | user account
-
-#### Returns:
-| Type | Description |
-| --- | --- |
-|`start` | time for ipfs resource
+|`whether` | ipfs storage is expired for the account
 ### availableExpiration
 
 > return available expiration time for the account
@@ -68,37 +216,19 @@ function startTime(bytes32 account) external returns (uint256)
 
 #### Declaration
 ```
-function availableExpiration(bytes32 account) external returns (uint256)
+function availableExpiration(address provider,bytes32 account) external returns (uint256)
 ```
 
 #### Args:
 | Arg | Type | Description |
 | --- | --- | --- |
+|`provider` | address | provider address
 |`account` | bytes32 | user account
 
 #### Returns:
 | Type | Description |
 | --- | --- |
 |`available` | expiration time for the account
-### expiration
-
-> return total expiration time for the account
-
-
-#### Declaration
-```
-function expiration(bytes32 account) external returns (uint256)
-```
-
-#### Args:
-| Arg | Type | Description |
-| --- | --- | --- |
-|`account` | bytes32 | user account
-
-#### Returns:
-| Type | Description |
-| --- | --- |
-|`total` | expiration time for the account
 ### expiredAt
 
 > return when the account will expire
@@ -106,18 +236,59 @@ function expiration(bytes32 account) external returns (uint256)
 
 #### Declaration
 ```
-function expiredAt(bytes32 account) external returns (uint256)
+function expiredAt(address provider,bytes32 account) external returns (uint256)
 ```
 
 #### Args:
 | Arg | Type | Description |
 | --- | --- | --- |
+|`provider` | address | provider address
 |`account` | bytes32 | user account
 
 #### Returns:
 | Type | Description |
 | --- | --- |
 |`when` | the account will expire
+### startTime
+
+> return ipfs storage start time for the account
+
+
+#### Declaration
+```
+function startTime(address provider,bytes32 account) external returns (uint256)
+```
+
+#### Args:
+| Arg | Type | Description |
+| --- | --- | --- |
+|`provider` | address | provider address
+|`account` | bytes32 | user account
+
+#### Returns:
+| Type | Description |
+| --- | --- |
+|`start` | time for the account
+### expiration
+
+> return total expiration time for the account
+
+
+#### Declaration
+```
+function expiration(address provider,bytes32 account) external returns (uint256)
+```
+
+#### Args:
+| Arg | Type | Description |
+| --- | --- | --- |
+|`provider` | address | provider address
+|`account` | bytes32 | user account
+
+#### Returns:
+| Type | Description |
+| --- | --- |
+|`total` | expiration time for the account
 ### balanceOf
 
 > return ipfs storage amount for the account
@@ -125,73 +296,53 @@ function expiredAt(bytes32 account) external returns (uint256)
 
 #### Declaration
 ```
-function balanceOf(bytes32 account) external returns (uint256)
+function balanceOf(address provider,bytes32 account) external returns (uint256)
 ```
 
 #### Args:
 | Arg | Type | Description |
 | --- | --- | --- |
+|`provider` | address | provider address
 |`account` | bytes32 | user account
 
 #### Returns:
 | Type | Description |
 | --- | --- |
 |`ipfs` | storage amount for the account
-### expandedFee
-
-> calculate fee for storage and expiration
-
-
-#### Declaration
-```
-function expandedFee(bytes32 account,uint256 expandedStorage,uint256 expandedExpiration) external returns (uint256 expandedStorageFee, uint256 expandedExpirationFee)
-```
-
-#### Args:
-| Arg | Type | Description |
-| --- | --- | --- |
-|`account` | bytes32 | user account
-|`expandedStorage` | uint256 | storage amount
-|`expandedExpiration` | uint256 |  expiration(in seconds)
-
-#### Returns:
-| Type | Description |
-| --- | --- |
-|`expandedStorageFee` | storage fee
-|`expandedExpirationFee` | expiration fee
-### expansions
-
-> calculate fee for storage and expiration
-
-
-#### Declaration
-```
-function expansions(bytes32 account,uint256 expandedStorageFee,uint256 expandedExpirationFee) external returns (uint256 expandedStorage, uint256 expandedExpiration)
-```
-
-#### Args:
-| Arg | Type | Description |
-| --- | --- | --- |
-|`account` | bytes32 | user account
-|`expandedStorageFee` | uint256 | storage fee
-|`expandedExpirationFee` | uint256 | expiration fee
-
-#### Returns:
-| Type | Description |
-| --- | --- |
-|`expandedStorage` | storage amount
-|`expandedExpiration` | expiration(in seconds)
 
 ## Events
 
-### Expanded
+### ProviderAllocated
 
-> emit when ipfs resource expanded
+> emit when ipfs storage allocated for the provider
 
   
 #### Params:
 | Param | Type | Indexed | Description |
 | --- | --- | :---: | --- |
+|`provider` | address |  | provider address
+|`amount` | uint256 |  | ipfs storage amount
+|`expiration` | uint256 |  | ipfs storage expiration
+### AccountAllocated
+
+> emit when ipfs storage allocated for the account
+
+  
+#### Params:
+| Param | Type | Indexed | Description |
+| --- | --- | :---: | --- |
+|`provider` | address |  | provider address
 |`account` | bytes32 |  | user account
-|`expandedStorageFee` | uint256 |  | storage fee
-|`expandedExpirationFee` | uint256 |  | expiration fee
+|`amount` | uint256 |  | ipfs storage amount
+|`expiration` | uint256 |  | ipfs storage expiration
+### ProviderRecovered
+
+> emit when provider recovered ipfs storage
+
+  
+#### Params:
+| Param | Type | Indexed | Description |
+| --- | --- | :---: | --- |
+|`provider` | address |  | provider address
+|`account` | bytes32 |  | user account
+|`amount` | uint256 |  | ipfs storage amount

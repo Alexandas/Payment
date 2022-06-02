@@ -2,7 +2,7 @@
 
 
 
-> make contract pausable
+> Pauser contract
 
 ## Globals
 | Var | Type |

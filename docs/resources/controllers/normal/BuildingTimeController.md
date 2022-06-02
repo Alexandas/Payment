@@ -13,14 +13,13 @@
 
 #### Declaration
 ```
-function initialize(address owner,address dstChainPayment,contract IResourcePriceAdaptor adaptor) external initializer
+function initialize(address owner,contract IRouter router) external initializer
 ```
 
 #### Args:
 | Arg | Type | Description |
 | --- | --- | --- |
 |`owner` | address | contract owner
-|`dstChainPayment` | address | dst chain payment contract address
-|`adaptor` | contract IResourcePriceAdaptor | resource adaptor contract address
+|`router` | contract IRouter | router contract
 
 

@@ -7,8 +7,7 @@
 ## Globals
 | Var | Type |
 | --- | --- |
-| controller | contract IIPFSStorageController |
-| contentSizes | mapping(address => mapping(bytes32 => mapping(string => uint256))) |
+| metas | mapping(address => mapping(bytes32 => mapping(string => struct ContentTracer.ContentMeta))) |
 
 ## Functions
 ### initialize
@@ -18,30 +17,14 @@
 
 #### Declaration
 ```
-function initialize(address owner,contract IProviders providers,contract IIPFSStorageController controller) external initializer
+function initialize(address owner,contract IRouter router) external initializer
 ```
 
 #### Args:
 | Arg | Type | Description |
 | --- | --- | --- |
 |`owner` | address | contract owner
-|`providers` | contract IProviders | providers contract address
-|`controller` | contract IIPFSStorageController | ipfs storage controller
-
-### setController
-
-> update ipfs storage controller
-
-
-#### Declaration
-```
-function setController(contract IIPFSStorageController _controller) external onlyOwner
-```
-
-#### Args:
-| Arg | Type | Description |
-| --- | --- | --- |
-|`_controller` | contract IIPFSStorageController | ipfs storage controller
+|`router` | contract IRouter | router contract address
 
 ### insertMult
 
@@ -50,7 +33,7 @@ function setController(contract IIPFSStorageController _controller) external onl
 
 #### Declaration
 ```
-function insertMult(bytes32[] accounts,string[] contents,uint256[] sizes) external onlyProvider
+function insertMult(bytes32[] accounts,string[] contents,uint256[] sizes,uint256[] counts) external onlyProvider
 ```
 
 #### Args:
@@ -59,6 +42,7 @@ function insertMult(bytes32[] accounts,string[] contents,uint256[] sizes) extern
 |`accounts` | bytes32[] | array of user account
 |`contents` | string[] | array of ipfs contents
 |`sizes` | uint256[] | array of ipfs content size
+|`counts` | uint256[] | array of ipfs content count
 
 ### removeMult
 
@@ -79,15 +63,6 @@ function removeMult(bytes32[] accounts,string[] contents) external onlyProvider
 
 ## Events
 
-### ControllerUpdated
-
-> emit when ipfs storage controller updated
-
-  
-#### Params:
-| Param | Type | Indexed | Description |
-| --- | --- | :---: | --- |
-|`controller` | contract IIPFSStorageController |  | ipfs storage controller
 ### Insert
 
 > emit when ipfs content inserted
@@ -100,6 +75,7 @@ function removeMult(bytes32[] accounts,string[] contents) external onlyProvider
 |`account` | bytes32 |  | user account
 |`content` | string |  | ipfs content
 |`size` | uint256 |  | ipfs content size
+|`count` | uint256 |  | ipfs content count
 |`expiration` | uint256 |  | ipfs content expiration
 ### Remove
 
@@ -112,3 +88,5 @@ function removeMult(bytes32[] accounts,string[] contents) external onlyProvider
 |`provider` | address |  | provider address
 |`account` | bytes32 |  | user account
 |`content` | string |  | ipfs content
+|`size` | uint256 |  | ipfs content size
+|`count` | uint256 |  | ipfs content count

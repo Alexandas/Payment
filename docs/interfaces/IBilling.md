@@ -6,57 +6,80 @@
 
 
 ## Functions
-### billsTypedHash
+### billingTypesHash
 
-> get bills types hash
+> get billing types hash
 
 
 #### Declaration
 ```
-function billsTypedHash() external returns (bytes32)
+function billingTypesHash() external returns (bytes32)
 ```
 
 
 #### Returns:
 | Type | Description |
 | --- | --- |
-|`type` | hash for bills
-### adaptor
+|`billing` | types hash
+### nonces
 
-> get the resource adaptor
+> keccak256("Billing(address provider,bytes32 account,bytes bills,uint256 timeout,uint64 nonce)")
+provider nonces for account
+
+#### Declaration
+```
+function nonces() external returns (uint64)
+```
+
+
+
+### spend
+
+> spend bills
 
 
 #### Declaration
 ```
-function adaptor() external returns (contract IResourcePriceAdaptor)
+function spend(address provider,bytes32 account,bytes bills,uint256 timeout,uint64 nonce,bytes signature) external returns (uint256 fee)
 ```
 
+#### Args:
+| Arg | Type | Description |
+| --- | --- | --- |
+|`provider` | address | provider address
+|`account` | bytes32 | user account
+|`bills` | bytes | billing data
+|`timeout` | uint256 | tx timeout
+|`nonce` | uint64 | billing nonce
+|`signature` | bytes | billing signature
 
 #### Returns:
 | Type | Description |
 | --- | --- |
-|`resource` | adaptor address
+|`fee` | billing fee
+### balanceOf
+
+
+
+#### Declaration
+```
+function balanceOf() external returns (uint256)
+```
+
+
+
 
 ## Events
 
-### BillsTypedHashUpdated
+### BillingTypesHashUpdated
 
-> emit when BillTypedHash updated
-
-  
-#### Params:
-| Param | Type | Indexed | Description |
-| --- | --- | :---: | --- |
-|`hash` | bytes32 |  | BillTypedHash
-### ResourcePriceAdaptorUpdated
-
-> emit when resource adaptor updated
+> emit when billing types hash updated
 
   
 #### Params:
 | Param | Type | Indexed | Description |
 | --- | --- | :---: | --- |
-|`adaptor` | contract IResourcePriceAdaptor |  | resource adaptor address
+|`hash` | bytes32 |  | billing types Hash
 ### Billing
 
 > emit when bills finalized
@@ -66,7 +89,7 @@ function adaptor() external returns (contract IResourcePriceAdaptor)
 | Param | Type | Indexed | Description |
 | --- | --- | :---: | --- |
 |`provider` | address |  | provider address
-|`nonce` | uint64 |  | nonce
 |`account` | bytes32 |  | user account
 |`bills` | bytes |  | bills data
 |`amount` | uint256 |  | fee
+|`nonce` | uint64 |  | nonce

@@ -7,7 +7,6 @@
 ## Globals
 | Var | Type |
 | --- | --- |
-| dstChainPayment | contract IDstChainPayment |
 | messageBus | address |
 | executor | address |
 
@@ -69,21 +68,6 @@ function executeMessageWithTransferFallback(address _sender,address _token,uint2
 |`_message` | bytes | src chain message
 |`executor` | address | executor address
 
-### setDstChainPayment
-
-> set dst chain payment address
-
-
-#### Declaration
-```
-function setDstChainPayment(contract IDstChainPayment _dstChainPayment) external onlyOwner
-```
-
-#### Args:
-| Arg | Type | Description |
-| --- | --- | --- |
-|`_dstChainPayment` | contract IDstChainPayment | dst chain payment address
-
 ### setMessageBus
 
 > set message bus
@@ -117,15 +101,6 @@ function setExecutor(address _executor) external onlyOwner
 
 ## Events
 
-### DstChainPaymentUpdated
-
-> emit when dst chain payment updated
-
-  
-#### Params:
-| Param | Type | Indexed | Description |
-| --- | --- | :---: | --- |
-|`_dstChainPayment` | contract IDstChainPayment |  | dst chain payment contract address
 ### MessageBusUpdated
 
 > emit when message bus updated
