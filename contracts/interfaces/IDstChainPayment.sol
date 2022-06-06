@@ -33,7 +33,7 @@ interface IDstChainPayment {
 	/// @dev pay on dst chain
 	/// @param payload payment payload
 	/// @return value payment value
-	function pay(PaymentPayload memory payload) external returns(uint256 value);
+	function pay(PaymentPayload memory payload) external returns (uint256 value);
 
 	/// @dev decode source chain message
 	/// @param message message bytes
@@ -79,6 +79,36 @@ interface IDstChainPayment {
 		uint256 expirationFee
 	) external view returns (uint256 amount, uint256 expiration);
 
-	function balanceOf(address providerWallet) external view returns (uint256);
+	/// @dev return balance of provider
+	/// @param provider provider address
+	/// @return balance of provider
+	function balanceOf(address provider) external view returns (uint256);
 
+	/// @dev return resource price
+	/// @param provider provider address
+	/// @param resourceType resource type
+	/// @return resource price
+	function priceOf(address provider, ResourceData.ResourceType resourceType) external view returns (uint256);
+
+	/// @dev return value of amount resource
+	/// @param provider provider address
+	/// @param resourceType resource type
+	/// @param amount resource amount
+	/// @return token value
+	function getValueOf(
+		address provider,
+		ResourceData.ResourceType resourceType,
+		uint256 amount
+	) external view returns (uint256);
+
+	/// @dev return resource amount with value
+	/// @param provider provider address
+	/// @param resourceType resource type
+	/// @param value token value
+	/// @return resource amount
+	function getAmountOf(
+		address provider,
+		ResourceData.ResourceType resourceType,
+		uint256 value
+	) external view returns (uint256);
 }

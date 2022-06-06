@@ -23,16 +23,27 @@ interface IDstChainPaymentInterface extends ethers.utils.Interface {
   functions: {
     "balanceOf(address)": FunctionFragment;
     "decodeSourceChainMessage(bytes)": FunctionFragment;
+    "getAmountOf(address,uint8,uint256)": FunctionFragment;
+    "getValueOf(address,uint8,uint256)": FunctionFragment;
     "ipfsAllocations(address,bytes32,uint256,uint256)": FunctionFragment;
     "ipfsAlloctionsFee(address,bytes32,uint256,uint256)": FunctionFragment;
     "pay((address,uint64,bytes32,tuple[]))": FunctionFragment;
     "payFromSourceChain(address,uint256,bytes)": FunctionFragment;
+    "priceOf(address,uint8)": FunctionFragment;
   };
 
   encodeFunctionData(functionFragment: "balanceOf", values: [string]): string;
   encodeFunctionData(
     functionFragment: "decodeSourceChainMessage",
     values: [BytesLike]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "getAmountOf",
+    values: [string, BigNumberish, BigNumberish]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "getValueOf",
+    values: [string, BigNumberish, BigNumberish]
   ): string;
   encodeFunctionData(
     functionFragment: "ipfsAllocations",
@@ -57,12 +68,21 @@ interface IDstChainPaymentInterface extends ethers.utils.Interface {
     functionFragment: "payFromSourceChain",
     values: [string, BigNumberish, BytesLike]
   ): string;
+  encodeFunctionData(
+    functionFragment: "priceOf",
+    values: [string, BigNumberish]
+  ): string;
 
   decodeFunctionResult(functionFragment: "balanceOf", data: BytesLike): Result;
   decodeFunctionResult(
     functionFragment: "decodeSourceChainMessage",
     data: BytesLike
   ): Result;
+  decodeFunctionResult(
+    functionFragment: "getAmountOf",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(functionFragment: "getValueOf", data: BytesLike): Result;
   decodeFunctionResult(
     functionFragment: "ipfsAllocations",
     data: BytesLike
@@ -76,6 +96,7 @@ interface IDstChainPaymentInterface extends ethers.utils.Interface {
     functionFragment: "payFromSourceChain",
     data: BytesLike
   ): Result;
+  decodeFunctionResult(functionFragment: "priceOf", data: BytesLike): Result;
 
   events: {
     "Paid(address,tuple)": EventFragment;
@@ -165,7 +186,7 @@ export class IDstChainPayment extends BaseContract {
 
   functions: {
     balanceOf(
-      providerWallet: string,
+      provider: string,
       overrides?: CallOverrides
     ): Promise<[BigNumber]>;
 
@@ -191,6 +212,20 @@ export class IDstChainPayment extends BaseContract {
         })[];
       }
     >;
+
+    getAmountOf(
+      provider: string,
+      resourceType: BigNumberish,
+      value: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<[BigNumber]>;
+
+    getValueOf(
+      provider: string,
+      resourceType: BigNumberish,
+      amount: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<[BigNumber]>;
 
     ipfsAllocations(
       provider: string,
@@ -231,12 +266,15 @@ export class IDstChainPayment extends BaseContract {
       message: BytesLike,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<ContractTransaction>;
+
+    priceOf(
+      provider: string,
+      resourceType: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<[BigNumber]>;
   };
 
-  balanceOf(
-    providerWallet: string,
-    overrides?: CallOverrides
-  ): Promise<BigNumber>;
+  balanceOf(provider: string, overrides?: CallOverrides): Promise<BigNumber>;
 
   decodeSourceChainMessage(
     message: BytesLike,
@@ -257,6 +295,20 @@ export class IDstChainPayment extends BaseContract {
       })[];
     }
   >;
+
+  getAmountOf(
+    provider: string,
+    resourceType: BigNumberish,
+    value: BigNumberish,
+    overrides?: CallOverrides
+  ): Promise<BigNumber>;
+
+  getValueOf(
+    provider: string,
+    resourceType: BigNumberish,
+    amount: BigNumberish,
+    overrides?: CallOverrides
+  ): Promise<BigNumber>;
 
   ipfsAllocations(
     provider: string,
@@ -295,11 +347,14 @@ export class IDstChainPayment extends BaseContract {
     overrides?: Overrides & { from?: string | Promise<string> }
   ): Promise<ContractTransaction>;
 
+  priceOf(
+    provider: string,
+    resourceType: BigNumberish,
+    overrides?: CallOverrides
+  ): Promise<BigNumber>;
+
   callStatic: {
-    balanceOf(
-      providerWallet: string,
-      overrides?: CallOverrides
-    ): Promise<BigNumber>;
+    balanceOf(provider: string, overrides?: CallOverrides): Promise<BigNumber>;
 
     decodeSourceChainMessage(
       message: BytesLike,
@@ -323,6 +378,20 @@ export class IDstChainPayment extends BaseContract {
         })[];
       }
     >;
+
+    getAmountOf(
+      provider: string,
+      resourceType: BigNumberish,
+      value: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
+
+    getValueOf(
+      provider: string,
+      resourceType: BigNumberish,
+      amount: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
 
     ipfsAllocations(
       provider: string,
@@ -363,6 +432,12 @@ export class IDstChainPayment extends BaseContract {
       message: BytesLike,
       overrides?: CallOverrides
     ): Promise<void>;
+
+    priceOf(
+      provider: string,
+      resourceType: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
   };
 
   filters: {
@@ -460,13 +535,24 @@ export class IDstChainPayment extends BaseContract {
   };
 
   estimateGas: {
-    balanceOf(
-      providerWallet: string,
-      overrides?: CallOverrides
-    ): Promise<BigNumber>;
+    balanceOf(provider: string, overrides?: CallOverrides): Promise<BigNumber>;
 
     decodeSourceChainMessage(
       message: BytesLike,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
+
+    getAmountOf(
+      provider: string,
+      resourceType: BigNumberish,
+      value: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
+
+    getValueOf(
+      provider: string,
+      resourceType: BigNumberish,
+      amount: BigNumberish,
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
@@ -501,17 +587,37 @@ export class IDstChainPayment extends BaseContract {
       dstAmount: BigNumberish,
       message: BytesLike,
       overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<BigNumber>;
+
+    priceOf(
+      provider: string,
+      resourceType: BigNumberish,
+      overrides?: CallOverrides
     ): Promise<BigNumber>;
   };
 
   populateTransaction: {
     balanceOf(
-      providerWallet: string,
+      provider: string,
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
     decodeSourceChainMessage(
       message: BytesLike,
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
+
+    getAmountOf(
+      provider: string,
+      resourceType: BigNumberish,
+      value: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
+
+    getValueOf(
+      provider: string,
+      resourceType: BigNumberish,
+      amount: BigNumberish,
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
@@ -546,6 +652,12 @@ export class IDstChainPayment extends BaseContract {
       dstAmount: BigNumberish,
       message: BytesLike,
       overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<PopulatedTransaction>;
+
+    priceOf(
+      provider: string,
+      resourceType: BigNumberish,
+      overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
   };
 }

@@ -7,7 +7,6 @@ import '@openzeppelin/contracts-upgradeable/utils/math/SafeMathUpgradeable.sol';
 import '@openzeppelin/contracts-upgradeable/token/ERC20/utils/SafeERC20Upgradeable.sol';
 import '@openzeppelin/contracts-upgradeable/utils/cryptography/draft-EIP712Upgradeable.sol';
 
-import '../interfaces/IFundPool.sol';
 import '../govers/RouterWrapper.sol';
 import '../access/OwnerWithdrawable.sol';
 import '../access/Pauser.sol';

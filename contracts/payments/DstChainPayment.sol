@@ -200,7 +200,7 @@ contract DstChainPayment is IDstChainPayment, ReentrancyGuardUpgradeable, OwnerW
 	/// @param provider provider address
 	/// @param resourceType resource type
 	/// @return resource price
-	function priceOf(address provider, ResourceData.ResourceType resourceType) public view returns (uint256) {
+	function priceOf(address provider, ResourceData.ResourceType resourceType) public view override returns (uint256) {
 		IResourcePriceAdaptor adaptor = router.ResourcePriceAdaptor();
 		return adaptor.priceOf(provider, resourceType);
 	}
@@ -214,8 +214,9 @@ contract DstChainPayment is IDstChainPayment, ReentrancyGuardUpgradeable, OwnerW
 		address provider,
 		ResourceData.ResourceType resourceType,
 		uint256 amount
-	) public view returns (uint256) {
-		return priceOf(provider, resourceType).mul(amount);
+	) public view override returns (uint256) {
+		IResourcePriceAdaptor adaptor = router.ResourcePriceAdaptor();
+		return adaptor.getValueOf(provider, resourceType, amount);
 	}
 
 	/// @dev return resource amount with value
@@ -227,7 +228,8 @@ contract DstChainPayment is IDstChainPayment, ReentrancyGuardUpgradeable, OwnerW
 		address provider,
 		ResourceData.ResourceType resourceType,
 		uint256 value
-	) public view returns (uint256) {
-		return value.div(priceOf(provider, resourceType));
+	) public view override returns (uint256) {
+		IResourcePriceAdaptor adaptor = router.ResourcePriceAdaptor();
+		return adaptor.getAmountOf(provider, resourceType, value);
 	}
 }

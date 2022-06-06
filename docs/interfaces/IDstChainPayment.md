@@ -112,15 +112,85 @@ function ipfsAllocations(address provider,bytes32 account,uint256 storageFee,uin
 |`expiration` | ipfs expiration(in seconds)
 ### balanceOf
 
+> return balance of provider
 
 
 #### Declaration
 ```
-function balanceOf() external returns (uint256)
+function balanceOf(address provider) external returns (uint256)
 ```
 
+#### Args:
+| Arg | Type | Description |
+| --- | --- | --- |
+|`provider` | address | provider address
+
+#### Returns:
+| Type | Description |
+| --- | --- |
+|`balance` | of provider
+### priceOf
+
+> return resource price
 
 
+#### Declaration
+```
+function priceOf(address provider,enum ResourceData.ResourceType resourceType) external returns (uint256)
+```
+
+#### Args:
+| Arg | Type | Description |
+| --- | --- | --- |
+|`provider` | address | provider address
+|`resourceType` | enum ResourceData.ResourceType | resource type
+
+#### Returns:
+| Type | Description |
+| --- | --- |
+|`resource` | price
+### getValueOf
+
+> return value of amount resource
+
+
+#### Declaration
+```
+function getValueOf(address provider,enum ResourceData.ResourceType resourceType,uint256 amount) external returns (uint256)
+```
+
+#### Args:
+| Arg | Type | Description |
+| --- | --- | --- |
+|`provider` | address | provider address
+|`resourceType` | enum ResourceData.ResourceType | resource type
+|`amount` | uint256 | resource amount
+
+#### Returns:
+| Type | Description |
+| --- | --- |
+|`token` | value
+### getAmountOf
+
+> return resource amount with value
+
+
+#### Declaration
+```
+function getAmountOf(address provider,enum ResourceData.ResourceType resourceType,uint256 value) external returns (uint256)
+```
+
+#### Args:
+| Arg | Type | Description |
+| --- | --- | --- |
+|`provider` | address | provider address
+|`resourceType` | enum ResourceData.ResourceType | resource type
+|`value` | uint256 | token value
+
+#### Returns:
+| Type | Description |
+| --- | --- |
+|`resource` | amount
 
 ## Events
 

@@ -63,7 +63,7 @@ var _abi = [
         inputs: [
             {
                 internalType: "address",
-                name: "providerWallet",
+                name: "provider",
                 type: "address",
             },
         ],
@@ -119,6 +119,64 @@ var _abi = [
                 internalType: "struct ResourceData.ValuePayload[]",
                 name: "payloads",
                 type: "tuple[]",
+            },
+        ],
+        stateMutability: "view",
+        type: "function",
+    },
+    {
+        inputs: [
+            {
+                internalType: "address",
+                name: "provider",
+                type: "address",
+            },
+            {
+                internalType: "enum ResourceData.ResourceType",
+                name: "resourceType",
+                type: "uint8",
+            },
+            {
+                internalType: "uint256",
+                name: "value",
+                type: "uint256",
+            },
+        ],
+        name: "getAmountOf",
+        outputs: [
+            {
+                internalType: "uint256",
+                name: "",
+                type: "uint256",
+            },
+        ],
+        stateMutability: "view",
+        type: "function",
+    },
+    {
+        inputs: [
+            {
+                internalType: "address",
+                name: "provider",
+                type: "address",
+            },
+            {
+                internalType: "enum ResourceData.ResourceType",
+                name: "resourceType",
+                type: "uint8",
+            },
+            {
+                internalType: "uint256",
+                name: "amount",
+                type: "uint256",
+            },
+        ],
+        name: "getValueOf",
+        outputs: [
+            {
+                internalType: "uint256",
+                name: "",
+                type: "uint256",
             },
         ],
         stateMutability: "view",
@@ -276,6 +334,30 @@ var _abi = [
         name: "payFromSourceChain",
         outputs: [],
         stateMutability: "nonpayable",
+        type: "function",
+    },
+    {
+        inputs: [
+            {
+                internalType: "address",
+                name: "provider",
+                type: "address",
+            },
+            {
+                internalType: "enum ResourceData.ResourceType",
+                name: "resourceType",
+                type: "uint8",
+            },
+        ],
+        name: "priceOf",
+        outputs: [
+            {
+                internalType: "uint256",
+                name: "",
+                type: "uint256",
+            },
+        ],
+        stateMutability: "view",
         type: "function",
     },
 ];
