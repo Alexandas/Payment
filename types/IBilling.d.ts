@@ -23,7 +23,7 @@ interface IBillingInterface extends ethers.utils.Interface {
   functions: {
     "balanceOf(address)": FunctionFragment;
     "billingTypesHash()": FunctionFragment;
-    "nonces(address,bytes32)": FunctionFragment;
+    "nonceExists(address,bytes32,uint64)": FunctionFragment;
     "spend(address,bytes32,bytes,uint256,uint64,bytes)": FunctionFragment;
   };
 
@@ -33,8 +33,8 @@ interface IBillingInterface extends ethers.utils.Interface {
     values?: undefined
   ): string;
   encodeFunctionData(
-    functionFragment: "nonces",
-    values: [string, BytesLike]
+    functionFragment: "nonceExists",
+    values: [string, BytesLike, BigNumberish]
   ): string;
   encodeFunctionData(
     functionFragment: "spend",
@@ -53,7 +53,10 @@ interface IBillingInterface extends ethers.utils.Interface {
     functionFragment: "billingTypesHash",
     data: BytesLike
   ): Result;
-  decodeFunctionResult(functionFragment: "nonces", data: BytesLike): Result;
+  decodeFunctionResult(
+    functionFragment: "nonceExists",
+    data: BytesLike
+  ): Result;
   decodeFunctionResult(functionFragment: "spend", data: BytesLike): Result;
 
   events: {
@@ -130,11 +133,12 @@ export class IBilling extends BaseContract {
 
     billingTypesHash(overrides?: CallOverrides): Promise<[string]>;
 
-    nonces(
+    nonceExists(
       provider: string,
       account: BytesLike,
+      nonce: BigNumberish,
       overrides?: CallOverrides
-    ): Promise<[BigNumber]>;
+    ): Promise<[boolean]>;
 
     spend(
       provider: string,
@@ -151,11 +155,12 @@ export class IBilling extends BaseContract {
 
   billingTypesHash(overrides?: CallOverrides): Promise<string>;
 
-  nonces(
+  nonceExists(
     provider: string,
     account: BytesLike,
+    nonce: BigNumberish,
     overrides?: CallOverrides
-  ): Promise<BigNumber>;
+  ): Promise<boolean>;
 
   spend(
     provider: string,
@@ -172,11 +177,12 @@ export class IBilling extends BaseContract {
 
     billingTypesHash(overrides?: CallOverrides): Promise<string>;
 
-    nonces(
+    nonceExists(
       provider: string,
       account: BytesLike,
+      nonce: BigNumberish,
       overrides?: CallOverrides
-    ): Promise<BigNumber>;
+    ): Promise<boolean>;
 
     spend(
       provider: string,
@@ -238,9 +244,10 @@ export class IBilling extends BaseContract {
 
     billingTypesHash(overrides?: CallOverrides): Promise<BigNumber>;
 
-    nonces(
+    nonceExists(
       provider: string,
       account: BytesLike,
+      nonce: BigNumberish,
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
@@ -263,9 +270,10 @@ export class IBilling extends BaseContract {
 
     billingTypesHash(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
-    nonces(
+    nonceExists(
       provider: string,
       account: BytesLike,
+      nonce: BigNumberish,
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 

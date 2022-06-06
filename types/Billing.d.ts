@@ -26,7 +26,7 @@ interface BillingInterface extends ethers.utils.Interface {
     "hashBillingTypes(address,bytes32,bytes,uint256,uint64)": FunctionFragment;
     "hashTypedDataV4ForBills(address,bytes32,bytes,uint256,uint64)": FunctionFragment;
     "initialize(address,string,string,string,address)": FunctionFragment;
-    "nonces(address,bytes32)": FunctionFragment;
+    "nonceExists(address,bytes32,uint64)": FunctionFragment;
     "owner()": FunctionFragment;
     "ownerWithdrawERC20(address,address,uint256)": FunctionFragment;
     "ownerWithdrawNative(address,uint256)": FunctionFragment;
@@ -54,8 +54,8 @@ interface BillingInterface extends ethers.utils.Interface {
     values: [string, string, string, string, string]
   ): string;
   encodeFunctionData(
-    functionFragment: "nonces",
-    values: [string, BytesLike]
+    functionFragment: "nonceExists",
+    values: [string, BytesLike, BigNumberish]
   ): string;
   encodeFunctionData(functionFragment: "owner", values?: undefined): string;
   encodeFunctionData(
@@ -101,7 +101,10 @@ interface BillingInterface extends ethers.utils.Interface {
     data: BytesLike
   ): Result;
   decodeFunctionResult(functionFragment: "initialize", data: BytesLike): Result;
-  decodeFunctionResult(functionFragment: "nonces", data: BytesLike): Result;
+  decodeFunctionResult(
+    functionFragment: "nonceExists",
+    data: BytesLike
+  ): Result;
   decodeFunctionResult(functionFragment: "owner", data: BytesLike): Result;
   decodeFunctionResult(
     functionFragment: "ownerWithdrawERC20",
@@ -249,11 +252,12 @@ export class Billing extends BaseContract {
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<ContractTransaction>;
 
-    nonces(
-      arg0: string,
-      arg1: BytesLike,
+    nonceExists(
+      provider: string,
+      account: BytesLike,
+      nonce: BigNumberish,
       overrides?: CallOverrides
-    ): Promise<[BigNumber]>;
+    ): Promise<[boolean]>;
 
     owner(overrides?: CallOverrides): Promise<[string]>;
 
@@ -323,11 +327,12 @@ export class Billing extends BaseContract {
     overrides?: Overrides & { from?: string | Promise<string> }
   ): Promise<ContractTransaction>;
 
-  nonces(
-    arg0: string,
-    arg1: BytesLike,
+  nonceExists(
+    provider: string,
+    account: BytesLike,
+    nonce: BigNumberish,
     overrides?: CallOverrides
-  ): Promise<BigNumber>;
+  ): Promise<boolean>;
 
   owner(overrides?: CallOverrides): Promise<string>;
 
@@ -397,11 +402,12 @@ export class Billing extends BaseContract {
       overrides?: CallOverrides
     ): Promise<void>;
 
-    nonces(
-      arg0: string,
-      arg1: BytesLike,
+    nonceExists(
+      provider: string,
+      account: BytesLike,
+      nonce: BigNumberish,
       overrides?: CallOverrides
-    ): Promise<BigNumber>;
+    ): Promise<boolean>;
 
     owner(overrides?: CallOverrides): Promise<string>;
 
@@ -574,9 +580,10 @@ export class Billing extends BaseContract {
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<BigNumber>;
 
-    nonces(
-      arg0: string,
-      arg1: BytesLike,
+    nonceExists(
+      provider: string,
+      account: BytesLike,
+      nonce: BigNumberish,
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
@@ -652,9 +659,10 @@ export class Billing extends BaseContract {
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<PopulatedTransaction>;
 
-    nonces(
-      arg0: string,
-      arg1: BytesLike,
+    nonceExists(
+      provider: string,
+      account: BytesLike,
+      nonce: BigNumberish,
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 

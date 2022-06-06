@@ -27,7 +27,7 @@ contract Billing is
 	bytes32 public override billingTypesHash;
 
 	/// @dev provider nonces for account
-	mapping(address => mapping(bytes32 => uint64)) public override nonces;
+	mapping(address => mapping(bytes32 => mapping(uint64 => bool))) internal nonces;
 
 	/// @dev provider balances
 	mapping(address => uint256) internal balances;
@@ -73,23 +73,21 @@ contract Billing is
 		bytes memory signature
 	) external nonReentrant onlyFundPool returns(uint256 fee) {
 		require(nonce > 0, 'Billing: invalid nonce');
-		require(timeout > block.timestamp, 'Billing: tx expired');
-		require(nonces[provider][account] == 0, 'Billing: nonce used');
+		require(timeout > block.timestamp, 'Billing: tx expires');
+		require(!nonces[provider][account][nonce], 'Billing: nonce exists');
 		bytes32 hash = hashTypedDataV4ForBills(provider, account, bills, timeout, nonce);
 		require(router.ProviderRegistry().isValidSignature(provider, hash, signature), 'Billing: invalid signature');
 		fee = _spend(provider, account, bills, nonce);
-		IERC20Upgradeable token = router.Token();
-		fee = ResourceData.matchResourceToToken(token, fee);
-		balances[provider] = balances[provider].add(fee);
-
+		
 		emit Billing(provider, account, bills, fee, nonce);
 	}
 
 	function _spend(address provider, bytes32 account, bytes memory bills, uint64 nonce) internal returns(uint256 fee) {
+		IERC20Upgradeable token = router.Token();
 		fee = _validateBills(provider, bills);
-		address wallet = router.ProviderRegistry().providerWallet(provider);
-		balances[wallet] = balances[wallet].add(fee);
-		nonces[provider][account] = nonce;
+		fee = ResourceData.matchResourceToToken(token, fee);
+		balances[provider] = balances[provider].add(fee);
+		nonces[provider][account][nonce] = true;
 	}
 
 	function _validateBills(address provider, bytes memory data) internal view returns (uint256 value) {
@@ -145,9 +143,22 @@ contract Billing is
 		emit BillingTypesHashUpdated(hash);
 	}
 
-	function balanceOf(address provider) public view returns (uint256) {
+	/// @dev return balance of provider
+	/// @param provider provider address
+	/// @return balance of provider
+	function balanceOf(address provider) public view override returns (uint256) {
 		require(router.ProviderRegistry().isProvider(provider), 'Billing: nonexistent provider');
 		return balances[provider];
+	}
+
+	/// @dev provider nonces for account
+	/// @param provider provider address
+	/// @param account user account
+	/// @param nonce nonce
+	/// @return whether nonce exists
+	function nonceExists(address provider, bytes32 account, uint64 nonce) public view override returns (bool) {
+		require(router.ProviderController().accountExists(provider, account), 'Billing: nonexistent provider');
+		return nonces[provider][account][nonce];
 	}
 
 }

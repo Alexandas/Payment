@@ -60,7 +60,7 @@ contract DstChainPayment is
 			ResourceData.ValuePayloads(payloads).convertSourceChainPayloads(value)
 		);
 		_processPayloads(provider, payload.account, payload.payloads, false);
-		_pay(payload.provider, token, dstAmount);
+		_pay(payload.provider, payload.account, token, dstAmount);
 
 		emit Paid(token, payload);
 	}
@@ -72,13 +72,14 @@ contract DstChainPayment is
 		value = _processPayloads(payload.provider, payload.account, payload.payloads, true);
 		IERC20Upgradeable token = router.Token();
 		value = ResourceData.matchResourceToToken(token, value);
-		_pay(payload.provider, token, value);
+		_pay(payload.provider, payload.account, token, value);
 
 		emit Paid(token, payload);
 	}
 
-	function _pay(address provider, IERC20Upgradeable token, uint256 amount) internal {
-		require(router.ProviderRegistry().isProvider(provider), 'DstChainPayment: nonexistent provider');
+	function _pay(address provider, bytes32 account, IERC20Upgradeable token, uint256 amount) internal {
+		require(router.ProviderController().accountExists(provider, account), 'DstChainPayment: nonexistent account');
+
 		balances[provider] = balances[provider].add(amount);
 		token.safeTransferFrom(msg.sender, address(this), amount);
 	}

@@ -152,7 +152,6 @@ contract FundPool is
 	) external override whenNotPaused nonReentrant returns (uint256 fee) {
 		IProviderController controller = router.ProviderController();
 		require(controller.walletOf(provider, account) == msg.sender, 'FundPool: caller is not the wallet for the account');
-		require(controller.accountExists(provider, account), 'FundPool: nonexistent account');
 		fee = _spend(provider, account, bills, timeout, nonce, signature);
 		require(balanceOf(provider, account) >= amount, 'FundPool: insufficient balance for withdrawal');
 		balances[provider][account] = balances[provider][account].sub(amount);

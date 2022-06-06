@@ -100,13 +100,18 @@ var _abi = [
                 name: "account",
                 type: "bytes32",
             },
-        ],
-        name: "nonces",
-        outputs: [
             {
                 internalType: "uint64",
-                name: "",
+                name: "nonce",
                 type: "uint64",
+            },
+        ],
+        name: "nonceExists",
+        outputs: [
+            {
+                internalType: "bool",
+                name: "",
+                type: "bool",
             },
         ],
         stateMutability: "view",

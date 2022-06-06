@@ -8,7 +8,7 @@
 | Var | Type |
 | --- | --- |
 | billingTypesHash | bytes32 |
-| nonces | mapping(address => mapping(bytes32 => uint64)) |
+| nonces | mapping(address => mapping(bytes32 => mapping(uint64 => bool))) |
 | balances | mapping(address => uint256) |
 
 ## Functions

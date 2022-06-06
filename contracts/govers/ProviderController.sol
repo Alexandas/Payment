@@ -23,7 +23,7 @@ contract ProviderController is IProviderController, EIP712Upgradeable, Pauser, R
 	constructor() initializer {}
 
 	modifier timeOK(uint256 timeout) {
-		require(timeout > block.timestamp, 'ProviderController: tx expired');
+		require(timeout > block.timestamp, 'ProviderController: tx expires');
 		_;
 	}
 
@@ -34,11 +34,14 @@ contract ProviderController is IProviderController, EIP712Upgradeable, Pauser, R
 	function initialize(
 		address owner,
 		address pauser,
+		string memory name,
+		string memory version,
 		string memory walletTypes,
 		IRouter router
 	) external initializer {
 		_transferOwnership(owner);
 		__Init_Pauser(pauser);
+		__EIP712_init(name, version);
 		__Init_Wallet_Types_Hash(walletTypes);
 		__Init_Router(router);
 	}
@@ -76,7 +79,7 @@ contract ProviderController is IProviderController, EIP712Upgradeable, Pauser, R
 		emit AccountRegistered(provider, account);
 	}
 
-	/// @dev Explain to a developer any extra details
+	/// @dev return whether the account exists
 	/// @param provider provider address
 	/// @param account user account
 	/// @return whether account exists
@@ -169,6 +172,7 @@ contract ProviderController is IProviderController, EIP712Upgradeable, Pauser, R
 		address wallet,
 		bytes memory signature
 	) external override {
+		require(accountExists(provider, account), 'ProviderController: nonexistent account');
 		require(!walletExists(provider, account), 'ProviderController: wallet exists');
 		bytes32 hash = hashTypedDataV4ForWallet(provider, account, wallet);
 		require(router.ProviderRegistry().isValidSignature(provider, hash, signature), 'ProviderController: invalid signature');

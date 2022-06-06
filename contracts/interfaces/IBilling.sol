@@ -35,10 +35,6 @@ interface IBilling  {
 	/// @return billing types hash
 	function billingTypesHash() external view returns (bytes32);
 
-	/// @dev keccak256("Billing(address provider,bytes32 account,bytes bills,uint256 timeout,uint64 nonce)")
-	/// @dev provider nonces for account
-	function nonces(address provider, bytes32 account) external view returns(uint64);
-
 	/// @dev spend bills
 	/// @param provider provider address
 	/// @param account user account
@@ -56,5 +52,15 @@ interface IBilling  {
 		bytes memory signature
 	) external returns(uint256 fee);
 
+	/// @dev return balance of provider
+	/// @param provider provider address
+	/// @return balance of provider
 	function balanceOf(address provider) external view returns (uint256);
+
+	/// @dev provider nonces for account
+	/// @param provider provider address
+	/// @param account user account
+	/// @param nonce nonce
+	/// @return whether nonce exists
+	function nonceExists(address provider, bytes32 account, uint64 nonce) external view returns (bool);
 }

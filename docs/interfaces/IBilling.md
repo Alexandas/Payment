@@ -21,18 +21,6 @@ function billingTypesHash() external returns (bytes32)
 | Type | Description |
 | --- | --- |
 |`billing` | types hash
-### nonces
-
-> keccak256("Billing(address provider,bytes32 account,bytes bills,uint256 timeout,uint64 nonce)")
-provider nonces for account
-
-#### Declaration
-```
-function nonces() external returns (uint64)
-```
-
-
-
 ### spend
 
 > spend bills
@@ -59,15 +47,44 @@ function spend(address provider,bytes32 account,bytes bills,uint256 timeout,uint
 |`fee` | billing fee
 ### balanceOf
 
+> return balance of provider
 
 
 #### Declaration
 ```
-function balanceOf() external returns (uint256)
+function balanceOf(address provider) external returns (uint256)
 ```
 
+#### Args:
+| Arg | Type | Description |
+| --- | --- | --- |
+|`provider` | address | provider address
+
+#### Returns:
+| Type | Description |
+| --- | --- |
+|`balance` | of provider
+### nonceExists
+
+> provider nonces for account
 
 
+#### Declaration
+```
+function nonceExists(address provider,bytes32 account,uint64 nonce) external returns (bool)
+```
+
+#### Args:
+| Arg | Type | Description |
+| --- | --- | --- |
+|`provider` | address | provider address
+|`account` | bytes32 | user account
+|`nonce` | uint64 | nonce
+
+#### Returns:
+| Type | Description |
+| --- | --- |
+|`whether` | nonce exists
 
 ## Events
 

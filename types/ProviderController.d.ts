@@ -28,7 +28,7 @@ interface ProviderControllerInterface extends ethers.utils.Interface {
     "hashTypedDataV4ForWallet(address,bytes32,address)": FunctionFragment;
     "hashWalletTypes(address,bytes32,address)": FunctionFragment;
     "initWallet(address,bytes32,address,bytes)": FunctionFragment;
-    "initialize(address,address,string,address)": FunctionFragment;
+    "initialize(address,address,string,string,string,address)": FunctionFragment;
     "isPauser(address)": FunctionFragment;
     "owner()": FunctionFragment;
     "pause()": FunctionFragment;
@@ -84,7 +84,7 @@ interface ProviderControllerInterface extends ethers.utils.Interface {
   ): string;
   encodeFunctionData(
     functionFragment: "initialize",
-    values: [string, string, string, string]
+    values: [string, string, string, string, string, string]
   ): string;
   encodeFunctionData(functionFragment: "isPauser", values: [string]): string;
   encodeFunctionData(functionFragment: "owner", values?: undefined): string;
@@ -366,6 +366,8 @@ export class ProviderController extends BaseContract {
     initialize(
       owner: string,
       pauser: string,
+      name: string,
+      version: string,
       walletTypes: string,
       router: string,
       overrides?: Overrides & { from?: string | Promise<string> }
@@ -498,6 +500,8 @@ export class ProviderController extends BaseContract {
   initialize(
     owner: string,
     pauser: string,
+    name: string,
+    version: string,
     walletTypes: string,
     router: string,
     overrides?: Overrides & { from?: string | Promise<string> }
@@ -627,6 +631,8 @@ export class ProviderController extends BaseContract {
     initialize(
       owner: string,
       pauser: string,
+      name: string,
+      version: string,
       walletTypes: string,
       router: string,
       overrides?: CallOverrides
@@ -871,6 +877,8 @@ export class ProviderController extends BaseContract {
     initialize(
       owner: string,
       pauser: string,
+      name: string,
+      version: string,
       walletTypes: string,
       router: string,
       overrides?: Overrides & { from?: string | Promise<string> }
@@ -1004,6 +1012,8 @@ export class ProviderController extends BaseContract {
     initialize(
       owner: string,
       pauser: string,
+      name: string,
+      version: string,
       walletTypes: string,
       router: string,
       overrides?: Overrides & { from?: string | Promise<string> }
