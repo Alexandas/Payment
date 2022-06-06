@@ -9,7 +9,6 @@ import '../interfaces/IRouter.sol';
 /// @author Alexandas
 /// @dev Router contract
 contract Router is IRouter, OwnableUpgradeable {
-
 	/// @dev message receiver contract address
 	address public override MessageReceiver;
 
@@ -75,7 +74,7 @@ contract Router is IRouter, OwnableUpgradeable {
 
 	/// @dev update provider registry contract
 	/// @param _providerRegistry provider registry contract address
-	function setProviderRegistry(IProviderRegistry _providerRegistry) external onlyOwner { 
+	function setProviderRegistry(IProviderRegistry _providerRegistry) external onlyOwner {
 		require(address(_providerRegistry) != address(0), 'Router: zero address');
 		ProviderRegistry = _providerRegistry;
 		emit ProviderRegistryUpdated(_providerRegistry);
@@ -160,5 +159,4 @@ contract Router is IRouter, OwnableUpgradeable {
 		FundPool = _pool;
 		emit FundPoolUpdated(_pool);
 	}
-
 }

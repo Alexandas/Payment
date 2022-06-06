@@ -8,7 +8,6 @@ import '../libraries/ResourceData.sol';
 /// @author Alexandas
 /// @dev Governance interface
 interface IGovernance {
-
 	/// @dev emit when governance drip resource to provider
 	/// @param provider provider address
 	event GovernanceDrip(address provider);
@@ -25,5 +24,4 @@ interface IGovernance {
 	/// @param provider provider address
 	/// @param payloads resource payloads
 	function drip(address provider, ResourceData.AmountPayload[] memory payloads) external;
-
 }

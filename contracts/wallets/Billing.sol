@@ -13,13 +13,7 @@ import '../access/OwnerWithdrawable.sol';
 
 /// @author Alexandas
 /// @dev Billing contract
-contract Billing is 
-	IBilling,
-	OwnerWithdrawable,
-	EIP712Upgradeable,
-	ReentrancyGuardUpgradeable,
-	RouterWrapper
-{
+contract Billing is IBilling, OwnerWithdrawable, EIP712Upgradeable, ReentrancyGuardUpgradeable, RouterWrapper {
 	using SafeMathUpgradeable for uint256;
 	using SafeERC20Upgradeable for IERC20Upgradeable;
 
@@ -69,20 +63,25 @@ contract Billing is
 		bytes32 account,
 		bytes memory bills,
 		uint256 timeout,
-		uint64 nonce, 
+		uint64 nonce,
 		bytes memory signature
-	) external nonReentrant onlyFundPool returns(uint256 fee) {
+	) external nonReentrant onlyFundPool returns (uint256 fee) {
 		require(nonce > 0, 'Billing: invalid nonce');
 		require(timeout > block.timestamp, 'Billing: tx expires');
 		require(!nonces[provider][account][nonce], 'Billing: nonce exists');
 		bytes32 hash = hashTypedDataV4ForBills(provider, account, bills, timeout, nonce);
 		require(router.ProviderRegistry().isValidSignature(provider, hash, signature), 'Billing: invalid signature');
 		fee = _spend(provider, account, bills, nonce);
-		
+
 		emit Billing(provider, account, bills, fee, nonce);
 	}
 
-	function _spend(address provider, bytes32 account, bytes memory bills, uint64 nonce) internal returns(uint256 fee) {
+	function _spend(
+		address provider,
+		bytes32 account,
+		bytes memory bills,
+		uint64 nonce
+	) internal returns (uint256 fee) {
 		IERC20Upgradeable token = router.Token();
 		fee = _validateBills(provider, bills);
 		fee = ResourceData.matchResourceToToken(token, fee);
@@ -156,9 +155,12 @@ contract Billing is
 	/// @param account user account
 	/// @param nonce nonce
 	/// @return whether nonce exists
-	function nonceExists(address provider, bytes32 account, uint64 nonce) public view override returns (bool) {
+	function nonceExists(
+		address provider,
+		bytes32 account,
+		uint64 nonce
+	) public view override returns (bool) {
 		require(router.ProviderController().accountExists(provider, account), 'Billing: nonexistent provider');
 		return nonces[provider][account][nonce];
 	}
-
 }

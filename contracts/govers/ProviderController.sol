@@ -55,10 +55,7 @@ contract ProviderController is IProviderController, EIP712Upgradeable, Pauser, R
 	/// @dev register account
 	/// @param account user account
 	/// @param timeout register tx timeout
-	function registerAccount(
-		bytes32 account,
-		uint256 timeout
-	) external override timeOK(timeout) onlyProvider {
+	function registerAccount(bytes32 account, uint256 timeout) external override timeOK(timeout) onlyProvider {
 		_registerAccount(msg.sender, account);
 	}
 
@@ -83,7 +80,7 @@ contract ProviderController is IProviderController, EIP712Upgradeable, Pauser, R
 	/// @param provider provider address
 	/// @param account user account
 	/// @return whether account exists
-	function accountExists(address provider, bytes32 account) public view override returns(bool) {
+	function accountExists(address provider, bytes32 account) public view override returns (bool) {
 		require(router.ProviderRegistry().isProvider(provider), 'ProviderController: nonexistent provider');
 		return accounts[provider][account];
 	}
@@ -93,14 +90,14 @@ contract ProviderController is IProviderController, EIP712Upgradeable, Pauser, R
 	/// @param payloads resource amount payloads
 	/// @param timeout tx timeout
 	function dripMult(
-		bytes32[] memory accounts, 
-		ResourceData.AmountPayload[][] memory payloads, 
+		bytes32[] memory accounts,
+		ResourceData.AmountPayload[][] memory payloads,
 		uint256 timeout
 	) external override timeOK(timeout) onlyProvider {
 		require(accounts.length > 0, 'ProviderController: invalid accounts length');
 		require(payloads.length > 0, 'ProviderController: invalid payloads length');
 		require(accounts.length == payloads.length, 'ProviderController: inconsitent parameter length');
-		for(uint256 i = 0; i < accounts.length; i++) {
+		for (uint256 i = 0; i < accounts.length; i++) {
 			_drip(msg.sender, accounts[i], payloads[i]);
 		}
 	}
@@ -110,14 +107,18 @@ contract ProviderController is IProviderController, EIP712Upgradeable, Pauser, R
 	/// @param payloads resource amount payloads
 	/// @param timeout tx timeout
 	function drip(
-		bytes32 account, 
-		ResourceData.AmountPayload[] memory payloads, 
+		bytes32 account,
+		ResourceData.AmountPayload[] memory payloads,
 		uint256 timeout
 	) external override timeOK(timeout) onlyProvider {
 		_drip(msg.sender, account, payloads);
 	}
 
-	function _drip(address provider, bytes32 account, ResourceData.AmountPayload[] memory payloads) internal {
+	function _drip(
+		address provider,
+		bytes32 account,
+		ResourceData.AmountPayload[] memory payloads
+	) internal {
 		require(accountExists(provider, account), 'AccountRegistry: account exists');
 		require(router.ProviderRegistry().isProvider(provider), 'ProviderController: nonexistent provider');
 		require(payloads.length > 0, 'ProviderController: empty payloads');
@@ -148,14 +149,14 @@ contract ProviderController is IProviderController, EIP712Upgradeable, Pauser, R
 	/// @param payloads resource amount payloads
 	/// @param timeout tx timeout
 	function registerAndDripMult(
-		bytes32[] memory accounts, 
-		ResourceData.AmountPayload[][] memory payloads, 
+		bytes32[] memory accounts,
+		ResourceData.AmountPayload[][] memory payloads,
 		uint256 timeout
 	) external override timeOK(timeout) onlyProvider {
 		require(accounts.length > 0, 'ProviderController: invalid accounts length');
 		require(payloads.length > 0, 'ProviderController: invalid payloads length');
 		require(accounts.length == payloads.length, 'ProviderController: inconsitent parameter length');
-		for(uint256 i = 0; i < accounts.length; i++) {
+		for (uint256 i = 0; i < accounts.length; i++) {
 			_registerAccount(msg.sender, accounts[i]);
 			_drip(msg.sender, accounts[i], payloads[i]);
 		}
@@ -193,12 +194,17 @@ contract ProviderController is IProviderController, EIP712Upgradeable, Pauser, R
 		_transferWallet(provider, account, wallet, newWallet);
 	}
 
-	function walletOf(address provider, bytes32 account) public view override returns(address) {
+	function walletOf(address provider, bytes32 account) public view override returns (address) {
 		require(walletExists(provider, account), 'ProviderController: nonexistent wallet');
 		return wallets[provider][account];
 	}
 
-	function _transferWallet(address provider, bytes32 account, address from, address to) internal {
+	function _transferWallet(
+		address provider,
+		bytes32 account,
+		address from,
+		address to
+	) internal {
 		wallets[provider][account] = to;
 
 		emit WalletTransferred(provider, account, from, to);
@@ -242,5 +248,4 @@ contract ProviderController is IProviderController, EIP712Upgradeable, Pauser, R
 	function walletExists(address provider, bytes32 account) public view override returns (bool) {
 		return wallets[provider][account] != address(0);
 	}
-
 }

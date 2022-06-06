@@ -17,17 +17,14 @@ contract IPFSStorageController is IIPFSStorageController, RouterWrapper, Ownable
 	mapping(address => Storage) internal providersStorage;
 
 	/// @dev ipfs storage for account
-	mapping(address=> mapping(bytes32 => Storage)) internal storages;
+	mapping(address => mapping(bytes32 => Storage)) internal storages;
 
 	constructor() initializer {}
 
 	/// @dev proxy initialize function
 	/// @param owner contract owner
 	/// @param router router contract address
-	function initialize(
-		address owner,
-		IRouter router
-	) external initializer {
+	function initialize(address owner, IRouter router) external initializer {
 		_transferOwnership(owner);
 		__Init_Router(router);
 	}
@@ -36,7 +33,11 @@ contract IPFSStorageController is IIPFSStorageController, RouterWrapper, Ownable
 	/// @param provider provider address
 	/// @param amount resource amount
 	/// @param expiration ipfs expiration
-	function allocateProvider(address provider, uint256 amount, uint256 expiration) external override onlyGovernance {
+	function allocateProvider(
+		address provider,
+		uint256 amount,
+		uint256 expiration
+	) external override onlyGovernance {
 		_allocateProivder(provider, amount, expiration);
 	}
 
@@ -45,7 +46,12 @@ contract IPFSStorageController is IIPFSStorageController, RouterWrapper, Ownable
 	/// @param account user account
 	/// @param amount ipfs storage amount
 	/// @param expiration ipfs expiration
-	function drip(address provider, bytes32 account, uint256 amount, uint256 expiration) external override onlyProviderController {
+	function drip(
+		address provider,
+		bytes32 account,
+		uint256 amount,
+		uint256 expiration
+	) external override onlyProviderController {
 		_allocateAccount(provider, account, amount, expiration);
 	}
 
@@ -54,11 +60,21 @@ contract IPFSStorageController is IIPFSStorageController, RouterWrapper, Ownable
 	/// @param account user account
 	/// @param amount ipfs storage amount
 	/// @param expiration ipfs expiration
-	function paymentAllocate(address provider, bytes32 account, uint256 amount, uint256 expiration) external override onlyDstChainPayment { 
+	function paymentAllocate(
+		address provider,
+		bytes32 account,
+		uint256 amount,
+		uint256 expiration
+	) external override onlyDstChainPayment {
 		_allocateAccount(provider, account, amount, expiration);
 	}
 
-	function _allocateAccount(address provider, bytes32 account, uint256 amount, uint256 expiration) internal {
+	function _allocateAccount(
+		address provider,
+		bytes32 account,
+		uint256 amount,
+		uint256 expiration
+	) internal {
 		require(!isProviderExpired(provider), 'IPFSStorageController: provider expired');
 		require(providerBalanceOf(provider) >= amount, 'IPFSStorageController: insufficient balance for the provider');
 		if (isExpired(provider, account)) {
@@ -73,24 +89,24 @@ contract IPFSStorageController is IIPFSStorageController, RouterWrapper, Ownable
 			storages[provider][account].expiration = storages[provider][account].expiration.add(expiration);
 		}
 		require(providerExpiredAt(provider) >= expiredAt(provider, account), 'IPFSStorageController: expiration overflows');
-		if(amount > 0) {
+		if (amount > 0) {
 			providersStorage[provider].amount = providersStorage[provider].amount.sub(amount);
 		}
 		emit AccountAllocated(provider, account, amount, expiration);
 	}
 
-	function _allocateProivder(address provider, uint256 amount, uint256 expiration) internal {
+	function _allocateProivder(
+		address provider,
+		uint256 amount,
+		uint256 expiration
+	) internal {
 		if (isProviderExpired(provider)) {
-			providersStorage[provider] = Storage({
-				startTime: block.timestamp,
-				amount: amount,
-				expiration: expiration
-			});
+			providersStorage[provider] = Storage({ startTime: block.timestamp, amount: amount, expiration: expiration });
 		} else {
 			providersStorage[provider].amount = providersStorage[provider].amount.add(amount);
 			providersStorage[provider].expiration = providersStorage[provider].expiration.add(expiration);
 		}
-	
+
 		emit ProviderAllocated(provider, amount, expiration);
 	}
 
@@ -205,5 +221,4 @@ contract IPFSStorageController is IIPFSStorageController, RouterWrapper, Ownable
 		require(!isExpired(provider, account), 'IPFSStorageController: account is expired.');
 		return storages[provider][account].amount;
 	}
-
 }

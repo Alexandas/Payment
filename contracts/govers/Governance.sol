@@ -60,5 +60,4 @@ contract Governance is IGovernance, RouterWrapper, OwnableUpgradeable {
 	function removeProvider(address provider) external override onlyOwner {
 		router.ProviderRegistry().removeProvider(provider);
 	}
-
 }

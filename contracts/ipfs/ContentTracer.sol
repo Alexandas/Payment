@@ -44,10 +44,7 @@ contract ContentTracer is RouterWrapper, OwnableUpgradeable {
 	/// @dev proxy initialize function
 	/// @param owner contract owner
 	/// @param router router contract address
-	function initialize(
-		address owner,
-		IRouter router
-	) external initializer {
+	function initialize(address owner, IRouter router) external initializer {
 		_transferOwnership(owner);
 		__Init_Router(router);
 	}

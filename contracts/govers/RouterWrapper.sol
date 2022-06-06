@@ -61,5 +61,4 @@ abstract contract RouterWrapper is Initializable {
 		router = _router;
 		emit RouterUpdated(_router);
 	}
-
 }

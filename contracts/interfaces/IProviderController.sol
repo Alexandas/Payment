@@ -7,7 +7,6 @@ import '../libraries/ResourceData.sol';
 /// @author Alexandas
 /// @dev provider controller interface
 interface IProviderController {
-
 	/// @dev emit when account registered in provider
 	/// @param provider provider address
 	/// @param account user account
@@ -30,15 +29,12 @@ interface IProviderController {
 	event WalletTransferred(address provider, bytes32 account, address from, address to);
 
 	/// @dev keccak256("Wallet(address provider,bytes32 account,address wallet)")
-	function walletTypesHash() external view returns(bytes32);
+	function walletTypesHash() external view returns (bytes32);
 
 	/// @dev register account
 	/// @param account user account
 	/// @param timeout register tx timeout
-	function registerAccount(
-		bytes32 account,
-		uint256 timeout
-	) external;
+	function registerAccount(bytes32 account, uint256 timeout) external;
 
 	/// @dev register multiple account
 	/// @param accounts user accounts
@@ -49,15 +45,15 @@ interface IProviderController {
 	/// @param provider provider address
 	/// @param account user account
 	/// @return whether account exists
-	function accountExists(address provider, bytes32 account) external view returns(bool);
+	function accountExists(address provider, bytes32 account) external view returns (bool);
 
 	/// @dev provider drip resource to multiple accounts
 	/// @param accounts user accounts
 	/// @param payloads resource amount payloads
 	/// @param timeout tx timeout
 	function dripMult(
-		bytes32[] memory accounts, 
-		ResourceData.AmountPayload[][] memory payloads, 
+		bytes32[] memory accounts,
+		ResourceData.AmountPayload[][] memory payloads,
 		uint256 timeout
 	) external;
 
@@ -66,8 +62,8 @@ interface IProviderController {
 	/// @param payloads resource amount payloads
 	/// @param timeout tx timeout
 	function drip(
-		bytes32 account, 
-		ResourceData.AmountPayload[] memory payloads, 
+		bytes32 account,
+		ResourceData.AmountPayload[] memory payloads,
 		uint256 timeout
 	) external;
 
@@ -76,8 +72,8 @@ interface IProviderController {
 	/// @param payloads resource amount payloads
 	/// @param timeout tx timeout
 	function registerAndDripMult(
-		bytes32[] memory accounts, 
-		ResourceData.AmountPayload[][] memory payloads, 
+		bytes32[] memory accounts,
+		ResourceData.AmountPayload[][] memory payloads,
 		uint256 timeout
 	) external;
 
@@ -107,12 +103,11 @@ interface IProviderController {
 	/// @param provider provider address
 	/// @param account user account
 	/// @return wallet for the account
-	function walletOf(address provider, bytes32 account) external view returns(address);
+	function walletOf(address provider, bytes32 account) external view returns (address);
 
 	/// @dev return whether wallet exists
 	/// @param provider provider address
 	/// @param account user account
 	/// @return whether wallet exists
 	function walletExists(address provider, bytes32 account) external view returns (bool);
-
 }

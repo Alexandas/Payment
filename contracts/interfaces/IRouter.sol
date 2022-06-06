@@ -16,8 +16,7 @@ import '../resources/interfaces/IResourcePriceAdaptor.sol';
 
 /// @author Alexandas
 /// @dev Router interface
-interface IRouter  {
-
+interface IRouter {
 	/// @dev emit when governance contract address updated
 	/// @param governance governance contract address
 	event GovernanceUpdated(IGovernance governance);
@@ -71,42 +70,41 @@ interface IRouter  {
 	event FundPoolUpdated(IFundPool fundPool);
 
 	/// @dev message receiver contract address
-	function MessageReceiver() external view returns(address);
+	function MessageReceiver() external view returns (address);
 
 	/// @dev Governance contract address
-	function Governance() external view returns(IGovernance);
+	function Governance() external view returns (IGovernance);
 
 	/// @dev providers contract address
-	function ProviderRegistry() external view returns(IProviderRegistry);
+	function ProviderRegistry() external view returns (IProviderRegistry);
 
 	/// @dev provider controller contract address
-	function ProviderController() external view returns(IProviderController);
+	function ProviderController() external view returns (IProviderController);
 
 	/// @dev token address
-	function Token() external view returns(IERC20Upgradeable);
+	function Token() external view returns (IERC20Upgradeable);
 
 	/// @dev return building time controller
-	function BuildingTimeController() external view returns(INormalResourceController);
+	function BuildingTimeController() external view returns (INormalResourceController);
 
 	/// @dev return bandwidth controller
-	function BandwidthController() external view returns(INormalResourceController);
+	function BandwidthController() external view returns (INormalResourceController);
 
 	/// @dev return AR storage controller
-	function ARStorageController() external view returns(INormalResourceController);
+	function ARStorageController() external view returns (INormalResourceController);
 
 	/// @dev return ipfs storage controller
-	function IPFSStorageController() external view returns(IIPFSStorageController);
+	function IPFSStorageController() external view returns (IIPFSStorageController);
 
 	/// @dev return resource price adaptor contract address
-	function ResourcePriceAdaptor() external view returns(IResourcePriceAdaptor);
+	function ResourcePriceAdaptor() external view returns (IResourcePriceAdaptor);
 
 	/// @dev dst chain payment contract address
-	function DstChainPayment() external view returns(IDstChainPayment);
+	function DstChainPayment() external view returns (IDstChainPayment);
 
 	/// @dev billing contract address
-	function Billing() external view returns(IBilling);
+	function Billing() external view returns (IBilling);
 
 	/// @dev fund pool contract address
-	function FundPool() external view returns(IFundPool);
-
+	function FundPool() external view returns (IFundPool);
 }

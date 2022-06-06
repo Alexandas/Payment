@@ -7,7 +7,6 @@ import '@openzeppelin/contracts-upgradeable/interfaces/IERC20Upgradeable.sol';
 /// @author Alexandas
 /// @dev resource data library
 library ResourceData {
-
 	using SafeMathUpgradeable for uint256;
 
 	enum ResourceType {
@@ -32,7 +31,11 @@ library ResourceData {
 		ResourceData.ValuePayload[] payloads;
 	}
 
-	function convertSourceChainPayloads(ValuePayloads memory valuePayloads, uint256 dstAmount) internal pure returns (ResourceData.ValuePayload[] memory newPayloads) {
+	function convertSourceChainPayloads(ValuePayloads memory valuePayloads, uint256 dstAmount)
+		internal
+		pure
+		returns (ResourceData.ValuePayload[] memory newPayloads)
+	{
 		ResourceData.ValuePayload[] memory payloads = valuePayloads.payloads;
 		require(payloads.length > 0, 'ResourceData: invalid payload length');
 		uint256 total = totalValue(payloads);
@@ -98,5 +101,4 @@ library ResourceData {
 		require(success, 'ResourceData: invalid token');
 		return abi.decode(data, (uint256));
 	}
-
 }

@@ -23,10 +23,7 @@ abstract contract NormalResourceController is INormalResourceController, RouterW
 	/// @dev proxy initialize function
 	/// @param owner contract owner
 	/// @param router router contract
-	function __Init_Normal_Resource_Controller(
-		address owner,
-		IRouter router
-	) internal onlyInitializing {
+	function __Init_Normal_Resource_Controller(address owner, IRouter router) internal onlyInitializing {
 		_transferOwnership(owner);
 		__Init_Router(router);
 	}
@@ -42,7 +39,11 @@ abstract contract NormalResourceController is INormalResourceController, RouterW
 	/// @param provider provider address
 	/// @param account user account
 	/// @param amount resource amount
-	function drip(address provider, bytes32 account, uint256 amount) external override onlyProviderController {
+	function drip(
+		address provider,
+		bytes32 account,
+		uint256 amount
+	) external override onlyProviderController {
 		_allocateAccount(provider, account, amount);
 	}
 
@@ -50,11 +51,19 @@ abstract contract NormalResourceController is INormalResourceController, RouterW
 	/// @param provider provider address
 	/// @param account user account
 	/// @param amount resource amount
-	function paymentAllocate(address provider, bytes32 account, uint256 amount) external override onlyDstChainPayment {
+	function paymentAllocate(
+		address provider,
+		bytes32 account,
+		uint256 amount
+	) external override onlyDstChainPayment {
 		_allocateAccount(provider, account, amount);
 	}
 
-	function _allocateAccount(address provider, bytes32 account, uint256 amount) internal {
+	function _allocateAccount(
+		address provider,
+		bytes32 account,
+		uint256 amount
+	) internal {
 		require(providerBalanceOf(provider) >= amount, 'NormalResourceController: insufficient provider balance');
 		balances[provider][account] = balances[provider][account].add(amount);
 		providerBalances[provider] = providerBalances[provider].sub(amount);
@@ -82,5 +91,4 @@ abstract contract NormalResourceController is INormalResourceController, RouterW
 	function providerBalanceOf(address provider) public view override returns (uint256) {
 		return providerBalances[provider];
 	}
-
 }

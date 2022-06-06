@@ -14,14 +14,7 @@ import '../access/Pauser.sol';
 
 /// @author Alexandas
 /// @dev FundPool contract
-contract FundPool is 
-	IFundPool,
-	OwnerWithdrawable,
-	Pauser, 
-	ReentrancyGuardUpgradeable,
-	EIP712Upgradeable,
-	RouterWrapper
-{
+contract FundPool is IFundPool, OwnerWithdrawable, Pauser, ReentrancyGuardUpgradeable, EIP712Upgradeable, RouterWrapper {
 	using SafeMathUpgradeable for uint256;
 	using SafeERC20Upgradeable for IERC20Upgradeable;
 
@@ -98,8 +91,8 @@ contract FundPool is
 	/// @param signature provider signature
 	/// @return fee bills fee
 	function spend(
-		address provider, 
-		bytes32 account, 
+		address provider,
+		bytes32 account,
 		bytes memory bills,
 		uint256 timeout,
 		uint64 nonce,
@@ -111,8 +104,8 @@ contract FundPool is
 	}
 
 	function _spend(
-		address provider, 
-		bytes32 account, 
+		address provider,
+		bytes32 account,
 		bytes memory bills,
 		uint256 timeout,
 		uint64 nonce,
@@ -141,8 +134,8 @@ contract FundPool is
 	/// @param signature provider signature
 	/// @return fee bill fee
 	function withdraw(
-		address provider, 
-		bytes32 account, 
+		address provider,
+		bytes32 account,
 		bytes memory bills,
 		uint256 timeout,
 		uint64 nonce,
@@ -202,7 +195,7 @@ contract FundPool is
 	/// @param provider provider address
 	/// @param account user account
 	/// @return balance of account account
-	function balanceOf(address provider, bytes32 account) public view returns(uint256) {
+	function balanceOf(address provider, bytes32 account) public view returns (uint256) {
 		require(router.ProviderController().accountExists(provider, account), 'FundPool: nonexistent provider');
 		return balances[provider][account];
 	}

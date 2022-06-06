@@ -11,13 +11,7 @@ import '../libraries/ResourceData.sol';
 
 /// @author Alexandas
 /// @dev Dst chain payment contract
-contract DstChainPayment is
-	IDstChainPayment,
-	ReentrancyGuardUpgradeable,
-	OwnerWithdrawable,
-	Pauser,
-	RouterWrapper
-{
+contract DstChainPayment is IDstChainPayment, ReentrancyGuardUpgradeable, OwnerWithdrawable, Pauser, RouterWrapper {
 	using ResourceData for ResourceData.ValuePayloads;
 	using SafeMathUpgradeable for uint256;
 	using SafeERC20Upgradeable for IERC20Upgradeable;
@@ -53,12 +47,7 @@ contract DstChainPayment is
 		require(token == _token, 'DstChainPayment: invalid token');
 		(address provider, uint64 nonce, bytes32 account, ResourceData.ValuePayload[] memory payloads) = decodeSourceChainMessage(message);
 		uint256 value = ResourceData.matchTokenToResource(token, dstAmount);
-		PaymentPayload memory payload = PaymentPayload(
-			provider, 
-			nonce, 
-			account, 
-			ResourceData.ValuePayloads(payloads).convertSourceChainPayloads(value)
-		);
+		PaymentPayload memory payload = PaymentPayload(provider, nonce, account, ResourceData.ValuePayloads(payloads).convertSourceChainPayloads(value));
 		_processPayloads(provider, payload.account, payload.payloads, false);
 		_pay(payload.provider, payload.account, token, dstAmount);
 
@@ -77,7 +66,12 @@ contract DstChainPayment is
 		emit Paid(token, payload);
 	}
 
-	function _pay(address provider, bytes32 account, IERC20Upgradeable token, uint256 amount) internal {
+	function _pay(
+		address provider,
+		bytes32 account,
+		IERC20Upgradeable token,
+		uint256 amount
+	) internal {
 		require(router.ProviderController().accountExists(provider, account), 'DstChainPayment: nonexistent account');
 
 		balances[provider] = balances[provider].add(amount);
@@ -216,7 +210,11 @@ contract DstChainPayment is
 	/// @param resourceType resource type
 	/// @param amount resource amount
 	/// @return token value
-	function getValueOf(address provider, ResourceData.ResourceType resourceType, uint256 amount) public view returns (uint256) {
+	function getValueOf(
+		address provider,
+		ResourceData.ResourceType resourceType,
+		uint256 amount
+	) public view returns (uint256) {
 		return priceOf(provider, resourceType).mul(amount);
 	}
 
@@ -225,8 +223,11 @@ contract DstChainPayment is
 	/// @param resourceType resource type
 	/// @param value token value
 	/// @return resource amount
-	function getAmountOf(address provider, ResourceData.ResourceType resourceType, uint256 value) public view returns (uint256) {
+	function getAmountOf(
+		address provider,
+		ResourceData.ResourceType resourceType,
+		uint256 value
+	) public view returns (uint256) {
 		return value.div(priceOf(provider, resourceType));
 	}
-
 }

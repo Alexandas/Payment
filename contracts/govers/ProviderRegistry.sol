@@ -10,7 +10,6 @@ import './RouterWrapper.sol';
 /// @author Alexandas
 /// @dev provider registry contract
 contract ProviderRegistry is IProviderRegistry, RouterWrapper, OwnableUpgradeable {
-
 	/// @dev all providers
 	mapping(address => bool) internal providers;
 
@@ -113,5 +112,4 @@ contract ProviderRegistry is IProviderRegistry, RouterWrapper, OwnableUpgradeabl
 		require(isProvider(provider), 'ProviderRegistry: nonexistent provider');
 		return SignatureCheckerUpgradeable.isValidSignatureNow(provider, hash, signature);
 	}
-
 }
