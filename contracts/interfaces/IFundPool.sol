@@ -15,12 +15,6 @@ interface IFundPool {
 	/// @param amount token amount
 	event Spent(address provider, bytes32 account, uint256 amount);
 
-	/// @dev emit when wallet owner changed
-	/// @param provider provider address
-	/// @param account user account
-	/// @param newOwner new wallet owner for `account`
-	event WalletOwnerTransferred(address provider, bytes32 account, address newOwner);
-
 	/// @dev emit when account recharged
 	/// @param provider provider address
 	/// @param account user account

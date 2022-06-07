@@ -194,7 +194,6 @@ interface FundPoolInterface extends ethers.utils.Interface {
     "RouterUpdated(address)": EventFragment;
     "Spent(address,bytes32,uint256)": EventFragment;
     "Unpaused(address)": EventFragment;
-    "WalletOwnerTransferred(address,bytes32,address)": EventFragment;
     "Withdrawal(address,address,uint256)": EventFragment;
     "Withdrawn(address,bytes32,address,uint256)": EventFragment;
   };
@@ -210,7 +209,6 @@ interface FundPoolInterface extends ethers.utils.Interface {
   getEvent(nameOrSignatureOrTopic: "RouterUpdated"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "Spent"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "Unpaused"): EventFragment;
-  getEvent(nameOrSignatureOrTopic: "WalletOwnerTransferred"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "Withdrawal"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "Withdrawn"): EventFragment;
 }
@@ -254,14 +252,6 @@ export type SpentEvent = TypedEvent<
 >;
 
 export type UnpausedEvent = TypedEvent<[string] & { account: string }>;
-
-export type WalletOwnerTransferredEvent = TypedEvent<
-  [string, string, string] & {
-    provider: string;
-    account: string;
-    newOwner: string;
-  }
->;
 
 export type WithdrawalEvent = TypedEvent<
   [string, string, BigNumber] & { token: string; to: string; value: BigNumber }
@@ -789,24 +779,6 @@ export class FundPool extends BaseContract {
     ): TypedEventFilter<[string], { account: string }>;
 
     Unpaused(account?: null): TypedEventFilter<[string], { account: string }>;
-
-    "WalletOwnerTransferred(address,bytes32,address)"(
-      provider?: null,
-      account?: null,
-      newOwner?: null
-    ): TypedEventFilter<
-      [string, string, string],
-      { provider: string; account: string; newOwner: string }
-    >;
-
-    WalletOwnerTransferred(
-      provider?: null,
-      account?: null,
-      newOwner?: null
-    ): TypedEventFilter<
-      [string, string, string],
-      { provider: string; account: string; newOwner: string }
-    >;
 
     "Withdrawal(address,address,uint256)"(
       token?: null,

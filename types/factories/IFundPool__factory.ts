@@ -88,31 +88,6 @@ const _abi = [
       {
         indexed: false,
         internalType: "address",
-        name: "newOwner",
-        type: "address",
-      },
-    ],
-    name: "WalletOwnerTransferred",
-    type: "event",
-  },
-  {
-    anonymous: false,
-    inputs: [
-      {
-        indexed: false,
-        internalType: "address",
-        name: "provider",
-        type: "address",
-      },
-      {
-        indexed: false,
-        internalType: "bytes32",
-        name: "account",
-        type: "bytes32",
-      },
-      {
-        indexed: false,
-        internalType: "address",
         name: "to",
         type: "address",
       },

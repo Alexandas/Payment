@@ -84,14 +84,12 @@ interface IFundPoolInterface extends ethers.utils.Interface {
     "RechargeTypesHashUpdated(bytes32)": EventFragment;
     "Recharged(address,bytes32,uint256)": EventFragment;
     "Spent(address,bytes32,uint256)": EventFragment;
-    "WalletOwnerTransferred(address,bytes32,address)": EventFragment;
     "Withdrawn(address,bytes32,address,uint256)": EventFragment;
   };
 
   getEvent(nameOrSignatureOrTopic: "RechargeTypesHashUpdated"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "Recharged"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "Spent"): EventFragment;
-  getEvent(nameOrSignatureOrTopic: "WalletOwnerTransferred"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "Withdrawn"): EventFragment;
 }
 
@@ -112,14 +110,6 @@ export type SpentEvent = TypedEvent<
     provider: string;
     account: string;
     amount: BigNumber;
-  }
->;
-
-export type WalletOwnerTransferredEvent = TypedEvent<
-  [string, string, string] & {
-    provider: string;
-    account: string;
-    newOwner: string;
   }
 >;
 
@@ -354,24 +344,6 @@ export class IFundPool extends BaseContract {
     ): TypedEventFilter<
       [string, string, BigNumber],
       { provider: string; account: string; amount: BigNumber }
-    >;
-
-    "WalletOwnerTransferred(address,bytes32,address)"(
-      provider?: null,
-      account?: null,
-      newOwner?: null
-    ): TypedEventFilter<
-      [string, string, string],
-      { provider: string; account: string; newOwner: string }
-    >;
-
-    WalletOwnerTransferred(
-      provider?: null,
-      account?: null,
-      newOwner?: null
-    ): TypedEventFilter<
-      [string, string, string],
-      { provider: string; account: string; newOwner: string }
     >;
 
     "Withdrawn(address,bytes32,address,uint256)"(

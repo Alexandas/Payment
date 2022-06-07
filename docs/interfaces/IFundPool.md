@@ -149,17 +149,6 @@ function balanceOf(address provider,bytes32 account) external returns (uint256)
 |`provider` | address |  | provider address
 |`account` | bytes32 |  | user account
 |`amount` | uint256 |  | token amount
-### WalletOwnerTransferred
-
-> emit when wallet owner changed
-
-  
-#### Params:
-| Param | Type | Indexed | Description |
-| --- | --- | :---: | --- |
-|`provider` | address |  | provider address
-|`account` | bytes32 |  | user account
-|`newOwner` | address |  | new wallet owner for `account`
 ### Recharged
 
 > emit when account recharged
