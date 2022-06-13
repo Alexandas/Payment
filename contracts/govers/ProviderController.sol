@@ -173,6 +173,7 @@ contract ProviderController is IProviderController, EIP712Upgradeable, Pauser, R
 		address wallet,
 		bytes memory signature
 	) external override {
+		require(msg.sender == wallet, 'ProviderController: caller in not the wallet');
 		require(accountExists(provider, account), 'ProviderController: nonexistent account');
 		require(!walletExists(provider, account), 'ProviderController: wallet exists');
 		bytes32 hash = hashTypedDataV4ForWallet(provider, account, wallet);
