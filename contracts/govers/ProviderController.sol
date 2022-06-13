@@ -22,11 +22,6 @@ contract ProviderController is IProviderController, EIP712Upgradeable, Pauser, R
 
 	constructor() initializer {}
 
-	modifier timeOK(uint256 timeout) {
-		require(timeout > block.timestamp, 'ProviderController: tx expires');
-		_;
-	}
-
 	/// @dev proxy initialize function
 	/// @param owner contract owner
 	/// @param pauser contract pauser
@@ -54,15 +49,13 @@ contract ProviderController is IProviderController, EIP712Upgradeable, Pauser, R
 
 	/// @dev register account
 	/// @param account user account
-	/// @param timeout register tx timeout
-	function registerAccount(bytes32 account, uint256 timeout) external override timeOK(timeout) onlyProvider {
+	function registerAccount(bytes32 account) external override onlyProvider {
 		_registerAccount(msg.sender, account);
 	}
 
 	/// @dev register multiple account
 	/// @param accounts user accounts
-	/// @param timeout tx timeout
-	function registerMult(bytes32[] memory accounts, uint256 timeout) external override timeOK(timeout) onlyProvider {
+	function registerMult(bytes32[] memory accounts) external override onlyProvider {
 		for (uint256 i = 0; i < accounts.length; i++) {
 			_registerAccount(msg.sender, accounts[i]);
 		}
@@ -88,12 +81,10 @@ contract ProviderController is IProviderController, EIP712Upgradeable, Pauser, R
 	/// @dev provider drip resource to multiple accounts
 	/// @param accounts user accounts
 	/// @param payloads resource amount payloads
-	/// @param timeout tx timeout
 	function dripMult(
 		bytes32[] memory accounts,
-		ResourceData.AmountPayload[][] memory payloads,
-		uint256 timeout
-	) external override timeOK(timeout) onlyProvider {
+		ResourceData.AmountPayload[][] memory payloads
+	) external override onlyProvider {
 		require(accounts.length > 0, 'ProviderController: invalid accounts length');
 		require(payloads.length > 0, 'ProviderController: invalid payloads length');
 		require(accounts.length == payloads.length, 'ProviderController: inconsitent parameter length');
@@ -105,12 +96,10 @@ contract ProviderController is IProviderController, EIP712Upgradeable, Pauser, R
 	/// @dev provider drip resource to user account
 	/// @param account user account
 	/// @param payloads resource amount payloads
-	/// @param timeout tx timeout
 	function drip(
 		bytes32 account,
-		ResourceData.AmountPayload[] memory payloads,
-		uint256 timeout
-	) external override timeOK(timeout) onlyProvider {
+		ResourceData.AmountPayload[] memory payloads
+	) external override onlyProvider {
 		_drip(msg.sender, account, payloads);
 	}
 
@@ -147,12 +136,10 @@ contract ProviderController is IProviderController, EIP712Upgradeable, Pauser, R
 	/// @dev provider register and drip resource for multiple accounts
 	/// @param accounts user accounts
 	/// @param payloads resource amount payloads
-	/// @param timeout tx timeout
 	function registerAndDripMult(
 		bytes32[] memory accounts,
-		ResourceData.AmountPayload[][] memory payloads,
-		uint256 timeout
-	) external override timeOK(timeout) onlyProvider {
+		ResourceData.AmountPayload[][] memory payloads
+	) external override onlyProvider {
 		require(accounts.length > 0, 'ProviderController: invalid accounts length');
 		require(payloads.length > 0, 'ProviderController: invalid payloads length');
 		require(accounts.length == payloads.length, 'ProviderController: inconsitent parameter length');
@@ -207,7 +194,6 @@ contract ProviderController is IProviderController, EIP712Upgradeable, Pauser, R
 		address to
 	) internal {
 		wallets[provider][account] = to;
-
 		emit WalletTransferred(provider, account, from, to);
 	}
 

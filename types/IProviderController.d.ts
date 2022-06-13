@@ -22,12 +22,12 @@ import type { TypedEventFilter, TypedEvent, TypedListener } from "./common";
 interface IProviderControllerInterface extends ethers.utils.Interface {
   functions: {
     "accountExists(address,bytes32)": FunctionFragment;
-    "drip(bytes32,tuple[],uint256)": FunctionFragment;
-    "dripMult(bytes32[],tuple[][],uint256)": FunctionFragment;
+    "drip(bytes32,tuple[])": FunctionFragment;
+    "dripMult(bytes32[],tuple[][])": FunctionFragment;
     "initWallet(address,bytes32,address,bytes)": FunctionFragment;
-    "registerAccount(bytes32,uint256)": FunctionFragment;
-    "registerAndDripMult(bytes32[],tuple[][],uint256)": FunctionFragment;
-    "registerMult(bytes32[],uint256)": FunctionFragment;
+    "registerAccount(bytes32)": FunctionFragment;
+    "registerAndDripMult(bytes32[],tuple[][])": FunctionFragment;
+    "registerMult(bytes32[])": FunctionFragment;
     "transferWallet(address,bytes32,address)": FunctionFragment;
     "walletExists(address,bytes32)": FunctionFragment;
     "walletOf(address,bytes32)": FunctionFragment;
@@ -42,16 +42,14 @@ interface IProviderControllerInterface extends ethers.utils.Interface {
     functionFragment: "drip",
     values: [
       BytesLike,
-      { resourceType: BigNumberish; amounts: BigNumberish[] }[],
-      BigNumberish
+      { resourceType: BigNumberish; amounts: BigNumberish[] }[]
     ]
   ): string;
   encodeFunctionData(
     functionFragment: "dripMult",
     values: [
       BytesLike[],
-      { resourceType: BigNumberish; amounts: BigNumberish[] }[][],
-      BigNumberish
+      { resourceType: BigNumberish; amounts: BigNumberish[] }[][]
     ]
   ): string;
   encodeFunctionData(
@@ -60,19 +58,18 @@ interface IProviderControllerInterface extends ethers.utils.Interface {
   ): string;
   encodeFunctionData(
     functionFragment: "registerAccount",
-    values: [BytesLike, BigNumberish]
+    values: [BytesLike]
   ): string;
   encodeFunctionData(
     functionFragment: "registerAndDripMult",
     values: [
       BytesLike[],
-      { resourceType: BigNumberish; amounts: BigNumberish[] }[][],
-      BigNumberish
+      { resourceType: BigNumberish; amounts: BigNumberish[] }[][]
     ]
   ): string;
   encodeFunctionData(
     functionFragment: "registerMult",
-    values: [BytesLike[], BigNumberish]
+    values: [BytesLike[]]
   ): string;
   encodeFunctionData(
     functionFragment: "transferWallet",
@@ -211,14 +208,12 @@ export class IProviderController extends BaseContract {
     drip(
       account: BytesLike,
       payloads: { resourceType: BigNumberish; amounts: BigNumberish[] }[],
-      timeout: BigNumberish,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<ContractTransaction>;
 
     dripMult(
       accounts: BytesLike[],
       payloads: { resourceType: BigNumberish; amounts: BigNumberish[] }[][],
-      timeout: BigNumberish,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<ContractTransaction>;
 
@@ -232,20 +227,17 @@ export class IProviderController extends BaseContract {
 
     registerAccount(
       account: BytesLike,
-      timeout: BigNumberish,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<ContractTransaction>;
 
     registerAndDripMult(
       accounts: BytesLike[],
       payloads: { resourceType: BigNumberish; amounts: BigNumberish[] }[][],
-      timeout: BigNumberish,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<ContractTransaction>;
 
     registerMult(
       accounts: BytesLike[],
-      timeout: BigNumberish,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<ContractTransaction>;
 
@@ -280,14 +272,12 @@ export class IProviderController extends BaseContract {
   drip(
     account: BytesLike,
     payloads: { resourceType: BigNumberish; amounts: BigNumberish[] }[],
-    timeout: BigNumberish,
     overrides?: Overrides & { from?: string | Promise<string> }
   ): Promise<ContractTransaction>;
 
   dripMult(
     accounts: BytesLike[],
     payloads: { resourceType: BigNumberish; amounts: BigNumberish[] }[][],
-    timeout: BigNumberish,
     overrides?: Overrides & { from?: string | Promise<string> }
   ): Promise<ContractTransaction>;
 
@@ -301,20 +291,17 @@ export class IProviderController extends BaseContract {
 
   registerAccount(
     account: BytesLike,
-    timeout: BigNumberish,
     overrides?: Overrides & { from?: string | Promise<string> }
   ): Promise<ContractTransaction>;
 
   registerAndDripMult(
     accounts: BytesLike[],
     payloads: { resourceType: BigNumberish; amounts: BigNumberish[] }[][],
-    timeout: BigNumberish,
     overrides?: Overrides & { from?: string | Promise<string> }
   ): Promise<ContractTransaction>;
 
   registerMult(
     accounts: BytesLike[],
-    timeout: BigNumberish,
     overrides?: Overrides & { from?: string | Promise<string> }
   ): Promise<ContractTransaction>;
 
@@ -349,14 +336,12 @@ export class IProviderController extends BaseContract {
     drip(
       account: BytesLike,
       payloads: { resourceType: BigNumberish; amounts: BigNumberish[] }[],
-      timeout: BigNumberish,
       overrides?: CallOverrides
     ): Promise<void>;
 
     dripMult(
       accounts: BytesLike[],
       payloads: { resourceType: BigNumberish; amounts: BigNumberish[] }[][],
-      timeout: BigNumberish,
       overrides?: CallOverrides
     ): Promise<void>;
 
@@ -370,20 +355,17 @@ export class IProviderController extends BaseContract {
 
     registerAccount(
       account: BytesLike,
-      timeout: BigNumberish,
       overrides?: CallOverrides
     ): Promise<void>;
 
     registerAndDripMult(
       accounts: BytesLike[],
       payloads: { resourceType: BigNumberish; amounts: BigNumberish[] }[][],
-      timeout: BigNumberish,
       overrides?: CallOverrides
     ): Promise<void>;
 
     registerMult(
       accounts: BytesLike[],
-      timeout: BigNumberish,
       overrides?: CallOverrides
     ): Promise<void>;
 
@@ -481,14 +463,12 @@ export class IProviderController extends BaseContract {
     drip(
       account: BytesLike,
       payloads: { resourceType: BigNumberish; amounts: BigNumberish[] }[],
-      timeout: BigNumberish,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<BigNumber>;
 
     dripMult(
       accounts: BytesLike[],
       payloads: { resourceType: BigNumberish; amounts: BigNumberish[] }[][],
-      timeout: BigNumberish,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<BigNumber>;
 
@@ -502,20 +482,17 @@ export class IProviderController extends BaseContract {
 
     registerAccount(
       account: BytesLike,
-      timeout: BigNumberish,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<BigNumber>;
 
     registerAndDripMult(
       accounts: BytesLike[],
       payloads: { resourceType: BigNumberish; amounts: BigNumberish[] }[][],
-      timeout: BigNumberish,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<BigNumber>;
 
     registerMult(
       accounts: BytesLike[],
-      timeout: BigNumberish,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<BigNumber>;
 
@@ -551,14 +528,12 @@ export class IProviderController extends BaseContract {
     drip(
       account: BytesLike,
       payloads: { resourceType: BigNumberish; amounts: BigNumberish[] }[],
-      timeout: BigNumberish,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<PopulatedTransaction>;
 
     dripMult(
       accounts: BytesLike[],
       payloads: { resourceType: BigNumberish; amounts: BigNumberish[] }[][],
-      timeout: BigNumberish,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<PopulatedTransaction>;
 
@@ -572,20 +547,17 @@ export class IProviderController extends BaseContract {
 
     registerAccount(
       account: BytesLike,
-      timeout: BigNumberish,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<PopulatedTransaction>;
 
     registerAndDripMult(
       accounts: BytesLike[],
       payloads: { resourceType: BigNumberish; amounts: BigNumberish[] }[][],
-      timeout: BigNumberish,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<PopulatedTransaction>;
 
     registerMult(
       accounts: BytesLike[],
-      timeout: BigNumberish,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<PopulatedTransaction>;
 

@@ -33,13 +33,11 @@ interface IProviderController {
 
 	/// @dev register account
 	/// @param account user account
-	/// @param timeout register tx timeout
-	function registerAccount(bytes32 account, uint256 timeout) external;
+	function registerAccount(bytes32 account) external;
 
 	/// @dev register multiple account
 	/// @param accounts user accounts
-	/// @param timeout tx timeout
-	function registerMult(bytes32[] memory accounts, uint256 timeout) external;
+	function registerMult(bytes32[] memory accounts) external;
 
 	/// @dev Explain to a developer any extra details
 	/// @param provider provider address
@@ -50,31 +48,25 @@ interface IProviderController {
 	/// @dev provider drip resource to multiple accounts
 	/// @param accounts user accounts
 	/// @param payloads resource amount payloads
-	/// @param timeout tx timeout
 	function dripMult(
 		bytes32[] memory accounts,
-		ResourceData.AmountPayload[][] memory payloads,
-		uint256 timeout
+		ResourceData.AmountPayload[][] memory payloads
 	) external;
 
 	/// @dev provider drip resource to user account
 	/// @param account user account
 	/// @param payloads resource amount payloads
-	/// @param timeout tx timeout
 	function drip(
 		bytes32 account,
-		ResourceData.AmountPayload[] memory payloads,
-		uint256 timeout
+		ResourceData.AmountPayload[] memory payloads
 	) external;
 
 	/// @dev provider register and drip resource for multiple accounts
 	/// @param accounts user accounts
 	/// @param payloads resource amount payloads
-	/// @param timeout tx timeout
 	function registerAndDripMult(
 		bytes32[] memory accounts,
-		ResourceData.AmountPayload[][] memory payloads,
-		uint256 timeout
+		ResourceData.AmountPayload[][] memory payloads
 	) external;
 
 	/// @dev initialize wallet for the given account
