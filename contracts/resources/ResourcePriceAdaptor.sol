@@ -5,7 +5,6 @@ pragma solidity >=0.8.0;
 import '@openzeppelin/contracts-upgradeable/access/OwnableUpgradeable.sol';
 import '@openzeppelin/contracts-upgradeable/utils/math/SafeMathUpgradeable.sol';
 
-import './interfaces/IResourcePriceAdaptor.sol';
 import '../govers/RouterWrapper.sol';
 
 /// @author Alexandas
