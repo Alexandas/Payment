@@ -73,7 +73,6 @@ contract DstChainPayment is IDstChainPayment, ReentrancyGuardUpgradeable, OwnerW
 		uint256 amount
 	) internal {
 		require(router.ProviderController().accountExists(provider, account), 'DstChainPayment: nonexistent account');
-
 		balances[provider] = balances[provider].add(amount);
 		token.safeTransferFrom(msg.sender, address(this), amount);
 	}
