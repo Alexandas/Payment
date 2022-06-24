@@ -23,9 +23,7 @@ interface FundPoolInterface extends ethers.utils.Interface {
   functions: {
     "addPauser(address)": FunctionFragment;
     "balanceOf(address,bytes32)": FunctionFragment;
-    "hashRechargeTypes(address,bytes32,uint256)": FunctionFragment;
-    "hashTypedDataV4ForRecharge(address,bytes32,uint256)": FunctionFragment;
-    "initialize(address,address,string,string,string,address)": FunctionFragment;
+    "initialize(address,address,address)": FunctionFragment;
     "isPauser(address)": FunctionFragment;
     "owner()": FunctionFragment;
     "ownerWithdrawERC20(address,address,uint256)": FunctionFragment;
@@ -33,8 +31,7 @@ interface FundPoolInterface extends ethers.utils.Interface {
     "pause()": FunctionFragment;
     "paused()": FunctionFragment;
     "pausers(address)": FunctionFragment;
-    "recharge(address,bytes32,uint256,bytes)": FunctionFragment;
-    "rechargeTypesHash()": FunctionFragment;
+    "recharge(address,bytes32,uint256)": FunctionFragment;
     "removePauser(address)": FunctionFragment;
     "renounceOwnership()": FunctionFragment;
     "renouncePauser()": FunctionFragment;
@@ -52,16 +49,8 @@ interface FundPoolInterface extends ethers.utils.Interface {
     values: [string, BytesLike]
   ): string;
   encodeFunctionData(
-    functionFragment: "hashRechargeTypes",
-    values: [string, BytesLike, BigNumberish]
-  ): string;
-  encodeFunctionData(
-    functionFragment: "hashTypedDataV4ForRecharge",
-    values: [string, BytesLike, BigNumberish]
-  ): string;
-  encodeFunctionData(
     functionFragment: "initialize",
-    values: [string, string, string, string, string, string]
+    values: [string, string, string]
   ): string;
   encodeFunctionData(functionFragment: "isPauser", values: [string]): string;
   encodeFunctionData(functionFragment: "owner", values?: undefined): string;
@@ -78,11 +67,7 @@ interface FundPoolInterface extends ethers.utils.Interface {
   encodeFunctionData(functionFragment: "pausers", values: [string]): string;
   encodeFunctionData(
     functionFragment: "recharge",
-    values: [string, BytesLike, BigNumberish, BytesLike]
-  ): string;
-  encodeFunctionData(
-    functionFragment: "rechargeTypesHash",
-    values?: undefined
+    values: [string, BytesLike, BigNumberish]
   ): string;
   encodeFunctionData(
     functionFragment: "removePauser",
@@ -133,14 +118,6 @@ interface FundPoolInterface extends ethers.utils.Interface {
 
   decodeFunctionResult(functionFragment: "addPauser", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "balanceOf", data: BytesLike): Result;
-  decodeFunctionResult(
-    functionFragment: "hashRechargeTypes",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(
-    functionFragment: "hashTypedDataV4ForRecharge",
-    data: BytesLike
-  ): Result;
   decodeFunctionResult(functionFragment: "initialize", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "isPauser", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "owner", data: BytesLike): Result;
@@ -156,10 +133,6 @@ interface FundPoolInterface extends ethers.utils.Interface {
   decodeFunctionResult(functionFragment: "paused", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "pausers", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "recharge", data: BytesLike): Result;
-  decodeFunctionResult(
-    functionFragment: "rechargeTypesHash",
-    data: BytesLike
-  ): Result;
   decodeFunctionResult(
     functionFragment: "removePauser",
     data: BytesLike
@@ -189,7 +162,6 @@ interface FundPoolInterface extends ethers.utils.Interface {
     "Paused(address)": EventFragment;
     "PauserAdded(address)": EventFragment;
     "PauserRemoved(address)": EventFragment;
-    "RechargeTypesHashUpdated(bytes32)": EventFragment;
     "Recharged(address,bytes32,uint256)": EventFragment;
     "RouterUpdated(address)": EventFragment;
     "Spent(address,bytes32,uint256)": EventFragment;
@@ -204,7 +176,6 @@ interface FundPoolInterface extends ethers.utils.Interface {
   getEvent(nameOrSignatureOrTopic: "Paused"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "PauserAdded"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "PauserRemoved"): EventFragment;
-  getEvent(nameOrSignatureOrTopic: "RechargeTypesHashUpdated"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "Recharged"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "RouterUpdated"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "Spent"): EventFragment;
@@ -228,10 +199,6 @@ export type PausedEvent = TypedEvent<[string] & { account: string }>;
 export type PauserAddedEvent = TypedEvent<[string] & { account: string }>;
 
 export type PauserRemovedEvent = TypedEvent<[string] & { account: string }>;
-
-export type RechargeTypesHashUpdatedEvent = TypedEvent<
-  [string] & { hash: string }
->;
 
 export type RechargedEvent = TypedEvent<
   [string, string, BigNumber] & {
@@ -321,26 +288,9 @@ export class FundPool extends BaseContract {
       overrides?: CallOverrides
     ): Promise<[BigNumber]>;
 
-    hashRechargeTypes(
-      provider: string,
-      account: BytesLike,
-      amount: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<[string]>;
-
-    hashTypedDataV4ForRecharge(
-      provider: string,
-      account: BytesLike,
-      amount: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<[string]>;
-
     initialize(
       owner: string,
       pauser: string,
-      name: string,
-      version: string,
-      rechargeTypes: string,
       router: string,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<ContractTransaction>;
@@ -374,11 +324,8 @@ export class FundPool extends BaseContract {
       provider: string,
       account: BytesLike,
       amount: BigNumberish,
-      signature: BytesLike,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<ContractTransaction>;
-
-    rechargeTypesHash(overrides?: CallOverrides): Promise<[string]>;
 
     removePauser(
       account: string,
@@ -444,26 +391,9 @@ export class FundPool extends BaseContract {
     overrides?: CallOverrides
   ): Promise<BigNumber>;
 
-  hashRechargeTypes(
-    provider: string,
-    account: BytesLike,
-    amount: BigNumberish,
-    overrides?: CallOverrides
-  ): Promise<string>;
-
-  hashTypedDataV4ForRecharge(
-    provider: string,
-    account: BytesLike,
-    amount: BigNumberish,
-    overrides?: CallOverrides
-  ): Promise<string>;
-
   initialize(
     owner: string,
     pauser: string,
-    name: string,
-    version: string,
-    rechargeTypes: string,
     router: string,
     overrides?: Overrides & { from?: string | Promise<string> }
   ): Promise<ContractTransaction>;
@@ -497,11 +427,8 @@ export class FundPool extends BaseContract {
     provider: string,
     account: BytesLike,
     amount: BigNumberish,
-    signature: BytesLike,
     overrides?: Overrides & { from?: string | Promise<string> }
   ): Promise<ContractTransaction>;
-
-  rechargeTypesHash(overrides?: CallOverrides): Promise<string>;
 
   removePauser(
     account: string,
@@ -564,26 +491,9 @@ export class FundPool extends BaseContract {
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
-    hashRechargeTypes(
-      provider: string,
-      account: BytesLike,
-      amount: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<string>;
-
-    hashTypedDataV4ForRecharge(
-      provider: string,
-      account: BytesLike,
-      amount: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<string>;
-
     initialize(
       owner: string,
       pauser: string,
-      name: string,
-      version: string,
-      rechargeTypes: string,
       router: string,
       overrides?: CallOverrides
     ): Promise<void>;
@@ -615,11 +525,8 @@ export class FundPool extends BaseContract {
       provider: string,
       account: BytesLike,
       amount: BigNumberish,
-      signature: BytesLike,
       overrides?: CallOverrides
     ): Promise<void>;
-
-    rechargeTypesHash(overrides?: CallOverrides): Promise<string>;
 
     removePauser(account: string, overrides?: CallOverrides): Promise<void>;
 
@@ -722,14 +629,6 @@ export class FundPool extends BaseContract {
       account?: null
     ): TypedEventFilter<[string], { account: string }>;
 
-    "RechargeTypesHashUpdated(bytes32)"(
-      hash?: null
-    ): TypedEventFilter<[string], { hash: string }>;
-
-    RechargeTypesHashUpdated(
-      hash?: null
-    ): TypedEventFilter<[string], { hash: string }>;
-
     "Recharged(address,bytes32,uint256)"(
       provider?: null,
       account?: null,
@@ -831,26 +730,9 @@ export class FundPool extends BaseContract {
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
-    hashRechargeTypes(
-      provider: string,
-      account: BytesLike,
-      amount: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<BigNumber>;
-
-    hashTypedDataV4ForRecharge(
-      provider: string,
-      account: BytesLike,
-      amount: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<BigNumber>;
-
     initialize(
       owner: string,
       pauser: string,
-      name: string,
-      version: string,
-      rechargeTypes: string,
       router: string,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<BigNumber>;
@@ -884,11 +766,8 @@ export class FundPool extends BaseContract {
       provider: string,
       account: BytesLike,
       amount: BigNumberish,
-      signature: BytesLike,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<BigNumber>;
-
-    rechargeTypesHash(overrides?: CallOverrides): Promise<BigNumber>;
 
     removePauser(
       account: string,
@@ -955,26 +834,9 @@ export class FundPool extends BaseContract {
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
-    hashRechargeTypes(
-      provider: string,
-      account: BytesLike,
-      amount: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<PopulatedTransaction>;
-
-    hashTypedDataV4ForRecharge(
-      provider: string,
-      account: BytesLike,
-      amount: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<PopulatedTransaction>;
-
     initialize(
       owner: string,
       pauser: string,
-      name: string,
-      version: string,
-      rechargeTypes: string,
       router: string,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<PopulatedTransaction>;
@@ -1014,11 +876,8 @@ export class FundPool extends BaseContract {
       provider: string,
       account: BytesLike,
       amount: BigNumberish,
-      signature: BytesLike,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<PopulatedTransaction>;
-
-    rechargeTypesHash(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
     removePauser(
       account: string,

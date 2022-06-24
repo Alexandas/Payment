@@ -201,14 +201,6 @@ declare module "hardhat/types/runtime" {
       signerOrOptions?: ethers.Signer | FactoryOptions
     ): Promise<Contracts.SrcChainPayment__factory>;
     getContractFactory(
-      name: "Admin",
-      signerOrOptions?: ethers.Signer | FactoryOptions
-    ): Promise<Contracts.Admin__factory>;
-    getContractFactory(
-      name: "ContractProxy",
-      signerOrOptions?: ethers.Signer | FactoryOptions
-    ): Promise<Contracts.ContractProxy__factory>;
-    getContractFactory(
       name: "IPFSStorageController",
       signerOrOptions?: ethers.Signer | FactoryOptions
     ): Promise<Contracts.IPFSStorageController__factory>;
@@ -520,16 +512,6 @@ declare module "hardhat/types/runtime" {
       address: string,
       signer?: ethers.Signer
     ): Promise<Contracts.SrcChainPayment>;
-    getContractAt(
-      name: "Admin",
-      address: string,
-      signer?: ethers.Signer
-    ): Promise<Contracts.Admin>;
-    getContractAt(
-      name: "ContractProxy",
-      address: string,
-      signer?: ethers.Signer
-    ): Promise<Contracts.ContractProxy>;
     getContractAt(
       name: "IPFSStorageController",
       address: string,

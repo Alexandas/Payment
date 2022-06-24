@@ -12,19 +12,6 @@ const _abi = [
     inputs: [
       {
         indexed: false,
-        internalType: "bytes32",
-        name: "hash",
-        type: "bytes32",
-      },
-    ],
-    name: "RechargeTypesHashUpdated",
-    type: "event",
-  },
-  {
-    anonymous: false,
-    inputs: [
-      {
-        indexed: false,
         internalType: "address",
         name: "provider",
         type: "address",
@@ -142,28 +129,10 @@ const _abi = [
         name: "amount",
         type: "uint256",
       },
-      {
-        internalType: "bytes",
-        name: "signature",
-        type: "bytes",
-      },
     ],
     name: "recharge",
     outputs: [],
     stateMutability: "nonpayable",
-    type: "function",
-  },
-  {
-    inputs: [],
-    name: "rechargeTypesHash",
-    outputs: [
-      {
-        internalType: "bytes32",
-        name: "",
-        type: "bytes32",
-      },
-    ],
-    stateMutability: "view",
     type: "function",
   },
   {

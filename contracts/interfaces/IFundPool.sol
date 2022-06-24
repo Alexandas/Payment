@@ -5,9 +5,6 @@ pragma solidity >=0.8.0;
 /// @author Alexandas
 /// @dev FundPool interface
 interface IFundPool {
-	/// @dev emit when recharge type hash updated
-	/// @param hash recharge type hash
-	event RechargeTypesHashUpdated(bytes32 hash);
 
 	/// @dev emit when bill spent
 	/// @param provider provider address
@@ -28,19 +25,14 @@ interface IFundPool {
 	/// @param amount token amount
 	event Withdrawn(address provider, bytes32 account, address to, uint256 amount);
 
-	/// @dev return recharge types hash
-	function rechargeTypesHash() external view returns (bytes32);
-
 	/// @dev recharge for account
 	/// @param provider provider address
 	/// @param account user account
 	/// @param amount token amount
-	/// @param signature provider signature
 	function recharge(
 		address provider,
 		bytes32 account,
-		uint256 amount,
-		bytes memory signature
+		uint256 amount
 	) external;
 
 	/// @dev spend bills for account

@@ -22,8 +22,7 @@ import type { TypedEventFilter, TypedEvent, TypedListener } from "./common";
 interface IFundPoolInterface extends ethers.utils.Interface {
   functions: {
     "balanceOf(address,bytes32)": FunctionFragment;
-    "recharge(address,bytes32,uint256,bytes)": FunctionFragment;
-    "rechargeTypesHash()": FunctionFragment;
+    "recharge(address,bytes32,uint256)": FunctionFragment;
     "spend(address,bytes32,bytes,uint256,uint64,bytes)": FunctionFragment;
     "walletOf(address,bytes32)": FunctionFragment;
     "withdraw(address,bytes32,bytes,uint256,uint64,bytes,address,uint256)": FunctionFragment;
@@ -35,11 +34,7 @@ interface IFundPoolInterface extends ethers.utils.Interface {
   ): string;
   encodeFunctionData(
     functionFragment: "recharge",
-    values: [string, BytesLike, BigNumberish, BytesLike]
-  ): string;
-  encodeFunctionData(
-    functionFragment: "rechargeTypesHash",
-    values?: undefined
+    values: [string, BytesLike, BigNumberish]
   ): string;
   encodeFunctionData(
     functionFragment: "spend",
@@ -72,30 +67,20 @@ interface IFundPoolInterface extends ethers.utils.Interface {
 
   decodeFunctionResult(functionFragment: "balanceOf", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "recharge", data: BytesLike): Result;
-  decodeFunctionResult(
-    functionFragment: "rechargeTypesHash",
-    data: BytesLike
-  ): Result;
   decodeFunctionResult(functionFragment: "spend", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "walletOf", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "withdraw", data: BytesLike): Result;
 
   events: {
-    "RechargeTypesHashUpdated(bytes32)": EventFragment;
     "Recharged(address,bytes32,uint256)": EventFragment;
     "Spent(address,bytes32,uint256)": EventFragment;
     "Withdrawn(address,bytes32,address,uint256)": EventFragment;
   };
 
-  getEvent(nameOrSignatureOrTopic: "RechargeTypesHashUpdated"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "Recharged"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "Spent"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "Withdrawn"): EventFragment;
 }
-
-export type RechargeTypesHashUpdatedEvent = TypedEvent<
-  [string] & { hash: string }
->;
 
 export type RechargedEvent = TypedEvent<
   [string, string, BigNumber] & {
@@ -176,11 +161,8 @@ export class IFundPool extends BaseContract {
       provider: string,
       account: BytesLike,
       amount: BigNumberish,
-      signature: BytesLike,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<ContractTransaction>;
-
-    rechargeTypesHash(overrides?: CallOverrides): Promise<[string]>;
 
     spend(
       provider: string,
@@ -221,11 +203,8 @@ export class IFundPool extends BaseContract {
     provider: string,
     account: BytesLike,
     amount: BigNumberish,
-    signature: BytesLike,
     overrides?: Overrides & { from?: string | Promise<string> }
   ): Promise<ContractTransaction>;
-
-  rechargeTypesHash(overrides?: CallOverrides): Promise<string>;
 
   spend(
     provider: string,
@@ -266,11 +245,8 @@ export class IFundPool extends BaseContract {
       provider: string,
       account: BytesLike,
       amount: BigNumberish,
-      signature: BytesLike,
       overrides?: CallOverrides
     ): Promise<void>;
-
-    rechargeTypesHash(overrides?: CallOverrides): Promise<string>;
 
     spend(
       provider: string,
@@ -302,14 +278,6 @@ export class IFundPool extends BaseContract {
   };
 
   filters: {
-    "RechargeTypesHashUpdated(bytes32)"(
-      hash?: null
-    ): TypedEventFilter<[string], { hash: string }>;
-
-    RechargeTypesHashUpdated(
-      hash?: null
-    ): TypedEventFilter<[string], { hash: string }>;
-
     "Recharged(address,bytes32,uint256)"(
       provider?: null,
       account?: null,
@@ -378,11 +346,8 @@ export class IFundPool extends BaseContract {
       provider: string,
       account: BytesLike,
       amount: BigNumberish,
-      signature: BytesLike,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<BigNumber>;
-
-    rechargeTypesHash(overrides?: CallOverrides): Promise<BigNumber>;
 
     spend(
       provider: string,
@@ -424,11 +389,8 @@ export class IFundPool extends BaseContract {
       provider: string,
       account: BytesLike,
       amount: BigNumberish,
-      signature: BytesLike,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<PopulatedTransaction>;
-
-    rechargeTypesHash(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
     spend(
       provider: string,
