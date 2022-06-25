@@ -84,21 +84,24 @@ contract Billing is IBilling, OwnerWithdrawable, EIP712Upgradeable, ReentrancyGu
 	) internal returns (uint256 fee) {
 		IERC20Upgradeable token = router.Token();
 		fee = _validateBills(provider, bills);
-		fee = ResourceData.matchResourceToToken(token, fee);
-		balances[provider] = balances[provider].add(fee);
+		if(fee > 0) {
+			fee = ResourceData.matchResourceToToken(token, fee);
+			balances[provider] = balances[provider].add(fee);
+		}
 		nonces[provider][account][nonce] = true;
 	}
 
 	function _validateBills(address provider, bytes memory data) internal view returns (uint256 value) {
 		Bill[] memory bills = abi.decode(data, (Bill[]));
-		require(bills.length > 0, 'Billing: empty bill payloads');
-		for (uint256 i = 0; i < bills.length; i++) {
-			Bill memory bill = bills[i];
-			require(bill.entries.length > 0, 'Billing: empty bill entry');
-			for (uint256 j = 0; j < bill.entries.length; j++) {
-				BillEntry memory entry = bill.entries[i];
-				uint256 billing = router.ResourcePriceAdaptor().getValueAt(provider, entry.resourceType, entry.amount, bill.indexBlock);
-				value = value.add(billing);
+		if (bills.length > 0) {
+			for (uint256 i = 0; i < bills.length; i++) {
+				Bill memory bill = bills[i];
+				require(bill.entries.length > 0, 'Billing: empty bill entry');
+				for (uint256 j = 0; j < bill.entries.length; j++) {
+					BillEntry memory entry = bill.entries[i];
+					uint256 billing = router.ResourcePriceAdaptor().getValueAt(provider, entry.resourceType, entry.amount, bill.indexBlock);
+					value = value.add(billing);
+				}
 			}
 		}
 	}
