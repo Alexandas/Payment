@@ -45,7 +45,9 @@ contract FundPool is IFundPool, OwnerWithdrawable, Pauser, ReentrancyGuardUpgrad
 		uint256 amount
 	) external override whenNotPaused nonReentrant {
 		require(amount > 0, 'FundPool: zero amount');
-		require(router.ProviderController().walletOf(provider, account) != address(0), 'FundPool: nonexistent wallet');
+		address wallet = router.ProviderController().walletOf(provider, account);
+		require(wallet != address(0), 'FundPool: nonexistent wallet');
+		require(wallet == msg.sender, 'FundPool: caller is not the account wallet');
 		_recharge(provider, account, amount);
 	}
 

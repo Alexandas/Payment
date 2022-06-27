@@ -98,7 +98,7 @@ contract Billing is IBilling, OwnerWithdrawable, EIP712Upgradeable, ReentrancyGu
 				Bill memory bill = bills[i];
 				require(bill.entries.length > 0, 'Billing: empty bill entry');
 				for (uint256 j = 0; j < bill.entries.length; j++) {
-					BillEntry memory entry = bill.entries[i];
+					BillEntry memory entry = bill.entries[j];
 					uint256 billing = router.ResourcePriceAdaptor().getValueAt(provider, entry.resourceType, entry.amount, bill.indexBlock);
 					value = value.add(billing);
 				}
