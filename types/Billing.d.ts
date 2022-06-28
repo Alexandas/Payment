@@ -22,6 +22,7 @@ import type { TypedEventFilter, TypedEvent, TypedListener } from "./common";
 interface BillingInterface extends ethers.utils.Interface {
   functions: {
     "balanceOf(address)": FunctionFragment;
+    "billFee(address,bytes)": FunctionFragment;
     "billingTypesHash()": FunctionFragment;
     "hashBillingTypes(address,bytes32,bytes,uint256,uint64)": FunctionFragment;
     "hashTypedDataV4ForBills(address,bytes32,bytes,uint256,uint64)": FunctionFragment;
@@ -37,6 +38,10 @@ interface BillingInterface extends ethers.utils.Interface {
   };
 
   encodeFunctionData(functionFragment: "balanceOf", values: [string]): string;
+  encodeFunctionData(
+    functionFragment: "billFee",
+    values: [string, BytesLike]
+  ): string;
   encodeFunctionData(
     functionFragment: "billingTypesHash",
     values?: undefined
@@ -88,6 +93,7 @@ interface BillingInterface extends ethers.utils.Interface {
   ): string;
 
   decodeFunctionResult(functionFragment: "balanceOf", data: BytesLike): Result;
+  decodeFunctionResult(functionFragment: "billFee", data: BytesLike): Result;
   decodeFunctionResult(
     functionFragment: "billingTypesHash",
     data: BytesLike
@@ -223,6 +229,12 @@ export class Billing extends BaseContract {
       overrides?: CallOverrides
     ): Promise<[BigNumber]>;
 
+    billFee(
+      provider: string,
+      data: BytesLike,
+      overrides?: CallOverrides
+    ): Promise<[BigNumber] & { value: BigNumber }>;
+
     billingTypesHash(overrides?: CallOverrides): Promise<[string]>;
 
     hashBillingTypes(
@@ -298,6 +310,12 @@ export class Billing extends BaseContract {
 
   balanceOf(provider: string, overrides?: CallOverrides): Promise<BigNumber>;
 
+  billFee(
+    provider: string,
+    data: BytesLike,
+    overrides?: CallOverrides
+  ): Promise<BigNumber>;
+
   billingTypesHash(overrides?: CallOverrides): Promise<string>;
 
   hashBillingTypes(
@@ -372,6 +390,12 @@ export class Billing extends BaseContract {
 
   callStatic: {
     balanceOf(provider: string, overrides?: CallOverrides): Promise<BigNumber>;
+
+    billFee(
+      provider: string,
+      data: BytesLike,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
 
     billingTypesHash(overrides?: CallOverrides): Promise<string>;
 
@@ -551,6 +575,12 @@ export class Billing extends BaseContract {
   estimateGas: {
     balanceOf(provider: string, overrides?: CallOverrides): Promise<BigNumber>;
 
+    billFee(
+      provider: string,
+      data: BytesLike,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
+
     billingTypesHash(overrides?: CallOverrides): Promise<BigNumber>;
 
     hashBillingTypes(
@@ -627,6 +657,12 @@ export class Billing extends BaseContract {
   populateTransaction: {
     balanceOf(
       provider: string,
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
+
+    billFee(
+      provider: string,
+      data: BytesLike,
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 

@@ -106,6 +106,14 @@ contract Billing is IBilling, OwnerWithdrawable, EIP712Upgradeable, ReentrancyGu
 		}
 	}
 
+	/// @dev return bill fee
+	/// @param provider provider address
+	/// @param data bill data
+	/// @return value bill fee
+	function billFee(address provider, bytes memory data) external view returns (uint256 value) { 
+		return _validateBills(provider, data);
+	}
+
 	/// @dev return hash for bills
 	/// @param provider provider address
 	/// @param account user account
