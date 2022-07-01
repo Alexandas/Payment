@@ -45,9 +45,7 @@ contract FundPool is IFundPool, OwnerWithdrawable, Pauser, ReentrancyGuardUpgrad
 		uint256 amount
 	) external override whenNotPaused nonReentrant {
 		require(amount > 0, 'FundPool: zero amount');
-		address wallet = router.ProviderController().walletOf(provider, account);
-		require(wallet != address(0), 'FundPool: nonexistent wallet');
-		require(wallet == msg.sender, 'FundPool: caller is not the account wallet');
+		require(router.ProviderController().accountExists(provider, account), 'FundPool: nonexistent account');
 		_recharge(provider, account, amount);
 	}
 
@@ -77,7 +75,6 @@ contract FundPool is IFundPool, OwnerWithdrawable, Pauser, ReentrancyGuardUpgrad
 		uint64 nonce,
 		bytes memory signature
 	) external override whenNotPaused nonReentrant returns (uint256 fee) {
-		require(bills.length > 0, 'FundPool: invalid bills');
 		require(router.ProviderController().accountExists(provider, account), 'FundPool: nonexistent account');
 		fee = _spend(provider, account, bills, timeout, nonce, signature);
 	}
@@ -89,16 +86,14 @@ contract FundPool is IFundPool, OwnerWithdrawable, Pauser, ReentrancyGuardUpgrad
 		uint256 timeout,
 		uint64 nonce,
 		bytes memory signature
-	) internal returns (uint256 amount) {
-		if (bills.length > 0) {
-			IBilling billing = router.Billing();
-			amount = billing.spend(provider, account, bills, timeout, nonce, signature);
-			uint256 balance = balanceOf(provider, account);
-			require(balance >= amount, 'FundPool: insufficient balance for billing fee');
-			balances[provider][account] = balances[provider][account].sub(amount);
-			router.Token().safeTransfer(address(billing), amount);
-		}
-		emit Spent(provider, account, amount);
+	) internal returns (uint256 fee) {
+		IBilling billing = router.Billing();
+		fee = billing.spend(provider, account, bills, timeout, nonce, signature);
+		uint256 balance = balanceOf(provider, account);
+		require(balance >= fee, 'FundPool: insufficient balance for billing fee');
+		balances[provider][account] = balances[provider][account].sub(fee);
+		router.Token().safeTransfer(address(billing), fee);
+		emit Spent(provider, account, fee);
 	}
 
 	/// @dev withdraw token for account
@@ -144,7 +139,8 @@ contract FundPool is IFundPool, OwnerWithdrawable, Pauser, ReentrancyGuardUpgrad
 	/// @param account user account
 	/// @return balance of account account
 	function balanceOf(address provider, bytes32 account) public view returns (uint256) {
-		require(router.ProviderController().accountExists(provider, account), 'FundPool: nonexistent provider');
+		require(router.ProviderController().accountExists(provider, account), 'FundPool: nonexistent account');
 		return balances[provider][account];
 	}
+
 }
